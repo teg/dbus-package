@@ -3,7 +3,7 @@
 %define expat_version           1.95.5
 %define glib2_version           2.2.0
 %define qt_version              3.1.0
-%define pyrex_version		0.9-3
+%define pyrex_version		0.9.2.1
 %define gtk2_version		2.4.0
 
 %define dbus_user_uid           81
@@ -11,7 +11,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.21
-Release: 6 
+Release: 10 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -117,6 +117,11 @@ function make_fast() {
         make
 }
 
+%ifarch ia64
+#FIXME: workaround for gcc-3.4 bug which causes python bindings build to hand on ia64 arches
+CFLAGS="$RPM_OPT_FLAGS -O1"
+export CFLAGS
+%endif
 #### Build once with tests to make check
 %configure $COMMON_ARGS --enable-tests=yes --enable-verbose-mode=yes --enable-asserts=yes
 make_fast
@@ -220,6 +225,18 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Fri Jun 25 2004 John (J5) Palmieri <johnp@redhat.com>
+- Workaround added to fix gcc-3.4 bug on ia64 
+                                                                                                                 
+* Fri Jun 25 2004 John (J5) Palmieri <johnp@redhat.com>
+- require new Pyrex version and see if it builds this time
+
+* Fri Jun 25 2004 John (J5) Palmieri <johnp@redhat.com>
+- rebuild with updated Pyrex (0.9.2.1)
+
+* Tue Jun 15 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
 * Fri Jun 04 2004 John (J5) Palmieri <johnp@redhat.com>
 - Moved dbus-viewer, dbus-monitor and dbus-glib-tool 
   into the dbus-glib package so that the main dbus
