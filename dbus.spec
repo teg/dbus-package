@@ -5,13 +5,14 @@
 %define qt_version              3.1.0
 %define pyrex_version		0.9.2.1
 %define gtk2_version		2.4.0
+%define libselinux_version	1.15.2	
 
 %define dbus_user_uid           81
 
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.21.cvs20040722
-Release: 3 
+Release: 5 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -23,11 +24,15 @@ BuildRequires: glib2-devel >= %{glib2_version}
 #BuildRequires: qt-devel    >= %{qt_version}
 BuildRequires: Pyrex	   >= %{pyrex_version}
 BuildRequires: gtk2-devel  >= %{gtk_version}
+BuildRequires: libselinux-devel >= %{libselinux_version}
+
+Requires: libselinux >= %{libselinux_version}
 
 Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.13-uid.patch
 Patch2: dbus-0.21-console-auth.patch 
+Patch3: dbus-0.21-se.patch
 
 %description
 
@@ -92,10 +97,13 @@ D-BUS python bindings for use with python programs.
 
 %patch1 -p1 -b .uid
 %patch2 -p0 -b .console-auth
+%patch3 -p2 -b .se
+
+autoreconf -f -i
 
 %build
 
-COMMON_ARGS="--enable-glib=yes --enable-qt=no"
+COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes"
 
 if test -d %{_libdir}/qt-3.1 ; then
    export QTDIR=%{_libdir}/qt-3.1
@@ -232,6 +240,12 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Thu Aug 05 2004 John (J5) Palmieri <johnp@redhat.com> 
+- Added BuildRequires for libselinux-devel and Requires for libselinux
+
+* Tue Aug 02 2004 Colin Walters <walters@redhat.com>
+- Add SE-DBus patch
+
 * Fri Jul 30 2004 John (J5) Palmieri <johnp@redhat.com>
 - Added lib64 workaround for python bindings installing to
   the wrong lib directory on 64 bit archs
