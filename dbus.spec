@@ -29,7 +29,7 @@ BuildRequires: Pyrex	   >= %{pyrex_version}
 #BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
 #BuildRequires: audit-libs-devel >= 0.6.1
-BuildRequires: compat-gcc32
+BuildRequires: compat-gcc-32
 
 Requires: libselinux >= %{libselinux_version}
 
@@ -274,7 +274,7 @@ fi
 
 %changelog
 * Wed Mar 16 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-3
-- change compat-gcc requirement to compat-gcc32
+- change compat-gcc requirement to compat-gcc-32
 - rebuild with gcc 3.2
 
 * Tue Mar 08 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-2
