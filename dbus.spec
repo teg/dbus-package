@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.23
-Release: 1 
+Release: 2 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 Source1: messagebus
@@ -29,12 +29,14 @@ BuildRequires: glib2-devel >= %{glib2_version}
 BuildRequires: Pyrex	   >= %{pyrex_version}
 #BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
+BuildRequires: audit-libs-devel >= 0.6.1
 
 Requires: libselinux >= %{libselinux_version}
 
 Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.13-uid.patch
+Patch2: dbus-0.23-selinux-avc-audit.patch
 
 %description
 
@@ -111,7 +113,7 @@ D-BUS python bindings for use with python programs.
 %setup -q
 
 %patch1 -p1 -b .uid
-
+%patch2 -p1 -b .selinux-avc-audit
 %build
 
 COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat"
@@ -264,6 +266,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Fri Jan 21 2005 John (J5) Palmieri <johnp@redhat.com> - 0.23-2
+- Add Steve Grubb's SE-Linux audit patch (Bug# 144920)
+
 * Fri Jan 21 2005 John (J5) Palmieri <johnp@redhat.com> - 0.23-1
 - Update to upstream version 0.23
 - Drop all patches except for the UDI patch as they have been 
