@@ -112,7 +112,7 @@ D-BUS python bindings for use with python programs.
 
 %patch1 -p1 -b .uid
 %patch2 -p0 -b .console-auth
-%patch3 -p- -b .python-int64
+%patch3 -p0 -b .python-int64
 
 autoreconf -f -i
 
