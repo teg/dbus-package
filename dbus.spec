@@ -10,8 +10,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.21
-Release: 10 
+Version: 0.21.cvs20040722
+Release: 3 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -27,7 +27,7 @@ BuildRequires: gtk2-devel  >= %{gtk_version}
 Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.13-uid.patch
-Patch2: dbus-python-stack-trash.patch 
+Patch2: dbus-0.21-console-auth.patch 
 
 %description
 
@@ -91,7 +91,7 @@ D-BUS python bindings for use with python programs.
 %setup -q
 
 %patch1 -p1 -b .uid
-%patch2 -p2 -b .python-stack-trash
+%patch2 -p0 -b .console-auth
 
 %build
 
@@ -140,6 +140,13 @@ rm -rf %{buildroot}
 %makeinstall
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
+
+#hack to get around a bug in the python distutils on 64 bit archs
+%if "%{_lib}" == "lib64"
+cp -r $RPM_BUILD_ROOT/usr/lib/* $RPM_BUILD_ROOT%{_libdir}/
+rm -rf $RPM_BUILD_ROOT/usr/lib
+perl -pi -e 's/\/usr\/lib\//\/usr\/lib64\//g' INSTALLED_FILES
+%endif
 
 ## %find_lang %{gettext_package}
 
@@ -225,9 +232,21 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Fri Jul 30 2004 John (J5) Palmieri <johnp@redhat.com>
+- Added lib64 workaround for python bindings installing to
+  the wrong lib directory on 64 bit archs
+
+* Fri Jul 30 2004 John (J5) Palmieri <johnp@redhat.com>
+- Updated console-auth patch
+- rebuild
+ 
+* Thu Jul 22 2004 John (J5) Palmieri <johnp@redhat.com>
+- Update to upstream CVS build
+- Added console-auth patch
+
 * Fri Jun 25 2004 John (J5) Palmieri <johnp@redhat.com>
-- Workaround added to fix gcc-3.4 bug on ia64 
-                                                                                                                 
+- Workaround added to fix gcc-3.4 bug on ia64
+
 * Fri Jun 25 2004 John (J5) Palmieri <johnp@redhat.com>
 - require new Pyrex version and see if it builds this time
 
