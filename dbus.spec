@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.22
-Release: 2 
+Release: 3 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -23,7 +23,7 @@ BuildRequires: expat-devel >= %{expat_version}
 BuildRequires: glib2-devel >= %{glib2_version}
 #BuildRequires: qt-devel    >= %{qt_version}
 BuildRequires: Pyrex	   >= %{pyrex_version}
-BuildRequires: gtk2-devel  >= %{gtk_version}
+#BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
 
 Requires: libselinux >= %{libselinux_version}
@@ -58,6 +58,7 @@ Requires: %name = %{version}-%{release}
 D-BUS add-on library to integrate the standard D-BUS library with
 the GLib thread abstraction and main loop.
 
+%if 0
 %package gtk
 Summary: GTK based tools
 Group: Development/Tools 
@@ -66,6 +67,8 @@ Requires: gtk2 >= %{gtk_version}
 %description gtk
 
 D-BUS tools written using the gtk+ GUI libaries
+
+%endif
 
 %if 0
 
@@ -110,7 +113,7 @@ autoreconf -f -i
 
 %build
 
-COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes"
+COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk"
 
 if test -d %{_libdir}/qt-3.1 ; then
    export QTDIR=%{_libdir}/qt-3.1
@@ -223,10 +226,13 @@ fi
 %{_bindir}/dbus-glib-tool
 %{_bindir}/dbus-monitor
 
+%if 0
 %files gtk
 %defattr(-,root,root)
 
 %{_bindir}/dbus-viewer
+
+%endif
 
 %if 0
 %files qt
@@ -251,6 +257,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Mon Aug 16 2004 John (J5) Palmieri <johnp@redhat.com>
+- Disabled dbus-gtk since dbus-viewer doesn't do anything right now
+
 * Mon Aug 16 2004 John (J5) Palmieri <johnp@redhat.com>
 - Moved dbus-viewer to new dbus-gtk package so that dbus-glib
   no longer requires X or GTK libraries. (RH Bug #130029)
