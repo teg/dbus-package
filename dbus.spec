@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.22
-Release: 4 
+Release: 5 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -20,6 +20,7 @@ Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-root
 PreReq: chkconfig /usr/sbin/useradd
 BuildPreReq: libtool
+BuildRequires: /etc/redhat-release 
 BuildRequires: expat-devel >= %{expat_version}
 BuildRequires: libxml2-devel
 BuildRequires: glib2-devel >= %{glib2_version}
@@ -259,6 +260,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Thu Sep 16 2004 John (J5) Palmieri <johnp@redhat.com>
+- added BuildRequires: /etc/redhat-release (RH Bug #132436)
+
 * Wed Aug 18 2004 John (J5) Palmieri <johnp@redhat.com>
 - Added Steve Grubb's spec file patch (RH Bug #130201)
 
