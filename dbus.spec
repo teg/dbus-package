@@ -11,8 +11,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.21.cvs20040722
-Release: 5 
+Version: 0.22
+Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -32,7 +32,6 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.13-uid.patch
 Patch2: dbus-0.21-console-auth.patch 
-Patch3: dbus-0.21-se.patch
 
 %description
 
@@ -97,7 +96,6 @@ D-BUS python bindings for use with python programs.
 
 %patch1 -p1 -b .uid
 %patch2 -p0 -b .console-auth
-%patch3 -p2 -b .se
 
 autoreconf -f -i
 
@@ -240,6 +238,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Thu Aug 12 2004 John (J5) Palmieri <johnp@redhat.com>
+- Update to new 0.22 release
+
 * Thu Aug 05 2004 John (J5) Palmieri <johnp@redhat.com> 
 - Added BuildRequires for libselinux-devel and Requires for libselinux
 
