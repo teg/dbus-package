@@ -112,8 +112,6 @@ D-BUS python bindings for use with python programs.
 
 %patch1 -p1 -b .uid
 
-autoreconf -f -i
-
 %build
 
 COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat"
