@@ -3,7 +3,7 @@
 %define expat_version           1.95.5
 %define glib2_version           2.2.0
 %define qt_version              3.1.0
-%define pyrex_version		0.9.2.1
+%define pyrex_version		0.9.3
 %define gtk2_version		2.4.0
 %define libselinux_version	1.15.2	
 
@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.31
-Release: 3 
+Release: 4 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -29,7 +29,6 @@ BuildRequires: Pyrex	   >= %{pyrex_version}
 #BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
 #BuildRequires: audit-libs-devel >= 0.6.1
-BuildRequires: compat-gcc-32
 
 Requires: libselinux >= %{libselinux_version}
 
@@ -117,7 +116,7 @@ D-BUS python bindings for use with python programs.
 
 %build
 
-COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid CC=gcc32 CXX=g++32 "
+COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid"
 
 if test -d %{_libdir}/qt-3.1 ; then
    export QTDIR=%{_libdir}/qt-3.1
@@ -145,14 +144,6 @@ CFLAGS="$RPM_OPT_FLAGS -O1"
 export CFLAGS
 %endif
 
-%ifarch %{ix86}
-# This is all needed to work around RPMs %{optflags} which are wrong
-# for gcc 3.3 when gcc 3.4 is installed
-%define optflags %{nil}
-export CFLAGS="-march=i386 -mcpu=i686 -O2 -g"
-export CXXFLAGS="-march=i386 -mcpu=i686 -O2 -g"
-%endif
-
 #### Build once with tests to make check
 %configure $COMMON_ARGS --enable-tests=yes --enable-verbose-mode=yes --enable-asserts=yes
 make_fast
@@ -168,7 +159,7 @@ make_fast
 %install
 rm -rf %{buildroot}
 
-%makeinstall CC=gcc32 CXX=g++32
+%makeinstall
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 
@@ -273,6 +264,10 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Wed Mar 23 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-4
+- Pyrex has been patched to generate gcc4.0 complient code
+- Rebuild for gcc4.0
+ 
 * Wed Mar 16 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-3
 - change compat-gcc requirement to compat-gcc-32
 - rebuild with gcc 3.2
