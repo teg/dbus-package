@@ -11,7 +11,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.21
-Release: 5 
+Release: 6 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -174,11 +174,8 @@ fi
 %dir %{_localstatedir}/run/dbus
 %dir %{_libdir}/dbus-1.0
 %{_bindir}/dbus-daemon-1
-%{_bindir}/dbus-glib-tool
-%{_bindir}/dbus-monitor
 %{_bindir}/dbus-send
 %{_bindir}/dbus-cleanup-sockets
-%{_bindir}/dbus-viewer
 %{_libdir}/*dbus-1*.so.*
 %{_datadir}/man/man*/*
 %{_libdir}/dbus-1.0/services
@@ -196,6 +193,9 @@ fi
 %defattr(-,root,root)
 
 %{_libdir}/*glib*.so.*
+%{_bindir}/dbus-glib-tool
+%{_bindir}/dbus-monitor
+%{_bindir}/dbus-viewer
 
 %if 0
 %files qt
@@ -220,6 +220,11 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Fri Jun 04 2004 John (J5) Palmieri <johnp@redhat.com>
+- Moved dbus-viewer, dbus-monitor and dbus-glib-tool 
+  into the dbus-glib package so that the main dbus
+  package does not depend on glib (Bug #125285) 
+
 * Thu Jun 03 2004 John (J5) Palmieri <johnp@redhat.com>
 - rebuilt
 
