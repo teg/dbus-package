@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.22
-Release: 5 
+Release: 6 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -34,7 +34,8 @@ Requires: libselinux >= %{libselinux_version}
 Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.13-uid.patch
-Patch2: dbus-0.21-console-auth.patch 
+Patch2: dbus-0.21-console-auth.patch
+Patch3: dbus-0.22-python-int64.patch 
 
 %description
 
@@ -111,6 +112,7 @@ D-BUS python bindings for use with python programs.
 
 %patch1 -p1 -b .uid
 %patch2 -p0 -b .console-auth
+%patch3 -p- -b .python-int64
 
 autoreconf -f -i
 
@@ -260,6 +262,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Thu Sep 16 2004 John (J5) Palmieri <johnp@redhat.com>
+- added python int64 patch from davidz
+
 * Thu Sep 16 2004 John (J5) Palmieri <johnp@redhat.com>
 - added BuildRequires: /etc/redhat-release (RH Bug #132436)
 
