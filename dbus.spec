@@ -12,14 +12,16 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.22
-Release: 3 
+Release: 4 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
 Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-root
 PreReq: chkconfig /usr/sbin/useradd
+BuildPreReq: libtool
 BuildRequires: expat-devel >= %{expat_version}
+BuildRequires: libxml2-devel
 BuildRequires: glib2-devel >= %{glib2_version}
 #BuildRequires: qt-devel    >= %{qt_version}
 BuildRequires: Pyrex	   >= %{pyrex_version}
@@ -113,7 +115,7 @@ autoreconf -f -i
 
 %build
 
-COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk"
+COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat"
 
 if test -d %{_libdir}/qt-3.1 ; then
    export QTDIR=%{_libdir}/qt-3.1
@@ -257,6 +259,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Wed Aug 18 2004 John (J5) Palmieri <johnp@redhat.com>
+- Added Steve Grubb's spec file patch (RH Bug #130201)
+
 * Mon Aug 16 2004 John (J5) Palmieri <johnp@redhat.com>
 - Disabled dbus-gtk since dbus-viewer doesn't do anything right now
 
