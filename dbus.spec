@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.32
-Release: 1 
+Release: 2 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -34,6 +34,7 @@ Requires: libselinux >= %{libselinux_version}
 
 Conflicts: cups < 1:1.1.20-4
 
+Patch1: dbus-0.32-selinux-init.patch
 Patch2: dbus-0.23-selinux-avc-audit.patch
 
 %description
@@ -110,6 +111,7 @@ D-BUS python bindings for use with python programs.
 %prep
 %setup -q
 
+%patch1 -p1 -b .selinux-init
 #%patch2 -p1 -b .selinux-avc-audit
 
 %build
@@ -262,6 +264,10 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Thu Mar 31 2005 John (J5) Palmieri <johnp@redhat.com> - 0.32-2
+- add selinux-init patch to fix dbus from segfaulting when
+  building on machines that don't have selinux enabled
+
 * Thu Mar 31 2005 John (J5) Palmieri <johnp@redhat.com> - 0.32-1
 - update to upstream version 0.32
 
