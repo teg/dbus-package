@@ -11,8 +11,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.23
-Release: 4 
+Version: 0.31
+Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 Source1: messagebus
@@ -35,9 +35,8 @@ Requires: libselinux >= %{libselinux_version}
 
 Conflicts: cups < 1:1.1.20-4
 
-Patch1: dbus-0.13-uid.patch
+Patch1: dbus-0.30-uid.patch
 Patch2: dbus-0.23-selinux-avc-audit.patch
-Patch3: dbus-0.22-user-has-same-id.patch
 
 %description
 
@@ -113,9 +112,8 @@ D-BUS python bindings for use with python programs.
 %prep
 %setup -q
 
-%patch1 -p1 -b .uid
+%patch1 -p2 -b .uid
 %patch2 -p1 -b .selinux-avc-audit
-%patch3 -p0 -b .user-has-same-id
 
 %build
 
@@ -215,7 +213,7 @@ fi
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_localstatedir}/run/dbus
 %dir %{_libdir}/dbus-1.0
-%{_bindir}/dbus-daemon-1
+%{_bindir}/dbus-daemon
 %{_bindir}/dbus-send
 %{_bindir}/dbus-cleanup-sockets
 %{_libdir}/*dbus-1*.so.*
@@ -235,7 +233,7 @@ fi
 %defattr(-,root,root)
 
 %{_libdir}/*glib*.so.*
-%{_bindir}/dbus-glib-tool
+%{_bindir}/dbus-binding-tool
 %{_bindir}/dbus-monitor
 
 %if 0
@@ -269,6 +267,13 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Mon Mar 07 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-1
+- update to upstream version 0.31
+- take out user has same id patch (merged upstream)
+- udi patch updated
+- dbus-daemon-1 renamed to dbus-daemon
+- dbus-glib-tool renamed to dbus-binding-tool
+
 * Tue Feb 01 2005 John (J5) Palmieri <johnp@redhat.com> - 0.23-4
 - Explicitly pass in the pid file location to ./configure instead of
   letting it guess based on the build enviornment
