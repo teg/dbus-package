@@ -29,7 +29,7 @@ BuildRequires: glib2-devel >= %{glib2_version}
 BuildRequires: Pyrex	   >= %{pyrex_version}
 #BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
-BuildRequires: audit-libs-devel >= 0.6.1
+#BuildRequires: audit-libs-devel >= 0.6.1
 BuildRequires: compat-gcc
 
 Requires: libselinux >= %{libselinux_version}
@@ -114,7 +114,7 @@ D-BUS python bindings for use with python programs.
 %setup -q
 
 %patch1 -p2 -b .uid
-%patch2 -p1 -b .selinux-avc-audit
+#%patch2 -p1 -b .selinux-avc-audit
 
 %build
 
@@ -284,6 +284,7 @@ fi
 - dbus-daemon-1 renamed to dbus-daemon
 - dbus-glib-tool renamed to dbus-binding-tool
 - force gcc33 because pyrex generate improper lvalue code
+- disable audit patch for now
 
 * Tue Feb 01 2005 John (J5) Palmieri <johnp@redhat.com> - 0.23-4
 - Explicitly pass in the pid file location to ./configure instead of
