@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.22
-Release: 7 
+Release: 8 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 Source1: messagebus
@@ -37,6 +37,7 @@ Conflicts: cups < 1:1.1.20-4
 Patch1: dbus-0.13-uid.patch
 Patch2: dbus-0.21-console-auth.patch
 Patch3: dbus-0.22-python-int64.patch 
+Patch4: dbus-0.22-servicedir.patch
 
 %description
 
@@ -114,6 +115,7 @@ D-BUS python bindings for use with python programs.
 %patch1 -p1 -b .uid
 %patch2 -p0 -b .console-auth
 %patch3 -p0 -b .python-int64
+%patch4 -p1 -b .servicedir
 
 autoreconf -f -i
 
@@ -217,7 +219,7 @@ fi
 %{_bindir}/dbus-cleanup-sockets
 %{_libdir}/*dbus-1*.so.*
 %{_datadir}/man/man*/*
-%{_libdir}/dbus-1.0/services
+%{_datadir}/dbus-1.0/services
 
 %files devel
 %defattr(-,root,root)
@@ -266,6 +268,10 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Wed Sep 22 2004 John (J5) Palmieri <johnp@redhat.com>
+- Adding patch to move /usr/lib/dbus-1.0/services to
+  /usr/share/dbus-1.0/services 
+
 * Thu Sep 16 2004 John (J5) Palmieri <johnp@redhat.com>
 - reverting BuildRequires: redhat-release because of issues with build system
 - added precompiled version of the messagebus init script
