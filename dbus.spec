@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.22
-Release: 1 
+Release: 2 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -57,6 +57,15 @@ Requires: %name = %{version}-%{release}
 
 D-BUS add-on library to integrate the standard D-BUS library with
 the GLib thread abstraction and main loop.
+
+%package gtk
+Summary: GTK based tools
+Group: Development/Tools 
+Requires: %name = %{version}-%{release}
+Requires: gtk2 >= %{gtk_version}
+%description gtk
+
+D-BUS tools written using the gtk+ GUI libaries
 
 %if 0
 
@@ -213,6 +222,10 @@ fi
 %{_libdir}/*glib*.so.*
 %{_bindir}/dbus-glib-tool
 %{_bindir}/dbus-monitor
+
+%files gtk
+%defattr(-,root,root)
+
 %{_bindir}/dbus-viewer
 
 %if 0
@@ -238,6 +251,10 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Mon Aug 16 2004 John (J5) Palmieri <johnp@redhat.com>
+- Moved dbus-viewer to new dbus-gtk package so that dbus-glib
+  no longer requires X or GTK libraries. (RH Bug #130029)
+
 * Thu Aug 12 2004 John (J5) Palmieri <johnp@redhat.com>
 - Update to new 0.22 release
 
