@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.31
-Release: 2 
+Release: 3 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -29,7 +29,7 @@ BuildRequires: Pyrex	   >= %{pyrex_version}
 #BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
 #BuildRequires: audit-libs-devel >= 0.6.1
-BuildRequires: compat-gcc
+BuildRequires: compat-gcc32
 
 Requires: libselinux >= %{libselinux_version}
 
@@ -117,7 +117,7 @@ D-BUS python bindings for use with python programs.
 
 %build
 
-COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid CC=gcc33 CXX=g++33 "
+COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid CC=gcc32 CXX=g++32 "
 
 if test -d %{_libdir}/qt-3.1 ; then
    export QTDIR=%{_libdir}/qt-3.1
@@ -168,7 +168,7 @@ make_fast
 %install
 rm -rf %{buildroot}
 
-%makeinstall CC=gcc33 CXX=g++33
+%makeinstall CC=gcc32 CXX=g++32
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 
@@ -273,6 +273,10 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Wed Mar 16 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-3
+- change compat-gcc requirement to compat-gcc32
+- rebuild with gcc 3.2
+
 * Tue Mar 08 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-2
 - Remove precompiled init script and let the sources generate it
 
