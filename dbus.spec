@@ -145,6 +145,15 @@ function make_fast() {
 CFLAGS="$RPM_OPT_FLAGS -O1"
 export CFLAGS
 %endif
+
+%ifarch %{ix86}
+# This is all needed to work around RPMs %{optflags} which are wrong
+# for gcc 3.3 when gcc 3.4 is installed
+%define optflags %{nil}
+export CFLAGS="-march=i386 -mcpu=i686 -O2 -g"
+export CXXFLAGS="-march=i386 -mcpu=i686 -O2 -g"
+%endif
+
 #### Build once with tests to make check
 %configure $COMMON_ARGS --enable-tests=yes --enable-verbose-mode=yes --enable-asserts=yes
 make_fast
