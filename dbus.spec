@@ -8,19 +8,21 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.13
-Release: 6
+Version: 0.20
+Release: 4.1
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
 Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-root
-PreReq: chkconfig
+PreReq: chkconfig /usr/sbin/useradd
 BuildRequires: expat-devel >= %{expat_version}
 BuildRequires: glib2-devel >= %{glib2_version}
 BuildRequires: qt-devel    >= %{qt_version}
+Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.13-uid.patch
+Patch2: dbus-0.20-varargs.patch
 
 %description
 
@@ -75,6 +77,7 @@ in this separate package so server systems need not install X.
 %setup -q
 
 %patch1 -p1 -b .uid
+%patch2 -p1 -b .vararg
 
 %build
 
@@ -143,7 +146,6 @@ if [ "$1" -ge "1" ]; then
   service messagebus condrestart > /dev/null 2>&1
 fi
 
-##  -f %{gettext_package}.lang
 %files
 %defattr(-,root,root)
 
@@ -156,9 +158,11 @@ fi
 %dir %{_localstatedir}/run/dbus
 %dir %{_libdir}/dbus-1.0
 %{_bindir}/dbus-daemon-1
+%{_bindir}/dbus-glib-tool
 %{_bindir}/dbus-monitor
 %{_bindir}/dbus-send
 %{_bindir}/dbus-cleanup-sockets
+%{_bindir}/dbus-viewer
 %{_libdir}/*dbus-1*.so.*
 %{_datadir}/man/man*/*
 %{_libdir}/dbus-1.0/services
@@ -191,6 +195,26 @@ fi
 %{_bindir}/dbus-launch
 
 %changelog
+* Tue Mar 02 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Wed Feb 25 2004 Bill Nottingham <notting@redhat.com> 0.20-4
+- fix dbus error functions on x86-64 (#116324)
+- add prereq (#112027)
+
+* Fri Feb 13 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Fri Feb 13 2004 Tim Waugh <twaugh@redhat.com>
+- Conflict with cups prior to configuration file change, so that the
+  %%postun service condrestart works.
+
+* Wed Feb 11 2004 Havoc Pennington <hp@redhat.com> 0.20-2
+- rebuild in fc2, cups now updated
+
+* Wed Jan  7 2004 Bill Nottingham <notting@redhat.com> 0.20-1
+- update to upstream 0.20
+
 * Thu Oct 16 2003 Havoc Pennington <hp@redhat.com> 0.13-6
 - hmm, dbus doesn't support uids in the config file. fix.
 
