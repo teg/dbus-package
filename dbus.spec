@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.31
-Release: 1 
+Release: 2 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 Source1: messagebus
@@ -180,9 +180,6 @@ rm -rf $RPM_BUILD_ROOT/usr/lib
 perl -pi -e 's/\/usr\/lib\//\/usr\/lib64\//g' INSTALLED_FILES
 %endif
 
-#install precompiled messagebus init script
-install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/messagebus
-
 ## %find_lang %{gettext_package}
 
 %clean
@@ -277,6 +274,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Tue Mar 08 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-2
+- Remove precompiled init script and let the sources generate it
+
 * Mon Mar 07 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-1
 - update to upstream version 0.31
 - take out user has same id patch (merged upstream)
