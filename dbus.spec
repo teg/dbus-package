@@ -117,7 +117,7 @@ D-BUS python bindings for use with python programs.
 
 %build
 
-COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid"
+COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid CC=gcc34 CXX=g++34 "
 
 if test -d %{_libdir}/qt-3.1 ; then
    export QTDIR=%{_libdir}/qt-3.1
@@ -159,7 +159,7 @@ make_fast
 %install
 rm -rf %{buildroot}
 
-%makeinstall
+%makeinstall CC=gcc32 CXX=g++32
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 
@@ -273,6 +273,7 @@ fi
 - udi patch updated
 - dbus-daemon-1 renamed to dbus-daemon
 - dbus-glib-tool renamed to dbus-binding-tool
+- force gcc34 because pyrex generate improper lvalue code
 
 * Tue Feb 01 2005 John (J5) Palmieri <johnp@redhat.com> - 0.23-4
 - Explicitly pass in the pid file location to ./configure instead of
