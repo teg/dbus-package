@@ -20,7 +20,7 @@ Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-root
 PreReq: chkconfig /usr/sbin/useradd
 BuildPreReq: libtool
-BuildRequires: /etc/redhat-release 
+BuildRequires: redhat-release 
 BuildRequires: expat-devel >= %{expat_version}
 BuildRequires: libxml2-devel
 BuildRequires: glib2-devel >= %{glib2_version}
@@ -262,6 +262,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Thu Sep 16 2004 John (J5) Palmieri <johnp@redhat.com>
+- changed /etc/redhat-release to the package redhat-release
+
 * Thu Sep 16 2004 John (J5) Palmieri <johnp@redhat.com>
 - added python int64 patch from davidz
 
