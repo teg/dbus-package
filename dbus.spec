@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.22
-Release: 8 
+Release: 9 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 Source1: messagebus
@@ -219,7 +219,7 @@ fi
 %{_bindir}/dbus-cleanup-sockets
 %{_libdir}/*dbus-1*.so.*
 %{_datadir}/man/man*/*
-%{_datadir}/dbus-1.0/services
+%{_datadir}/dbus-1/services
 
 %files devel
 %defattr(-,root,root)
@@ -268,6 +268,11 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Wed Sep 22 2004 John (J5) Palmieri <johnp@redhat.com>
+- Fixed patch to use dbus-1 instead of dbus-1.0
+- (configure.in): Exported just the datadir instead of
+  the full path to the dbus datadir for consistency
+
 * Wed Sep 22 2004 John (J5) Palmieri <johnp@redhat.com>
 - Adding patch to move /usr/lib/dbus-1.0/services to
   /usr/share/dbus-1.0/services 
