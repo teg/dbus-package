@@ -11,8 +11,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.31
-Release: 4 
+Version: 0.32
+Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -34,7 +34,6 @@ Requires: libselinux >= %{libselinux_version}
 
 Conflicts: cups < 1:1.1.20-4
 
-Patch1: dbus-0.30-uid.patch
 Patch2: dbus-0.23-selinux-avc-audit.patch
 
 %description
@@ -111,7 +110,6 @@ D-BUS python bindings for use with python programs.
 %prep
 %setup -q
 
-%patch1 -p2 -b .uid
 #%patch2 -p1 -b .selinux-avc-audit
 
 %build
@@ -264,6 +262,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Thu Mar 31 2005 John (J5) Palmieri <johnp@redhat.com> - 0.32-1
+- update to upstream version 0.32
+
 * Wed Mar 23 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-4
 - Pyrex has been patched to generate gcc4.0 complient code
 - Rebuild for gcc4.0
