@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.22
-Release: 10 
+Release: 11 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 Source1: messagebus
@@ -38,6 +38,7 @@ Patch1: dbus-0.13-uid.patch
 Patch2: dbus-0.21-console-auth.patch
 Patch3: dbus-0.22-python-int64.patch 
 Patch4: dbus-0.22-servicedir.patch
+Patch5: dbus-0.22-selinux-backport.patch
 
 %description
 
@@ -49,6 +50,7 @@ per-user-login-session messaging facility.
 Summary: Libraries and headers for D-BUS
 Group: Development/Libraries
 Requires: %name = %{version}-%{release}
+Requires: glib2-devel 
 
 %description devel
 
@@ -116,6 +118,7 @@ D-BUS python bindings for use with python programs.
 %patch2 -p0 -b .console-auth
 %patch3 -p0 -b .python-int64
 %patch4 -p1 -b .servicedir
+%patch5 -p1 -b .selinux-backport
 
 autoreconf -f -i
 
@@ -271,6 +274,11 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Tue Nov 02 2004 John (J5) Palmieri <johnp@redhat.com>
+- Add a requires for glib2-devel in the devel package
+- Add SE-Linux backport from Colin Walters that fixes 
+  messages getting lost in SE-Linux contexts
+
 * Wed Oct 13 2004 John (J5) Palmieri <johnp@redhat.com>
 - Bump up release and rebuild
 
