@@ -203,6 +203,9 @@ if [ "$1" -ge "1" ]; then
   service messagebus condrestart > /dev/null 2>&1
 fi
 
+%post glib -p /sbin/ldconfig
+%postun glib -p /sbin/ldconfig
+
 %files
 %defattr(-,root,root)
 
@@ -268,6 +271,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Mon Oct 11 2004 Tim Waugh <twaugh@redhat.com>
+- Run /sbin/ldconfig for glib sub-package (bug #134062).
+
 * Wed Sep 22 2004 John (J5) Palmieri <johnp@redhat.com>
 - Fixed patch to use dbus-1 instead of dbus-1.0
 - (configure.in): Exported just the datadir instead of
