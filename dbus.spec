@@ -11,8 +11,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.22
-Release: 12 
+Version: 0.23
+Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 Source1: messagebus
@@ -35,10 +35,6 @@ Requires: libselinux >= %{libselinux_version}
 Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.13-uid.patch
-Patch2: dbus-0.21-console-auth.patch
-Patch3: dbus-0.22-python-int64.patch 
-Patch4: dbus-0.22-servicedir.patch
-Patch5: dbus-0.22-selinux-backport.patch
 
 %description
 
@@ -115,10 +111,6 @@ D-BUS python bindings for use with python programs.
 %setup -q
 
 %patch1 -p1 -b .uid
-%patch2 -p0 -b .console-auth
-%patch3 -p0 -b .python-int64
-%patch4 -p1 -b .servicedir
-%patch5 -p1 -b .selinux-backport
 
 autoreconf -f -i
 
@@ -274,6 +266,16 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Fri Jan 21 2005 John (J5) Palmieri <johnp@redhat.com> - 0.23-1
+- Update to upstream version 0.23
+- Drop all patches except for the UDI patch as they have been 
+  integrated upstream 
+- List of API changes:
+      * add setgroups() to drop supplementary groups
+      * removed dbus_bug_get_with_g_main since it's been replaced by dbus_g_bus_get
+      * added support for int64 and uint64 to the python bindings
+      * use SerivceOwnerChanges signal instead of ServiceCreated and ServiceDeleted
+
 * Mon Nov  8 2004 Jeremy Katz <katzj@redhat.com> - 0.22-12
 - rebuild against python 2.4
 
