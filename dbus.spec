@@ -12,15 +12,16 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.22
-Release: 6 
+Release: 7 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
+Source1: messagebus
 License: AFL/GPL
 Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-root
 PreReq: chkconfig /usr/sbin/useradd
 BuildPreReq: libtool
-BuildRequires: redhat-release 
+#BuildRequires: redhat-release 
 BuildRequires: expat-devel >= %{expat_version}
 BuildRequires: libxml2-devel
 BuildRequires: glib2-devel >= %{glib2_version}
@@ -171,6 +172,9 @@ rm -rf $RPM_BUILD_ROOT/usr/lib
 perl -pi -e 's/\/usr\/lib\//\/usr\/lib64\//g' INSTALLED_FILES
 %endif
 
+#install precompiled messagebus init script
+install -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/messagebus
+
 ## %find_lang %{gettext_package}
 
 %clean
@@ -262,6 +266,10 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Thu Sep 16 2004 John (J5) Palmieri <johnp@redhat.com>
+- reverting BuildRequires: redhat-release because of issues with build system
+- added precompiled version of the messagebus init script
+
 * Thu Sep 16 2004 John (J5) Palmieri <johnp@redhat.com>
 - changed /etc/redhat-release to the package redhat-release
 
