@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.22
-Release: 11 
+Release: 12 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 Source1: messagebus
@@ -274,6 +274,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Mon Nov  8 2004 Jeremy Katz <katzj@redhat.com> - 0.22-12
+- rebuild against python 2.4
+
 * Tue Nov 02 2004 John (J5) Palmieri <johnp@redhat.com>
 - Add a requires for glib2-devel in the devel package
 - Add SE-Linux backport from Colin Walters that fixes 
