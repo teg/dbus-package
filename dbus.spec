@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.23
-Release: 2 
+Release: 4 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 Source1: messagebus
@@ -37,6 +37,7 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.13-uid.patch
 Patch2: dbus-0.23-selinux-avc-audit.patch
+Patch3: dbus-0.22-user-has-same-id.patch
 
 %description
 
@@ -114,9 +115,11 @@ D-BUS python bindings for use with python programs.
 
 %patch1 -p1 -b .uid
 %patch2 -p1 -b .selinux-avc-audit
+%patch3 -p0 -b .user-has-same-id
+
 %build
 
-COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat"
+COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid"
 
 if test -d %{_libdir}/qt-3.1 ; then
    export QTDIR=%{_libdir}/qt-3.1
@@ -266,6 +269,13 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Tue Feb 01 2005 John (J5) Palmieri <johnp@redhat.com> - 0.23-4
+- Explicitly pass in the pid file location to ./configure instead of
+  letting it guess based on the build enviornment
+
+* Mon Jan 31 2005 John (J5) Palmieri <johnp@redhat.com> - 0.23-3
+- Add patch to fix random users from connecting to a users session bus
+
 * Fri Jan 21 2005 John (J5) Palmieri <johnp@redhat.com> - 0.23-2
 - Add Steve Grubb's SE-Linux audit patch (Bug# 144920)
 
