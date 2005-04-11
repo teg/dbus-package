@@ -37,6 +37,7 @@ Conflicts: cups < 1:1.1.20-4
 Patch1: dbus-0.32-selinux-init.patch
 Patch2: dbus-0.23-selinux-avc-audit.patch
 Patch3: dbus-0.32-glib-fix-infinite-loop.patch
+Patch4: dbus-0.32-try-something.patch
 
 %description
 
@@ -115,6 +116,7 @@ D-BUS python bindings for use with python programs.
 %patch1 -p1 -b .selinux-init
 #%patch2 -p1 -b .selinux-avc-audit
 %patch3 -p0 -b .glib-inf-lop
+%patch4 -p1 -b .try-something
 
 %build
 
@@ -137,7 +139,7 @@ function make_fast() {
         make %{?_smp_mflags} || true
 
         ### then do a real make and don't ignore failure
-        make
+        DBUS_VERBOSE=1 make
 }
 
 %ifarch ia64
