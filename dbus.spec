@@ -156,7 +156,7 @@ DBUS_VERBOSE=1 make check > dbus-check.log 2>&1 || (cat dbus-check.log && false)
 make clean 
 
 %configure $COMMON_ARGS --disable-tests --disable-verbose-mode --disable-asserts
-make_fast
+make
 
 %install
 rm -rf %{buildroot}
