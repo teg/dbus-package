@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.32
-Release: 3 
+Release: 4 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -37,7 +37,7 @@ Conflicts: cups < 1:1.1.20-4
 Patch1: dbus-0.32-selinux-init.patch
 Patch2: dbus-0.23-selinux-avc-audit.patch
 Patch3: dbus-0.32-glib-fix-infinite-loop.patch
-Patch4: dbus-0.32-try-something.patch
+Patch4: dbus-0.32-print_child_pid.patch
 
 %description
 
@@ -116,7 +116,7 @@ D-BUS python bindings for use with python programs.
 %patch1 -p1 -b .selinux-init
 #%patch2 -p1 -b .selinux-avc-audit
 %patch3 -p0 -b .glib-inf-lop
-%patch4 -p1 -b .try-something
+%patch4 -p1 -b .print_child_pid
 
 %build
 
@@ -268,6 +268,9 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Mon Apr 11 2005 John (J5) Palmieri <johnp@redhat.com> - 0.32-4
+- add print_child_pid patch which make sure we prin the child's pid if we fork
+
 * Thu Apr  7 2005 David Zeuthen <davidz@redhat.com> - 0.32-3
 - add fix for glib infinite loop (fdo #2889)
 
