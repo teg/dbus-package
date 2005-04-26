@@ -11,8 +11,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.32
-Release: 6 
+Version: 0.33
+Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -36,7 +36,6 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.32-selinux_chroot_workaround.patch
 Patch2: dbus-0.23-selinux-avc-audit.patch
-Patch3: dbus-0.32-glib-fix-infinite-loop.patch
 Patch4: dbus-0.32-print_child_pid.patch
 Patch5: dbus-0.32-deadlock-fix.patch
 
@@ -115,8 +114,7 @@ D-BUS python bindings for use with python programs.
 %setup -q
 
 %patch1 -p1 -b .selinux_chroot_workaround
-#%patch2 -p1 -b .selinux-avc-audit
-%patch3 -p0 -b .glib-inf-lop
+%patch2 -p1 -b .selinux-avc-audit
 %patch4 -p1 -b .print_child_pid
 %patch5 -p0 -b .deadlock-fix
 
@@ -270,6 +268,10 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Mon Apr 25 2005 John (J5) Palmieri <johnp@redhat.com> - 0.33-1
+- update to upstream 0.33
+- renable selinux audit patch
+
 * Mon Apr 12 2005 John (J5) Palmieri <johnp@redhat.com> - 0.32-6
 - Added patch to fix deadlocks when using recursive g_mains
 
