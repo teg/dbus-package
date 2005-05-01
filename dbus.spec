@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.33
-Release: 1 
+Release: 2 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -38,6 +38,7 @@ Patch1: dbus-0.32-selinux_chroot_workaround.patch
 Patch2: dbus-0.23-selinux-avc-audit.patch
 Patch4: dbus-0.32-print_child_pid.patch
 Patch5: dbus-0.32-deadlock-fix.patch
+Patch6: dbus-0.33-types.patch
 
 %description
 
@@ -117,6 +118,7 @@ D-BUS python bindings for use with python programs.
 %patch2 -p1 -b .selinux-avc-audit
 %patch4 -p1 -b .print_child_pid
 %patch5 -p0 -b .deadlock-fix
+%patch6 -p1 -b .types
 
 %build
 
@@ -268,6 +270,10 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Sun May 01 2005 John (J5) Palmieri <johnp@redhat.com> - 0.33-2
+- Backport patch from CVS that fixes int32's being marshaled as
+uint16's in the python bindings
+
 * Mon Apr 25 2005 John (J5) Palmieri <johnp@redhat.com> - 0.33-1
 - update to upstream 0.33
 - renable selinux audit patch
