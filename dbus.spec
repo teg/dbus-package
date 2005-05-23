@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.33
-Release: 2 
+Release: 3
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -168,6 +168,7 @@ rm -rf %{buildroot}
 %makeinstall
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/dbus_bindings*a
 
 #hack to get around a bug in the python distutils on 64 bit archs
 %if "%{_lib}" == "lib64"
@@ -265,11 +266,12 @@ fi
 %{_libdir}/python*/site-packages/dbus.py
 %{_libdir}/python*/site-packages/dbus.pyc
 %{_libdir}/python*/site-packages/dbus.pyo
-%{_libdir}/python*/site-packages/dbus_bindings.a
-%{_libdir}/python*/site-packages/dbus_bindings.la
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Mon May 23 2005 Bill Nottingham <notting@redhat.com> - 0.33-3
+- remove static libraries from python bindings
+
 * Sun May 01 2005 John (J5) Palmieri <johnp@redhat.com> - 0.33-2
 - Backport patch from CVS that fixes int32's being marshaled as
 uint16's in the python bindings
