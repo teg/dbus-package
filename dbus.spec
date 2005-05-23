@@ -168,7 +168,6 @@ rm -rf %{buildroot}
 %makeinstall
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
-rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/dbus_bindings*a
 
 #hack to get around a bug in the python distutils on 64 bit archs
 %if "%{_lib}" == "lib64"
@@ -176,6 +175,8 @@ cp -r $RPM_BUILD_ROOT/usr/lib/* $RPM_BUILD_ROOT%{_libdir}/
 rm -rf $RPM_BUILD_ROOT/usr/lib
 perl -pi -e 's/\/usr\/lib\//\/usr\/lib64\//g' INSTALLED_FILES
 %endif
+
+rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/dbus_bindings*a
 
 ## %find_lang %{gettext_package}
 
