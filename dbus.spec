@@ -12,7 +12,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.33
-Release: 3
+Release: 4 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -28,7 +28,7 @@ BuildRequires: glib2-devel >= %{glib2_version}
 BuildRequires: Pyrex	   >= %{pyrex_version}
 #BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
-#BuildRequires: audit-libs-devel >= 0.6.1
+BuildRequires: audit-libs-devel >= 0.9
 
 Requires: libselinux >= %{libselinux_version}
 
@@ -122,7 +122,7 @@ D-BUS python bindings for use with python programs.
 
 %build
 
-COMMON_ARGS="--enable-glib=yes --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid"
+COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid"
 
 if test -d %{_libdir}/qt-3.1 ; then
    export QTDIR=%{_libdir}/qt-3.1
@@ -270,6 +270,10 @@ fi
 %{_libdir}/python*/site-packages/dbus_bindings.so
 
 %changelog
+* Wed Jun 18 2005 John (J5) Palmieri <johnp@redhat.com> - 0.33-4
+- Add new libaudit patch from Steve Grub and enable in configure
+  (Bug #159218)
+
 * Mon May 23 2005 Bill Nottingham <notting@redhat.com> - 0.33-3
 - remove static libraries from python bindings
 
