@@ -11,8 +11,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.33
-Release: 4 
+Version: 0.34
+Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -36,9 +36,8 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.32-selinux_chroot_workaround.patch
 Patch2: dbus-0.23-selinux-avc-audit.patch
-Patch4: dbus-0.32-print_child_pid.patch
-Patch5: dbus-0.32-deadlock-fix.patch
-Patch6: dbus-0.33-types.patch
+Patch7: dbus-0.34-kill-babysitter.patch
+Patch8: dbus-0.34-python-threadsync.patch
 
 %description
 
@@ -116,9 +115,8 @@ D-BUS python bindings for use with python programs.
 
 %patch1 -p1 -b .selinux_chroot_workaround
 %patch2 -p1 -b .selinux-avc-audit
-%patch4 -p1 -b .print_child_pid
-%patch5 -p0 -b .deadlock-fix
-%patch6 -p1 -b .types
+%patch7 -p0 -b .kill-babysitter
+%patch8 -p1 -b .python-threadsync
 
 %build
 
@@ -176,7 +174,8 @@ rm -rf $RPM_BUILD_ROOT/usr/lib
 perl -pi -e 's/\/usr\/lib\//\/usr\/lib64\//g' INSTALLED_FILES
 %endif
 
-rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/dbus_bindings*a
+rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/dbus/dbus_bindings*a
+
 
 ## %find_lang %{gettext_package}
 
@@ -212,7 +211,8 @@ fi
 
 %doc COPYING ChangeLog NEWS
 
-%dir %{_sysconfdir}/dbus-1
+%dir %{_sysconfdir}/ found:
+   /usr/lib/python2.4/site-packages/dbus/dbdbus-1
 %config %{_sysconfdir}/dbus-1/*.conf
 %config %{_sysconfdir}/rc.d/init.d/*
 %dir %{_sysconfdir}/dbus-1/system.d
@@ -264,12 +264,18 @@ fi
 
 %files python
 %defattr(-,root,root)
-%{_libdir}/python*/site-packages/dbus.py
-%{_libdir}/python*/site-packages/dbus.pyc
-%{_libdir}/python*/site-packages/dbus.pyo
-%{_libdir}/python*/site-packages/dbus_bindings.so
+%{_libdir}/python*/site-packages/dbus/*.py*
+%{_libdir}/python*/site-packages/dbus/dbus_bindings.so
 
 %changelog
+* Tue Jun 28 2005 John (J5) Palmieri <johnp@redhat.com> - 0.34-1
+- Upgrade to dbus-0.34
+- added dbus-0.34-kill-babysitter.patch
+- added dbus-0.34-python-threadsync.patch
+- remove dbus-0.32-print_child_pid.patch
+- remove dbus-0.32-deadlock-fix.patch
+- remove dbus-0.33-types.patch
+
 * Wed Jun 18 2005 John (J5) Palmieri <johnp@redhat.com> - 0.33-4
 - Add new libaudit patch from Steve Grub and enable in configure
   (Bug #159218)
