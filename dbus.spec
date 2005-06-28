@@ -211,8 +211,7 @@ fi
 
 %doc COPYING ChangeLog NEWS
 
-%dir %{_sysconfdir}/ found:
-   /usr/lib/python2.4/site-packages/dbus/dbdbus-1
+%dir %{_sysconfdir}/dbus-1
 %config %{_sysconfdir}/dbus-1/*.conf
 %config %{_sysconfdir}/rc.d/init.d/*
 %dir %{_sysconfdir}/dbus-1/system.d
