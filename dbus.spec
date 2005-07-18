@@ -11,7 +11,7 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.34
+Version: 0.35.2
 Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
@@ -35,9 +35,7 @@ Requires: libselinux >= %{libselinux_version}
 Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.32-selinux_chroot_workaround.patch
-Patch2: dbus-0.23-selinux-avc-audit.patch
-Patch7: dbus-0.34-kill-babysitter.patch
-Patch8: dbus-0.34-python-threadsync.patch
+Patch2: dbus-0.35.2-selinux-avc-audit.patch
 
 %description
 
@@ -115,21 +113,16 @@ D-BUS python bindings for use with python programs.
 
 %patch1 -p1 -b .selinux_chroot_workaround
 %patch2 -p1 -b .selinux-avc-audit
-%patch7 -p0 -b .kill-babysitter
-%patch8 -p1 -b .python-threadsync
 
 %build
 
-COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid"
+COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid}"
 
 if test -d %{_libdir}/qt-3.1 ; then
    export QTDIR=%{_libdir}/qt-3.1
 else
    echo "WARNING: %{_libdir}/qt-3.1 does not exist"
 fi
-
-#### Fix user to run the system bus as
-perl -pi -e 's@<user>[a-z]+</user>@<user>%{dbus_user_uid}</user>@g' bus/system.conf*
 
 ### this is some crack because bits of dbus can be 
 ### smp-compiled but others don't feel like working
@@ -174,7 +167,7 @@ rm -rf $RPM_BUILD_ROOT/usr/lib
 perl -pi -e 's/\/usr\/lib\//\/usr\/lib64\//g' INSTALLED_FILES
 %endif
 
-rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/dbus/dbus_bindings*a
+rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/dbus/*.*a
 
 
 ## %find_lang %{gettext_package}
@@ -264,9 +257,16 @@ fi
 %files python
 %defattr(-,root,root)
 %{_libdir}/python*/site-packages/dbus/*.py*
-%{_libdir}/python*/site-packages/dbus/dbus_bindings.so
+%{_libdir}/python*/site-packages/dbus/*.so
 
 %changelog
+* Mon Jul 18 2005 John (J5) Palmieri <johnp@redhat.com> - 0.35.2-1
+- Upgrade to dbus-0.35.2
+- removed dbus-0.34-kill-babysitter.patch
+- removed dbus-0.34-python-threadsync.patch
+- removed dbus-0.23-selinux-avc-audit.patch
+- added dbus-0.35.2-selinux-avc-audit.patch
+
 * Tue Jun 28 2005 John (J5) Palmieri <johnp@redhat.com> - 0.34-1
 - Upgrade to dbus-0.34
 - added dbus-0.34-kill-babysitter.patch
