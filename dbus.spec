@@ -186,15 +186,11 @@ rm -rf %{buildroot}
 
 %preun
 if [ $1 = 0 ]; then
-    service messagebus stop > /dev/null 2>&1
     /sbin/chkconfig --del messagebus
 fi
 
 %postun
 /sbin/ldconfig
-if [ "$1" -ge "1" ]; then
-  service messagebus condrestart > /dev/null 2>&1
-fi
 
 %post glib -p /sbin/ldconfig
 %postun glib -p /sbin/ldconfig
@@ -266,6 +262,7 @@ fi
 - removed dbus-0.34-python-threadsync.patch
 - removed dbus-0.23-selinux-avc-audit.patch
 - added dbus-0.35.2-selinux-avc-audit.patch
+- take out restarts on upgrade
 
 * Tue Jun 28 2005 John (J5) Palmieri <johnp@redhat.com> - 0.34-1
 - Upgrade to dbus-0.34
