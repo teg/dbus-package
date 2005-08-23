@@ -27,7 +27,7 @@ BuildPreReq: libtool
 BuildRequires: expat-devel >= %{expat_version}
 BuildRequires: libxml2-devel
 BuildRequires: glib2-devel >= %{glib2_version}
-#BuildRequires: qt-devel    >= %{qt_version}
+BuildRequires: qt-devel    >= %{qt_version}
 BuildRequires: Pyrex	   >= %{pyrex_version}
 #BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
