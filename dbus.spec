@@ -5,7 +5,8 @@
 
 %define expat_version           1.95.5
 %define glib2_version           2.2.0
-%define qt_version              3.1.0
+%define qt_basever		3.3
+%define qt_version              3.3.0
 %define pyrex_version		0.9.3
 %define gtk2_version		2.4.0
 %define libselinux_version	1.15.2	
@@ -119,10 +120,10 @@ autoreconf -f -i
 
 COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-qt=yes --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid}"
 
-if test -d %{_libdir}/qt-3.1 ; then
-   export QTDIR=%{_libdir}/qt-3.1
+if test -d %{_libdir}/qt-%{qt_basever} ; then
+   export QTDIR=%{_libdir}/qt-%{qt_basever}
 else
-   echo "WARNING: %{_libdir}/qt-3.1 does not exist"
+   echo "WARNING: %{_libdir}/qt-%{qtbasever} does not exist"
 fi
 
 ### this is some crack because bits of dbus can be 
