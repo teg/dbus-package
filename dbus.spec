@@ -1,3 +1,6 @@
+%define pyver %(python -c 'import sys ; print sys.version[:3]')
+%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_pytho\n_lib()")}
+
 %define gettext_package dbus
 
 %define expat_version           1.95.5
@@ -11,7 +14,7 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.35.2
+Version: 0.36
 Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
@@ -75,8 +78,6 @@ D-BUS tools written using the gtk+ GUI libaries
 
 %endif
 
-%if 0
-
 %package qt
 Summary: Qt-based library for using D-BUS
 Group: Development/Libraries
@@ -86,8 +87,6 @@ Requires: %name = %{version}-%{release}
 
 D-BUS add-on library to integrate the standard D-BUS library with
 the Qt thread abstraction and main loop.
-
-%endif
 
 %package x11
 Summary: X11-requiring add-ons for D-BUS
@@ -114,9 +113,11 @@ D-BUS python bindings for use with python programs.
 %patch1 -p1 -b .selinux_chroot_workaround
 %patch2 -p1 -b .selinux-avc-audit
 
+autoreconf -f -i
+
 %build
 
-COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-qt=no --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid}"
+COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-qt=yes --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid}"
 
 if test -d %{_libdir}/qt-3.1 ; then
    export QTDIR=%{_libdir}/qt-3.1
@@ -160,15 +161,7 @@ rm -rf %{buildroot}
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 
-#hack to get around a bug in the python distutils on 64 bit archs
-%if "%{_lib}" == "lib64"
-cp -r $RPM_BUILD_ROOT/usr/lib/* $RPM_BUILD_ROOT%{_libdir}/
-rm -rf $RPM_BUILD_ROOT/usr/lib
-perl -pi -e 's/\/usr\/lib\//\/usr\/lib64\//g' INSTALLED_FILES
-%endif
-
 rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/dbus/*.*a
-
 
 ## %find_lang %{gettext_package}
 
@@ -237,13 +230,10 @@ fi
 
 %endif
 
-%if 0
 %files qt
 %defattr(-,root,root)
 
 %{_libdir}/*qt*.so.*
-
-%endif
 
 %files x11
 %defattr(-,root,root)
@@ -252,10 +242,17 @@ fi
 
 %files python
 %defattr(-,root,root)
-%{_libdir}/python*/site-packages/dbus/*.py*
 %{_libdir}/python*/site-packages/dbus/*.so
+%{_libdir}/python*/site-packages/dbus.pth
+%{python_sitelib}/dbus/*.py*
 
 %changelog
+* Tue Aug 23 2005 John (J5) Palmieri <johnp@redhat.com> - 0.36-1
+- Upgrade to dbus-0.36
+- Split modules that go into %{_lib}/python2.4/site-packages/dbus
+and those that go into %{python_sitelib}/dbus (they differ on 64bit)
+- Renable Qt bindings since packages in core can use them
+
 * Mon Jul 18 2005 John (J5) Palmieri <johnp@redhat.com> - 0.35.2-1
 - Upgrade to dbus-0.35.2
 - removed dbus-0.34-kill-babysitter.patch
