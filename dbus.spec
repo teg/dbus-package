@@ -15,7 +15,7 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.36
+Version: 0.36.1
 Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
@@ -245,9 +245,13 @@ fi
 %defattr(-,root,root)
 %{_libdir}/python*/site-packages/dbus/*.so
 %{_libdir}/python*/site-packages/dbus.pth
-%{python_sitelib}/dbus/*.py*
+%{_libdir}/python*/site-packages/dbus/*.py*
 
 %changelog
+* Wed Aug 24 2005 John (J5) Palmieri <johnp@redhat.com> - 0.36.1-1
+- Upgrade to dbus-0.36.1
+- Install all files to lib64/ on 64bit machines
+
 * Tue Aug 23 2005 John (J5) Palmieri <johnp@redhat.com> - 0.36-1
 - Upgrade to dbus-0.36
 - Split modules that go into %{_lib}/python2.4/site-packages/dbus
