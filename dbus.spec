@@ -15,7 +15,7 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.36.2
+Version: 0.50
 Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
@@ -248,6 +248,9 @@ fi
 %{_libdir}/python*/site-packages/dbus/*.py*
 
 %changelog
+* Mon Sep 08 2005 John (J5) Palmieri <johnp@redhat.com> - 0.50-1
+- upgrade to 0.50
+
 * Mon Aug 29 2005 John (J5) Palmieri <johnp@redhat.com> - 0.36.2-1
 - upgrade to 0.36.2 which fixes an exploit where
   users can attach to another user's session bus (CAN-2005-0201)
