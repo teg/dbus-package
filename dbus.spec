@@ -15,7 +15,7 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.50
+Version: 0.60
 Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
@@ -28,7 +28,7 @@ BuildPreReq: libtool
 BuildRequires: expat-devel >= %{expat_version}
 BuildRequires: libxml2-devel
 BuildRequires: glib2-devel >= %{glib2_version}
-BuildRequires: qt-devel    >= %{qt_version}
+#BuildRequires: qt-devel    >= %{qt_version}
 BuildRequires: Pyrex	   >= %{pyrex_version}
 #BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
@@ -39,7 +39,7 @@ Requires: libselinux >= %{libselinux_version}
 Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.32-selinux_chroot_workaround.patch
-Patch2: dbus-0.35.2-selinux-avc-audit.patch
+Patch2: dbus-0.60-selinux-avc-audit.patch
 
 %description
 
@@ -78,7 +78,7 @@ Requires: gtk2 >= %{gtk_version}
 D-BUS tools written using the gtk+ GUI libaries
 
 %endif
-
+%if 0
 %package qt
 Summary: Qt-based library for using D-BUS
 Group: Development/Libraries
@@ -88,6 +88,8 @@ Requires: %name = %{version}-%{release}
 
 D-BUS add-on library to integrate the standard D-BUS library with
 the Qt thread abstraction and main loop.
+
+%endif
 
 %package x11
 Summary: X11-requiring add-ons for D-BUS
@@ -118,7 +120,7 @@ autoreconf -f -i
 
 %build
 
-COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-qt=yes --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid}"
+COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid}"
 
 if test -d %{_libdir}/qt-%{qt_basever} ; then
    export QTDIR=%{_libdir}/qt-%{qt_basever}
@@ -137,11 +139,11 @@ function make_fast() {
         DBUS_VERBOSE=1 make
 }
 
-%ifarch ia64
+#%ifarch ia64
 #FIXME: workaround for gcc-3.4 bug which causes python bindings build to hand on ia64 arches
-CFLAGS="$RPM_OPT_FLAGS -O1"
-export CFLAGS
-%endif
+#CFLAGS="$RPM_OPT_FLAGS -O1"
+#export CFLAGS
+#%endif
 
 #### Build once with tests to make check
 %configure $COMMON_ARGS --enable-tests=yes --enable-verbose-mode=yes --enable-asserts=yes
@@ -231,10 +233,12 @@ fi
 
 %endif
 
+%if 0
 %files qt
 %defattr(-,root,root)
 
 %{_libdir}/*qt*.so.*
+%endif
 
 %files x11
 %defattr(-,root,root)
@@ -248,6 +252,9 @@ fi
 %{_libdir}/python*/site-packages/dbus/*.py*
 
 %changelog
+* Thu Dec 01 2005 John (J5) Palmieri <johnp@redhat.com> - 0.60-1
+- upgrade to 0.60
+
 * Mon Sep 08 2005 John (J5) Palmieri <johnp@redhat.com> - 0.50-1
 - upgrade to 0.50
 
