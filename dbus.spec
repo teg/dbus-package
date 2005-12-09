@@ -16,7 +16,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.60
-Release: 1 
+Release: 1 .1
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -252,6 +252,9 @@ fi
 %{_libdir}/python*/site-packages/dbus/*.py*
 
 %changelog
+* Fri Dec 09 2005 Jesse Keating <jkeating@redhat.com>
+- rebuilt
+
 * Thu Dec 01 2005 John (J5) Palmieri <johnp@redhat.com> - 0.60-1
 - upgrade to 0.60
 
