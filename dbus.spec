@@ -13,10 +13,16 @@
 
 %define dbus_user_uid           81
 
+# Mono only availible on these: (s390x disabled for now)
+%define mono_archs %ix86 x86_64 ppc ia64 armv4l sparc s390 #s390x
+
+# Just exclusivearch for now:
+ExclusiveArch: %mono_archs
+
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.60
-Release: 1.1
+Release: 2
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -33,6 +39,10 @@ BuildRequires: Pyrex	   >= %{pyrex_version}
 #BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
 BuildRequires: audit-libs-devel >= 0.9
+
+%ifarch %mono_archs
+BuildRequires: mono-devel gtk-sharp
+%endif
 
 Requires: libselinux >= %{libselinux_version}
 
@@ -110,6 +120,16 @@ Requires: %name = %{version}-%{release}
                                                                                 
 D-BUS python bindings for use with python programs.   
 
+%ifarch %mono_archs
+%package sharp
+Summary: mono bindings for D-BUS
+Group: Development/Libraries
+Requires: %name = %{version}-%{release}
+                                                                                
+%description sharp
+D-BUS mono bindings for use with mono programs.   
+%endif
+
 %prep
 %setup -q
 
@@ -119,8 +139,11 @@ D-BUS python bindings for use with python programs.
 autoreconf -f -i
 
 %build
-
-COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid}"
+%ifarch %mono_archs
+export MONO_SHARED_DIR=%{_builddir}/%{?buildsubdir}
+MONO_ARGS="--enable-mono"
+%endif
+COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid} $MONO_ARGS"
 
 if test -d %{_libdir}/qt-%{qt_basever} ; then
    export QTDIR=%{_libdir}/qt-%{qt_basever}
@@ -159,6 +182,13 @@ make
 
 %install
 rm -rf %{buildroot}
+export MONO_SHARED_DIR=%{_builddir}/%{?buildsubdir}
+
+# dbus installs mono files in libdir, not in prefix/lib, fixup:
+perl -pi -e 's,/gacdir \$\(libdir\),/gacdir /usr/lib,g' mono/Makefile
+perl -pi -e "s,/root \\\$\\(DESTDIR\\)\\\$\(libdir\\),/root $RPM_BUILD_ROOT/usr/lib,g" mono/Makefile
+perl -pi -e "s,/usr/lib64,/usr/lib,g" dbus-sharp.pc
+mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/mono
 
 %makeinstall
 
@@ -215,7 +245,8 @@ fi
 %{_libdir}/lib*.a
 %{_libdir}/lib*.so
 %{_libdir}/dbus-1.0/include
-%{_libdir}/pkgconfig/*
+%{_libdir}/pkgconfig/dbus-1.pc
+%{_libdir}/pkgconfig/dbus-glib-1.pc
 %{_includedir}/*
 
 %files glib
@@ -251,7 +282,18 @@ fi
 %{_libdir}/python*/site-packages/dbus.pth
 %{_libdir}/python*/site-packages/dbus/*.py*
 
+%ifarch %mono_archs
+%files sharp
+%defattr(-,root,root)
+%{_prefix}/lib/mono/dbus-sharp
+%{_prefix}/lib/mono/gac/dbus-sharp
+%{_libdir}/pkgconfig/dbus-sharp.pc
+%endif
+
 %changelog
+* Mon Jan  9 2006 Alexander Larsson <alexl@redhat.com> - 0.60-2
+- Add dbus-sharp sub-package
+
 * Fri Dec 09 2005 Jesse Keating <jkeating@redhat.com> - 0.60-1.1
 - rebuilt
 
