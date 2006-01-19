@@ -13,13 +13,13 @@
 
 %define dbus_user_uid           81
 
-# Mono only availible on these: (s390x disabled for now)
-%define mono_archs %ix86 x86_64 ppc ia64 armv4l sparc s390 #s390x
+# Mono only availible on these:
+%define mono_archs %ix86 x86_64 ppc ia64 armv4l sparc s390 s390x
 
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.60
-Release: 3
+Release: 4
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -288,6 +288,9 @@ fi
 %endif
 
 %changelog
+* Thu Jan 19 2006 Alexander Larsson <alexl@redhat.com> 0.60-4
+- mono now built on s390x
+
 * Mon Jan  9 2006 Alexander Larsson <alexl@redhat.com> 0.60-3
 - Don't exclude non-mono arches
 
