@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.60
-Release: 4
+Release: 5 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -47,6 +47,7 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.32-selinux_chroot_workaround.patch
 Patch2: dbus-0.60-selinux-avc-audit.patch
+Patch3: dbus-0.60-start-early.patch
 
 %description
 
@@ -132,6 +133,7 @@ D-BUS mono bindings for use with mono programs.
 
 %patch1 -p1 -b .selinux_chroot_workaround
 %patch2 -p1 -b .selinux-avc-audit
+%patch3 -p1 -b .start-early
 
 autoreconf -f -i
 
@@ -187,11 +189,40 @@ perl -pi -e "s,/root \\\$\\(DESTDIR\\)\\\$\(libdir\\),/root $RPM_BUILD_ROOT/usr/
 perl -pi -e "s,/usr/lib64,/usr/lib,g" dbus-sharp.pc
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/mono
 
-%makeinstall
+make install DESTDIR=$RPM_BUILD_ROOT
+
+rm -f $RPM_BUILD_ROOT%{_libdir}/*.a
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/dbus/*.*a
+
+# move the base dbus libraries and executables to /bin and /lib
+mkdir -p $RPM_BUILD_ROOT/bin
+mkdir -p $RPM_BUILD_ROOT/%{_lib}
+
+mv -f $RPM_BUILD_ROOT%{_libdir}/*dbus-1*.so.* $RPM_BUILD_ROOT/%{_lib}
+mv -f $RPM_BUILD_ROOT%{_bindir}/dbus-daemon $RPM_BUILD_ROOT/bin
+mv -f $RPM_BUILD_ROOT%{_bindir}/dbus-send $RPM_BUILD_ROOT/bin
+mv -f $RPM_BUILD_ROOT%{_bindir}/dbus-cleanup-sockets $RPM_BUILD_ROOT/bin
+
+# We need to make relative links to the moved libaries
+# Create a dummy file so that no matter how deep %%{_libdir} is, we can
+# find the root directory.
+touch $RPM_BUILD_ROOT/rootfile
+# Search for the file relative to the location of %%{_libdir}.
+root=..
+while [ ! -e $RPM_BUILD_ROOT/%{_libdir}/${root}/rootfile ] ; do
+        root=${root}/..
+	done
+	# Actually create the link.
+	pushd $RPM_BUILD_ROOT/%{_libdir}
+	for so_file in *dbus-1*.so ; do 
+		ln -f -s ${root}/%{_lib}/$so_file.? $so_file
+	done
+	popd
+	# Clean it up.
+	rm $RPM_BUILD_ROOT/rootfile
 
 ## %find_lang %{gettext_package}
 
@@ -229,17 +260,16 @@ fi
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_localstatedir}/run/dbus
 %dir %{_libdir}/dbus-1.0
-%{_bindir}/dbus-daemon
-%{_bindir}/dbus-send
-%{_bindir}/dbus-cleanup-sockets
-%{_libdir}/*dbus-1*.so.*
+/bin/dbus-daemon
+/bin/dbus-send
+/bin/dbus-cleanup-sockets
+/%{_lib}/*dbus-1*.so.*
 %{_datadir}/man/man*/*
 %{_datadir}/dbus-1/services
 
 %files devel
 %defattr(-,root,root)
 
-%{_libdir}/lib*.a
 %{_libdir}/lib*.so
 %{_libdir}/dbus-1.0/include
 %{_libdir}/pkgconfig/dbus-1.pc
@@ -288,6 +318,11 @@ fi
 %endif
 
 %changelog
+* Fri Jan 20 2006 John (J5) Palmieri <johnp@redhat.com> 0.60-5
+- move base libraries and binaries to /bin and /lib so they can be started
+  before /usr is mounted on network mounted /usr systems
+- have D-Bus start early
+
 * Thu Jan 19 2006 Alexander Larsson <alexl@redhat.com> 0.60-4
 - mono now built on s390x
 
