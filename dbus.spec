@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.60
-Release: 5 
+Release: 6 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -318,6 +318,9 @@ fi
 %endif
 
 %changelog
+* Fri Jan 20 2006 John (J5) Palmieri <johnp@redhat.com> 0.60-6
+- Fix up patch to init script so it refrences /bin not /usr/bin
+
 * Fri Jan 20 2006 John (J5) Palmieri <johnp@redhat.com> 0.60-5
 - move base libraries and binaries to /bin and /lib so they can be started
   before /usr is mounted on network mounted /usr systems

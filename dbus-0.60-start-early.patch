@@ -1,5 +1,5 @@
---- dbus-0.60/bus/messagebus.in.start-early	2006-01-20 16:39:46.000000000 -0500
-+++ dbus-0.60/bus/messagebus.in	2006-01-20 16:42:06.000000000 -0500
+--- dbus-0.60/bus/messagebus.in.start-early	2005-01-18 17:20:38.000000000 -0500
++++ dbus-0.60/bus/messagebus.in	2006-01-20 18:03:33.000000000 -0500
 @@ -2,7 +2,7 @@
  #
  # messagebus:   The D-BUS systemwide message bus
@@ -9,3 +9,12 @@
  # description:  This is a daemon which broadcasts notifications of system events \
  #               and other messages. See http://www.freedesktop.org/software/dbus/
  #
+@@ -11,7 +11,7 @@
+ #
+ 
+ # Sanity checks.
+-[ -x @EXPANDED_BINDIR@/dbus-daemon ] || exit 0
++[ -x /bin/dbus-daemon ] || exit 0
+ 
+ # Source function library.
+ . @EXPANDED_SYSCONFDIR@/rc.d/init.d/functions
