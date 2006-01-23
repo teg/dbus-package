@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.60
-Release: 6 
+Release: 7 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -48,6 +48,7 @@ Conflicts: cups < 1:1.1.20-4
 Patch1: dbus-0.32-selinux_chroot_workaround.patch
 Patch2: dbus-0.60-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
+Patch4: dbus-python-fix-callchain.patch 
 
 %description
 
@@ -134,6 +135,7 @@ D-BUS mono bindings for use with mono programs.
 %patch1 -p1 -b .selinux_chroot_workaround
 %patch2 -p1 -b .selinux-avc-audit
 %patch3 -p1 -b .start-early
+%patch4 -p0 -b .python-callchain
 
 autoreconf -f -i
 
@@ -206,23 +208,38 @@ mv -f $RPM_BUILD_ROOT%{_bindir}/dbus-daemon $RPM_BUILD_ROOT/bin
 mv -f $RPM_BUILD_ROOT%{_bindir}/dbus-send $RPM_BUILD_ROOT/bin
 mv -f $RPM_BUILD_ROOT%{_bindir}/dbus-cleanup-sockets $RPM_BUILD_ROOT/bin
 
-# We need to make relative links to the moved libaries
-# Create a dummy file so that no matter how deep %%{_libdir} is, we can
+# Create a dummy file so that no matter how deep we are we can
 # find the root directory.
 touch $RPM_BUILD_ROOT/rootfile
+
+# We need to make relative links to dbus-send
+# Search for the file relative to the location of %%{_bindir}.
+root=..
+while [ ! -e $RPM_BUILD_ROOT/%{_bindir}/${root}/rootfile ] ; do
+        root=${root}/..
+done
+
+# Actually create the link.
+pushd $RPM_BUILD_ROOT/%{_bindir}
+ln -f -s ${root}/bin/dbus-send dbus-send
+popd
+	
+
+# We need to make relative links to the moved libaries
 # Search for the file relative to the location of %%{_libdir}.
 root=..
 while [ ! -e $RPM_BUILD_ROOT/%{_libdir}/${root}/rootfile ] ; do
         root=${root}/..
-	done
-	# Actually create the link.
-	pushd $RPM_BUILD_ROOT/%{_libdir}
-	for so_file in *dbus-1*.so ; do 
-		ln -f -s ${root}/%{_lib}/$so_file.? $so_file
-	done
-	popd
-	# Clean it up.
-	rm $RPM_BUILD_ROOT/rootfile
+done
+
+# Actually create the link.
+pushd $RPM_BUILD_ROOT/%{_libdir}
+for so_file in *dbus-1*.so ; do 
+	ln -f -s ${root}/%{_lib}/$so_file.? $so_file
+done
+popd
+# Clean it up.
+rm $RPM_BUILD_ROOT/rootfile
 
 ## %find_lang %{gettext_package}
 
@@ -262,6 +279,7 @@ fi
 %dir %{_libdir}/dbus-1.0
 /bin/dbus-daemon
 /bin/dbus-send
+%{_bindir}/dbus-send
 /bin/dbus-cleanup-sockets
 /%{_lib}/*dbus-1*.so.*
 %{_datadir}/man/man*/*
@@ -318,6 +336,11 @@ fi
 %endif
 
 %changelog
+* Mon Jan 23 2006 John (J5) Palmieri <johnp@redhat.com> 0.60-7
+- Add patch to fix the python callchain
+- Symlink dbus-send to /usr/bin because some applications
+  look for it there
+
 * Fri Jan 20 2006 John (J5) Palmieri <johnp@redhat.com> 0.60-6
 - Fix up patch to init script so it refrences /bin not /usr/bin
 
