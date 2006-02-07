@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.60
-Release: 7 
+Release: 7.1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -336,6 +336,9 @@ fi
 %endif
 
 %changelog
+* Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 0.60-7.1
+- rebuilt for new gcc4.1 snapshot and glibc changes
+
 * Mon Jan 23 2006 John (J5) Palmieri <johnp@redhat.com> 0.60-7
 - Add patch to fix the python callchain
 - Symlink dbus-send to /usr/bin because some applications
