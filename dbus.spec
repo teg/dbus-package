@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.60
-Release: 7.1 
+Release: 7.2 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -336,6 +336,9 @@ fi
 %endif
 
 %changelog
+* Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 0.60-7.2
+- bump again for double-long bug on ppc(64)
+
 * Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 0.60-7.1
 - rebuilt for new gcc4.1 snapshot and glibc changes
 
