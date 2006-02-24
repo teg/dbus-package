@@ -19,13 +19,14 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.61
-Release: 1 
+Release: 2 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
 Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-root
-PreReq: chkconfig /usr/sbin/useradd
+PreReq: /usr/sbin/useradd
+Requires: chkconfig >= 1.3.26
 BuildPreReq: libtool
 #BuildRequires: redhat-release 
 BuildRequires: expat-devel >= %{expat_version}
@@ -123,7 +124,8 @@ D-BUS python bindings for use with python programs.
 Summary: mono bindings for D-BUS
 Group: Development/Libraries
 Requires: %name = %{version}-%{release}
-                                                                                
+Provides: mono(dbus-sharp) = 0.60.0.0
+
 %description sharp
 D-BUS mono bindings for use with mono programs.   
 %endif
@@ -251,7 +253,8 @@ rm -rf %{buildroot}
 
 %post
 /sbin/ldconfig
-/sbin/chkconfig --add messagebus
+/sbin/chkconfig --add messagebus 
+/sbin/chkconfig messagebus resetpriorities
 
 %preun
 if [ $1 = 0 ]; then
@@ -334,6 +337,11 @@ fi
 %endif
 
 %changelog
+* Fri Feb 24 2006 John (J5) Palmieri <johnp@redhat.com> 0.61-2
+- Add a Provides line to the mono package to get around an auto dep
+  the buildsystem puts in
+- Make sure chkconfig rests the priorities so we can start earlier
+
 * Fri Feb 24 2006 John (J5) Palmieri <johnp@redhat.com> 0.61-1
 - Upgrade to upstream version 0.61
 - remove python callchain patch
