@@ -124,7 +124,6 @@ D-BUS python bindings for use with python programs.
 Summary: mono bindings for D-BUS
 Group: Development/Libraries
 Requires: %name = %{version}-%{release}
-Provides: mono(dbus-sharp) = 0.60.0.0
 
 %description sharp
 D-BUS mono bindings for use with mono programs.   
@@ -338,8 +337,6 @@ fi
 
 %changelog
 * Fri Feb 24 2006 John (J5) Palmieri <johnp@redhat.com> 0.61-2
-- Add a Provides line to the mono package to get around an auto dep
-  the buildsystem puts in
 - Make sure chkconfig rests the priorities so we can start earlier
 
 * Fri Feb 24 2006 John (J5) Palmieri <johnp@redhat.com> 0.61-1
