@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.61
-Release: 2 
+Release: 3
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -49,6 +49,9 @@ Conflicts: cups < 1:1.1.20-4
 Patch1: dbus-0.32-selinux_chroot_workaround.patch
 Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
+
+#make sure we take this out if ABI changes
+Patch4: dbus-0.61-mono-no-abi-version-change.patch 
 
 %description
 
@@ -135,6 +138,9 @@ D-BUS mono bindings for use with mono programs.
 %patch1 -p1 -b .selinux_chroot_workaround
 %patch2 -p1 -b .selinux-avc-audit
 %patch3 -p1 -b .start-early
+
+#make sure we take this out if ABI changes
+%patch4 -p1 -b .mono-no-abi-version-change
 
 autoreconf -f -i
 
@@ -336,6 +342,11 @@ fi
 %endif
 
 %changelog
+* Fri Feb 24 2006 John (J5) Palmieri <johnp@redhat.com> 0.61-2
+- ABI hasn't changed so add patch that makes dbus-sharp think
+  it is still 0.60 (mono uses hard version names so any change
+  means apps need to recompile)
+
 * Fri Feb 24 2006 John (J5) Palmieri <johnp@redhat.com> 0.61-2
 - Make sure chkconfig rests the priorities so we can start earlier
 
