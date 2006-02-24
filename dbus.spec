@@ -18,8 +18,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.60
-Release: 7.2 
+Version: 0.61
+Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -46,9 +46,8 @@ Requires: libselinux >= %{libselinux_version}
 Conflicts: cups < 1:1.1.20-4
 
 Patch1: dbus-0.32-selinux_chroot_workaround.patch
-Patch2: dbus-0.60-selinux-avc-audit.patch
+Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
-Patch4: dbus-python-fix-callchain.patch 
 
 %description
 
@@ -135,7 +134,6 @@ D-BUS mono bindings for use with mono programs.
 %patch1 -p1 -b .selinux_chroot_workaround
 %patch2 -p1 -b .selinux-avc-audit
 %patch3 -p1 -b .start-early
-%patch4 -p0 -b .python-callchain
 
 autoreconf -f -i
 
@@ -144,7 +142,7 @@ autoreconf -f -i
 export MONO_SHARED_DIR=%{_builddir}/%{?buildsubdir}
 MONO_ARGS="--enable-mono"
 %endif
-COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-selinux=yes --disable-gtk --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid} $MONO_ARGS"
+COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-selinux=yes --disable-gtk --disable-qt --disable-qt3 --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid} $MONO_ARGS"
 
 if test -d %{_libdir}/qt-%{qt_basever} ; then
    export QTDIR=%{_libdir}/qt-%{qt_basever}
@@ -336,6 +334,11 @@ fi
 %endif
 
 %changelog
+* Fri Feb 24 2006 John (J5) Palmieri <johnp@redhat.com> 0.61-1
+- Upgrade to upstream version 0.61
+- remove python callchain patch
+- update avc patch
+
 * Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 0.60-7.2
 - bump again for double-long bug on ppc(64)
 

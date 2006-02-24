@@ -1,0 +1,175 @@
+--- dbus-0.61/dbus/dbus-sysdeps-util.c.selinux-avc-audit	2006-02-24 10:46:45.000000000 -0500
++++ dbus-0.61/dbus/dbus-sysdeps-util.c	2006-02-24 14:41:15.000000000 -0500
+@@ -42,6 +42,10 @@
+ #include <sys/socket.h>
+ #include <dirent.h>
+ #include <sys/un.h>
++#ifdef HAVE_LIBAUDIT
++#include <sys/prctl.h>
++#include <sys/capability.h>
++#endif /* HAVE_LIBAUDIT */
+ 
+ #ifndef O_BINARY
+ #define O_BINARY 0
+@@ -247,6 +251,12 @@
+                         dbus_gid_t     gid,
+                         DBusError     *error)
+ {
++#ifdef HAVE_LIBAUDIT
++  int priv = !getuid();
++  if (priv)
++    prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0);
++#endif /* HAVE_LIBAUDIT */
++
+   /* setgroups() only works if we are a privileged process,
+    * so we don't return error on failure; the only possible
+    * failure is that we don't have perms to do it.
+@@ -265,6 +275,10 @@
+       dbus_set_error (error, _dbus_error_from_errno (errno),
+                       "Failed to set GID to %lu: %s", gid,
+                       _dbus_strerror (errno));
++#ifdef HAVE_LIBAUDIT
++      if (priv)
++        prctl(PR_SET_KEEPCAPS, 0, 0, 0, 0);
++#endif /* HAVE_LIBAUDIT */
+       return FALSE;
+     }
+   
+@@ -273,9 +287,25 @@
+       dbus_set_error (error, _dbus_error_from_errno (errno),
+                       "Failed to set UID to %lu: %s", uid,
+                       _dbus_strerror (errno));
++#ifdef HAVE_LIBAUDIT
++      if (priv)
++        prctl(PR_SET_KEEPCAPS, 0, 0, 0, 0);
++#endif /* HAVE_LIBAUDIT */
+       return FALSE;
+     }
+   
++#ifdef HAVE_LIBAUDIT
++    if (priv) {
++        cap_t new_caps;
++        cap_value_t cap_list[] = { CAP_AUDIT_WRITE };
++
++        prctl(PR_SET_KEEPCAPS, 0, 0, 0, 0);
++        new_caps = cap_init();
++        cap_set_flag(new_caps, CAP_PERMITTED, 1, cap_list, CAP_SET);
++        cap_set_flag(new_caps, CAP_EFFECTIVE, 1, cap_list, CAP_SET);
++        cap_set_proc(new_caps);
++    }
++#endif /* HAVE_LIBAUDIT */
+   return TRUE;
+ }
+ 
+--- dbus-0.61/bus/selinux.c.selinux-avc-audit	2006-02-24 14:41:15.000000000 -0500
++++ dbus-0.61/bus/selinux.c	2006-02-24 14:41:15.000000000 -0500
+@@ -38,6 +38,9 @@
+ #include <selinux/flask.h>
+ #include <signal.h>
+ #include <stdarg.h>
++#ifdef HAVE_LIBAUDIT
++#include <libaudit.h>
++#endif /* HAVE_LIBAUDIT */
+ #endif /* HAVE_SELINUX */
+ 
+ #define BUS_SID_FROM_SELINUX(sid)  ((BusSELinuxID*) (sid))
+@@ -100,12 +103,40 @@
+  * @param variable argument list
+  */
+ #ifdef HAVE_SELINUX
++#ifdef HAVE_LIBAUDIT
++static int audit_fd = -1;
++static void audit_init(void)
++{
++  audit_fd = audit_open();
++  if (audit_fd < 0) {
++    /* If kernel doesn't support audit, bail out */
++    if (errno == EINVAL || errno == EPROTONOSUPPORT || errno == EAFNOSUPPORT)
++      return;
++    /* If user bus, bail out */
++    if (errno == EPERM && getuid() != 0)
++      return;
++    _dbus_warn ("Failed opening connection to the audit subsystem");
++  }
++}
++#endif /* HAVE_LIBAUDIT */
++
+ static void 
+ log_callback (const char *fmt, ...) 
+ {
+   va_list ap;
+   va_start(ap, fmt);
++#ifdef HAVE_LIBAUDIT
++  {
++     char buf[PATH_MAX*2];
++
++	/* FIXME: need to change this to show real user */
++     vsnprintf(buf, sizeof(buf), fmt, ap);
++     audit_log_user_avc_message(audit_fd, AUDIT_USER_AVC, buf, NULL, NULL,
++                                NULL, getuid());
++  }
++#else
+   vsyslog (LOG_INFO, fmt, ap);
++#endif /* HAVE_LIBAUDIT */
+   va_end(ap);
+ }
+ 
+@@ -313,6 +344,10 @@
+ 
+   freecon (bus_context);
+   
++#ifdef HAVE_LIBAUDIT
++  audit_init ();
++#endif /* HAVE_LIBAUDIT */
++
+   return TRUE;
+ #else
+   return TRUE;
+@@ -937,6 +972,9 @@
+ #endif /* DBUS_ENABLE_VERBOSE_MODE */
+ 
+       avc_destroy ();
++#ifdef HAVE_LIBAUDIT
++      audit_close (audit_fd);
++#endif /* HAVE_LIBAUDIT */
+     }
+ #endif /* HAVE_SELINUX */
+ }
+--- dbus-0.61/configure.in.selinux-avc-audit	2006-02-24 11:36:29.000000000 -0500
++++ dbus-0.61/configure.in	2006-02-24 14:55:17.000000000 -0500
+@@ -67,6 +67,7 @@
+ AC_ARG_ENABLE(mono_docs, AS_HELP_STRING([--enable-mono-docs],[build mono docs]),enable_mono_docs=$enableval,enable_mono_docs=no)
+ AC_ARG_ENABLE(python, AS_HELP_STRING([--enable-python],[build python bindings]),enable_python=$enableval,enable_python=auto)
+ AC_ARG_ENABLE(selinux, AS_HELP_STRING([--enable-selinux],[build with SELinux support]),enable_selinux=$enableval,enable_selinux=auto)
++AC_ARG_ENABLE(libaudit,          [  --enable-libaudit    build audit daemon support for SELinux],enable_libaudit=$enableval,enable_libaudit=auto)
+ AC_ARG_ENABLE(dnotify, AS_HELP_STRING([--enable-dnotify],[build with dnotify support (linux only)]),enable_dnotify=$enableval,enable_dnotify=auto)
+ 
+ AC_ARG_WITH(xml, AS_HELP_STRING([--with-xml=[libxml/expat]],[XML library to use]))
+@@ -851,6 +852,27 @@
+    AC_DEFINE(DBUS_BUS_ENABLE_DNOTIFY_ON_LINUX,1,[Use dnotify on Linux])
+ fi
+ 
++# libaudit detection
++if test x$enable_libaudit = xno ; then
++    have_libaudit=no;
++else
++    # See if we have audit daemon & capabilities library
++    AC_CHECK_LIB(audit, audit_log_user_avc_message, 
++                 have_libaudit=yes, have_libaudit=no)
++    if test x$have_libaudit = xyes ; then
++        AC_CHECK_LIB(cap, cap_set_proc, 
++                 have_libaudit=yes, have_libaudit=no)
++    fi
++fi
++
++AM_CONDITIONAL(HAVE_LIBAUDIT, test x$have_libaudit = xyes)
++
++if test x$have_libaudit = xyes ; then
++    SELINUX_LIBS="$SELINUX_LIBS -laudit"
++    LIBS="-lcap $LIBS"
++    AC_DEFINE(HAVE_LIBAUDIT,1,[audit daemon SELinux support])
++fi
++
+ #### Set up final flags
+ DBUS_CLIENT_CFLAGS=
+ DBUS_CLIENT_LIBS=
