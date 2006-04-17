@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.61
-Release: 3
+Release: 4 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -342,7 +342,10 @@ fi
 %endif
 
 %changelog
-* Fri Feb 24 2006 John (J5) Palmieri <johnp@redhat.com> 0.61-2
+* Mon Apr 17 2006 John (J5) Palmieri <johnp@redhat.com> 0.61-4
+- New audit patch
+
+* Fri Feb 24 2006 John (J5) Palmieri <johnp@redhat.com> 0.61-3
 - ABI hasn't changed so add patch that makes dbus-sharp think
   it is still 0.60 (mono uses hard version names so any change
   means apps need to recompile)

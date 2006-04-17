@@ -1,66 +1,3 @@
---- dbus-0.61/dbus/dbus-sysdeps-util.c.selinux-avc-audit	2006-02-24 10:46:45.000000000 -0500
-+++ dbus-0.61/dbus/dbus-sysdeps-util.c	2006-02-24 14:41:15.000000000 -0500
-@@ -42,6 +42,10 @@
- #include <sys/socket.h>
- #include <dirent.h>
- #include <sys/un.h>
-+#ifdef HAVE_LIBAUDIT
-+#include <sys/prctl.h>
-+#include <sys/capability.h>
-+#endif /* HAVE_LIBAUDIT */
- 
- #ifndef O_BINARY
- #define O_BINARY 0
-@@ -247,6 +251,12 @@
-                         dbus_gid_t     gid,
-                         DBusError     *error)
- {
-+#ifdef HAVE_LIBAUDIT
-+  int priv = !getuid();
-+  if (priv)
-+    prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0);
-+#endif /* HAVE_LIBAUDIT */
-+
-   /* setgroups() only works if we are a privileged process,
-    * so we don't return error on failure; the only possible
-    * failure is that we don't have perms to do it.
-@@ -265,6 +275,10 @@
-       dbus_set_error (error, _dbus_error_from_errno (errno),
-                       "Failed to set GID to %lu: %s", gid,
-                       _dbus_strerror (errno));
-+#ifdef HAVE_LIBAUDIT
-+      if (priv)
-+        prctl(PR_SET_KEEPCAPS, 0, 0, 0, 0);
-+#endif /* HAVE_LIBAUDIT */
-       return FALSE;
-     }
-   
-@@ -273,9 +287,25 @@
-       dbus_set_error (error, _dbus_error_from_errno (errno),
-                       "Failed to set UID to %lu: %s", uid,
-                       _dbus_strerror (errno));
-+#ifdef HAVE_LIBAUDIT
-+      if (priv)
-+        prctl(PR_SET_KEEPCAPS, 0, 0, 0, 0);
-+#endif /* HAVE_LIBAUDIT */
-       return FALSE;
-     }
-   
-+#ifdef HAVE_LIBAUDIT
-+    if (priv) {
-+        cap_t new_caps;
-+        cap_value_t cap_list[] = { CAP_AUDIT_WRITE };
-+
-+        prctl(PR_SET_KEEPCAPS, 0, 0, 0, 0);
-+        new_caps = cap_init();
-+        cap_set_flag(new_caps, CAP_PERMITTED, 1, cap_list, CAP_SET);
-+        cap_set_flag(new_caps, CAP_EFFECTIVE, 1, cap_list, CAP_SET);
-+        cap_set_proc(new_caps);
-+    }
-+#endif /* HAVE_LIBAUDIT */
-   return TRUE;
- }
- 
 --- dbus-0.61/bus/selinux.c.selinux-avc-audit	2006-02-24 14:41:15.000000000 -0500
 +++ dbus-0.61/bus/selinux.c	2006-02-24 14:41:15.000000000 -0500
 @@ -38,6 +38,9 @@
@@ -173,3 +110,127 @@
  #### Set up final flags
  DBUS_CLIENT_CFLAGS=
  DBUS_CLIENT_LIBS=
+--- dbus-0.61-orig/dbus/dbus-sysdeps-util.c.selinux-avc-audit	2006-02-24 10:46:45.000000000 -0500
++++ dbus-0.61/dbus/dbus-sysdeps-util.c	2006-04-04 13:00:04.000000000 -0400
+@@ -42,6 +42,11 @@
+ #include <sys/socket.h>
+ #include <dirent.h>
+ #include <sys/un.h>
++#ifdef HAVE_LIBAUDIT
++#include <sys/prctl.h>
++#include <sys/capability.h>
++#include <libaudit.h>
++#endif /* HAVE_LIBAUDIT */
+ 
+ #ifndef O_BINARY
+ #define O_BINARY 0
+@@ -247,6 +252,55 @@
+                         dbus_gid_t     gid,
+                         DBusError     *error)
+ {
++  int priv = FALSE;
++  
++#ifdef HAVE_LIBAUDIT
++  /* have a tmp set of caps that we use to transition to the usr/grp dbus should
++   * run as ... doesn't really help. But keeps people happy.
++   */
++  cap_t new_caps = NULL;
++
++  priv = !getuid();
++  if (priv)
++    {
++      cap_value_t new_cap_list[] = { CAP_AUDIT_WRITE };
++      cap_value_t tmp_cap_list[] = { CAP_AUDIT_WRITE, CAP_SETUID, CAP_SETGID };
++      cap_t tmp_caps = cap_init();
++      
++      if (!tmp_caps || !(new_caps = cap_init()))
++        {
++          dbus_set_error (error, DBUS_ERROR_FAILED,
++                          "Failed to initialize drop of capabilities\n");
++          if (tmp_caps)
++            cap_free(tmp_caps);
++          return FALSE;
++        }
++
++      /* assume these work... */
++      cap_set_flag(new_caps, CAP_PERMITTED, 1, new_cap_list, CAP_SET);
++      cap_set_flag(new_caps, CAP_EFFECTIVE, 1, new_cap_list, CAP_SET);
++      cap_set_flag(tmp_caps, CAP_PERMITTED, 3, tmp_cap_list, CAP_SET);
++      cap_set_flag(tmp_caps, CAP_EFFECTIVE, 3, tmp_cap_list, CAP_SET);
++      
++      if (prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0) == -1)
++        {
++          dbus_set_error (error, _dbus_error_from_errno (errno),
++                          "Failed to set keep-capabilities: %s\n",
++                          _dbus_strerror (errno));
++          cap_free(tmp_caps);
++          goto fail;
++        }
++      if (cap_set_proc(tmp_caps))
++        {
++          dbus_set_error (error, DBUS_ERROR_FAILED,
++                          "Failed to drop capabilities\n");
++          cap_free(tmp_caps);
++          goto fail;
++        }
++      cap_free(tmp_caps);
++    }
++#endif /* HAVE_LIBAUDIT */
++
+   /* setgroups() only works if we are a privileged process,
+    * so we don't return error on failure; the only possible
+    * failure is that we don't have perms to do it.
+@@ -265,7 +319,7 @@
+       dbus_set_error (error, _dbus_error_from_errno (errno),
+                       "Failed to set GID to %lu: %s", gid,
+                       _dbus_strerror (errno));
+-      return FALSE;
++      goto fail;
+     }
+   
+   if (setuid (uid) < 0)
+@@ -273,10 +327,42 @@
+       dbus_set_error (error, _dbus_error_from_errno (errno),
+                       "Failed to set UID to %lu: %s", uid,
+                       _dbus_strerror (errno));
+-      return FALSE;
++      goto fail;
+     }
+   
+-  return TRUE;
++#ifdef HAVE_LIBAUDIT
++    if (priv)
++      {
++        if (cap_set_proc(new_caps))
++          {
++            dbus_set_error (error, DBUS_ERROR_FAILED,
++                            "Failed to drop capabilities\n");
++            goto fail;
++          }
++        cap_free(new_caps);
++        
++        if (prctl(PR_SET_KEEPCAPS, 0, 0, 0, 0) == -1)
++          { /* should always work, if it did above */
++            dbus_set_error (error, _dbus_error_from_errno (errno),
++                            "Failed to unset keep-capabilities: %s\n",
++                            _dbus_strerror (errno));
++            return FALSE;
++          }
++      }
++#endif
++
++ return TRUE;
++
++ fail:
++#ifdef HAVE_LIBAUDIT
++  if (priv)
++    {
++      /* should always work, if it did above */
++      prctl(PR_SET_KEEPCAPS, 0, 0, 0, 0);
++      cap_free(new_caps);
++    }
++#endif
++  return FALSE;
+ }
+ 
+ /** Installs a UNIX signal handler
