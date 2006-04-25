@@ -49,6 +49,7 @@ Conflicts: cups < 1:1.1.20-4
 Patch1: dbus-0.32-selinux_chroot_workaround.patch
 Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
+Patch4: dbus-0.61.dbus-connection.c.backport.patch
 
 #make sure we take this out if ABI changes
 Patch4: dbus-0.61-mono-no-abi-version-change.patch 
@@ -138,6 +139,7 @@ D-BUS mono bindings for use with mono programs.
 %patch1 -p1 -b .selinux_chroot_workaround
 %patch2 -p1 -b .selinux-avc-audit
 %patch3 -p1 -b .start-early
+%patch4 -p1 -b .backport
 
 #make sure we take this out if ABI changes
 %patch4 -p1 -b .mono-no-abi-version-change
@@ -342,6 +344,11 @@ fi
 %endif
 
 %changelog
+* Tue Apr 25 2006 John (J5) Palmieri <johnp@redhat.com> - 0.61-4
+- Backport patch from dbus-connection.c
+  - Allows interfaces to be NULL in the message header as per the spec
+  - Fixes a problem with pendings calls blocking on a data starved socket
+
 * Mon Apr 17 2006 John (J5) Palmieri <johnp@redhat.com> 0.61-4
 - New audit patch
 
