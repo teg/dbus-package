@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.61
-Release: 4 
+Release: 5 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -344,7 +344,7 @@ fi
 %endif
 
 %changelog
-* Tue Apr 25 2006 John (J5) Palmieri <johnp@redhat.com> - 0.61-4
+* Tue Apr 25 2006 John (J5) Palmieri <johnp@redhat.com> - 0.61-5
 - Backport patch from dbus-connection.c
   - Allows interfaces to be NULL in the message header as per the spec
   - Fixes a problem with pendings calls blocking on a data starved socket
