@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.61
-Release: 5 
+Release: 5.1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -37,7 +37,7 @@ BuildRequires: Pyrex	   >= %{pyrex_version}
 #BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
 BuildRequires: audit-libs-devel >= 0.9
-
+BuildRequires: libX11
 %ifarch %mono_archs
 BuildRequires: mono-devel gtk-sharp
 %endif
@@ -107,6 +107,7 @@ the Qt thread abstraction and main loop.
 %package x11
 Summary: X11-requiring add-ons for D-BUS
 Group: Development/Libraries
+Requires: libX11
 Requires: %name = %{version}-%{release}
 
 %description x11
@@ -345,6 +346,9 @@ fi
 %endif
 
 %changelog
+* Mon May 15 2006 John (J5) Palmieri <johnp@redhat.com> - 0.61-5.1
+- Bump and rebuild.  Add a BR and R for libX11
+
 * Tue Apr 25 2006 John (J5) Palmieri <johnp@redhat.com> - 0.61-5
 - Backport patch from dbus-connection.c
   - Allows interfaces to be NULL in the message header as per the spec
