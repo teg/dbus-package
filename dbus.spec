@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.61
-Release: 5.1 
+Release: 5.2
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -37,7 +37,10 @@ BuildRequires: Pyrex	   >= %{pyrex_version}
 #BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
 BuildRequires: audit-libs-devel >= 0.9
-BuildRequires: libX11
+BuildRequires: libX11-devel
+BuildRequires: libICE-devel
+BuildRequires: libSM-devel
+BuildRequires: libcap-devel
 %ifarch %mono_archs
 BuildRequires: mono-devel gtk-sharp
 %endif
@@ -346,6 +349,10 @@ fi
 %endif
 
 %changelog
+* Wed May 17 2006 Karsten Hopp <karsten@redhat.de> 0.61-5.2 
+- add buildrequires libICE-devel, libSM-devel, libcap-devel
+- change buildrequires form libX11 to libX11-devel
+
 * Mon May 15 2006 John (J5) Palmieri <johnp@redhat.com> - 0.61-5.1
 - Bump and rebuild.  Add a BR and R for libX11
 
