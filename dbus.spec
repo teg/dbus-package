@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.61
-Release: 5.2
+Release: 6
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -349,6 +349,9 @@ fi
 %endif
 
 %changelog
+* Tue Jun  6 2006 Matthias Clasen <mclasen@redhat.com> 0.61-6
+- Rebuild
+
 * Wed May 17 2006 Karsten Hopp <karsten@redhat.de> 0.61-5.2 
 - add buildrequires libICE-devel, libSM-devel, libcap-devel
 - change buildrequires form libX11 to libX11-devel
