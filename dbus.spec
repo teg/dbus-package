@@ -41,6 +41,8 @@ BuildRequires: libX11-devel
 BuildRequires: libICE-devel
 BuildRequires: libSM-devel
 BuildRequires: libcap-devel
+BuildRequires: gettext
+
 %ifarch %mono_archs
 BuildRequires: mono-devel gtk-sharp
 %endif
