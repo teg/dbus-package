@@ -18,8 +18,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.61
-Release: 6
+Version: 0.62
+Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -54,8 +54,6 @@ Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
 #make sure we take this out if ABI changes
 Patch4: dbus-0.61-mono-no-abi-version-change.patch 
-
-Patch5: dbus-0.61.dbus-connection.c.backport.patch
 
 %description
 
@@ -146,8 +144,6 @@ D-BUS mono bindings for use with mono programs.
 
 #make sure we take this out if ABI changes
 %patch4 -p1 -b .mono-no-abi-version-change
-
-%patch5 -p1 -b .backport
 
 autoreconf -f -i
 
@@ -349,6 +345,9 @@ fi
 %endif
 
 %changelog
+* Mon Jun 12 2006 John (J5) Palmieri <johnp@redhat.com> - 0.62-1
+- Update to upstream 0.62
+
 * Tue Jun  6 2006 Matthias Clasen <mclasen@redhat.com> 0.61-6
 - Rebuild
 
