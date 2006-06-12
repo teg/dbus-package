@@ -14,7 +14,7 @@
 %define dbus_user_uid           81
 
 # Mono only availible on these:
-%define mono_archs %ix86 x86_64 ppc ia64 armv4l sparc s390 s390x
+%define mono_archs %ix86 x86_64 ppc ia64 armv4l sparc
 
 Summary: D-BUS message bus
 Name: dbus
@@ -349,6 +349,7 @@ fi
 %changelog
 * Mon Jun 12 2006 John (J5) Palmieri <johnp@redhat.com> - 0.62-1
 - Update to upstream 0.62
+- Remove mono for s390s
 
 * Tue Jun  6 2006 Matthias Clasen <mclasen@redhat.com> 0.61-6
 - Rebuild
