@@ -19,7 +19,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.62
-Release: 1 
+Release: 1.1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -347,6 +347,9 @@ fi
 %endif
 
 %changelog
+* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 0.62-1.1
+- rebuild
+
 * Mon Jun 12 2006 John (J5) Palmieri <johnp@redhat.com> - 0.62-1
 - Update to upstream 0.62
 - Remove mono for s390s
