@@ -1,25 +1,14 @@
-%define pyver %(python -c 'import sys ; print sys.version[:3]')
-%{!?python_sitelib: %define python_sitelib %(%{__python} -c "from distutils.sysconfig import get_python_lib; print get_pytho\n_lib()")}
-
 %define gettext_package dbus
 
 %define expat_version           1.95.5
-%define glib2_version           2.2.0
-%define qt_basever		3.3
-%define qt_version              3.3.0
-%define pyrex_version		0.9.3
-%define gtk2_version		2.4.0
 %define libselinux_version	1.15.2	
 
 %define dbus_user_uid           81
 
-# Mono only availible on these:
-%define mono_archs %ix86 x86_64 ppc ia64 armv4l sparc
-
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.62
-Release: 1.1 
+Version: 0.90
+Release: 1 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -30,32 +19,17 @@ Requires: chkconfig >= 1.3.26
 BuildPreReq: libtool
 #BuildRequires: redhat-release 
 BuildRequires: expat-devel >= %{expat_version}
-BuildRequires: libxml2-devel
-BuildRequires: glib2-devel >= %{glib2_version}
-#BuildRequires: qt-devel    >= %{qt_version}
-BuildRequires: Pyrex	   >= %{pyrex_version}
-#BuildRequires: gtk2-devel  >= %{gtk_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
 BuildRequires: audit-libs-devel >= 0.9
 BuildRequires: libX11-devel
-BuildRequires: libICE-devel
-BuildRequires: libSM-devel
 BuildRequires: libcap-devel
 BuildRequires: gettext
-
-%ifarch %mono_archs
-BuildRequires: mono-devel gtk-sharp
-%endif
-
 Requires: libselinux >= %{libselinux_version}
 
 Conflicts: cups < 1:1.1.20-4
 
-Patch1: dbus-0.32-selinux_chroot_workaround.patch
 Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
-#make sure we take this out if ABI changes
-Patch4: dbus-0.61-mono-no-abi-version-change.patch 
 
 %description
 
@@ -67,45 +41,10 @@ per-user-login-session messaging facility.
 Summary: Libraries and headers for D-BUS
 Group: Development/Libraries
 Requires: %name = %{version}-%{release}
-Requires: glib2-devel 
 
 %description devel
 
 Headers and static libraries for D-BUS.
-
-%package glib
-Summary: GLib-based library for using D-BUS
-Group: Development/Libraries
-Requires: %name = %{version}-%{release}
-
-%description glib
-
-D-BUS add-on library to integrate the standard D-BUS library with
-the GLib thread abstraction and main loop.
-
-%if 0
-%package gtk
-Summary: GTK based tools
-Group: Development/Tools 
-Requires: %name = %{version}-%{release}
-Requires: gtk2 >= %{gtk_version}
-%description gtk
-
-D-BUS tools written using the gtk+ GUI libaries
-
-%endif
-%if 0
-%package qt
-Summary: Qt-based library for using D-BUS
-Group: Development/Libraries
-Requires: %name = %{version}-%{release}
-
-%description qt
-
-D-BUS add-on library to integrate the standard D-BUS library with
-the Qt thread abstraction and main loop.
-
-%endif
 
 %package x11
 Summary: X11-requiring add-ons for D-BUS
@@ -118,49 +57,16 @@ Requires: %name = %{version}-%{release}
 D-BUS contains some tools that require Xlib to be installed, those are
 in this separate package so server systems need not install X.
 
-%package python 
-Summary: python bindings for D-BUS
-Group: Development/Libraries
-Requires: %name = %{version}-%{release}
-                                                                                
-%description python 
-                                                                                
-D-BUS python bindings for use with python programs.   
-
-%ifarch %mono_archs
-%package sharp
-Summary: mono bindings for D-BUS
-Group: Development/Libraries
-Requires: %name = %{version}-%{release}
-
-%description sharp
-D-BUS mono bindings for use with mono programs.   
-%endif
-
 %prep
 %setup -q
 
-%patch1 -p1 -b .selinux_chroot_workaround
 %patch2 -p1 -b .selinux-avc-audit
 %patch3 -p1 -b .start-early
-
-#make sure we take this out if ABI changes
-%patch4 -p1 -b .mono-no-abi-version-change
 
 autoreconf -f -i
 
 %build
-%ifarch %mono_archs
-export MONO_SHARED_DIR=%{_builddir}/%{?buildsubdir}
-MONO_ARGS="--enable-mono"
-%endif
-COMMON_ARGS="--enable-glib=yes --enable-libaudit --enable-selinux=yes --disable-gtk --disable-qt --disable-qt3 --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid} $MONO_ARGS"
-
-if test -d %{_libdir}/qt-%{qt_basever} ; then
-   export QTDIR=%{_libdir}/qt-%{qt_basever}
-else
-   echo "WARNING: %{_libdir}/qt-%{qtbasever} does not exist"
-fi
+COMMON_ARGS="--enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid} --libdir=/lib --bindir=/bin --sysconfdir=/etc --exec-prefix=/"
 
 ### this is some crack because bits of dbus can be 
 ### smp-compiled but others don't feel like working
@@ -173,17 +79,12 @@ function make_fast() {
         DBUS_VERBOSE=1 make
 }
 
-#%ifarch ia64
-#FIXME: workaround for gcc-3.4 bug which causes python bindings build to hand on ia64 arches
-#CFLAGS="$RPM_OPT_FLAGS -O1"
-#export CFLAGS
-#%endif
-
 #### Build once with tests to make check
 %configure $COMMON_ARGS --enable-tests=yes --enable-verbose-mode=yes --enable-asserts=yes
 make_fast
+
+#keep debug mode for now.
 exit 0
-DBUS_VERBOSE=1 make check > dbus-check.log 2>&1 || (cat dbus-check.log && false)
 
 #### Clean up and build again 
 make clean 
@@ -193,63 +94,17 @@ make
 
 %install
 rm -rf %{buildroot}
-export MONO_SHARED_DIR=%{_builddir}/%{?buildsubdir}
-
-# dbus installs mono files in libdir, not in prefix/lib, fixup:
-perl -pi -e 's,/gacdir \$\(libdir\),/gacdir /usr/lib,g' mono/Makefile
-perl -pi -e "s,/root \\\$\\(DESTDIR\\)\\\$\(libdir\\),/root $RPM_BUILD_ROOT/usr/lib,g" mono/Makefile
-perl -pi -e "s,/usr/lib64,/usr/lib,g" dbus-sharp.pc
-mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/mono
 
 make install DESTDIR=$RPM_BUILD_ROOT
 
-rm -f $RPM_BUILD_ROOT%{_libdir}/*.a
+mkdir -p $RPM_BUILD_ROOT/%{_libdir}/pkgconfig
+mv -f $RPM_BUILD_ROOT/%{_lib}/pkgconfig/*.pc $RPM_BUILD_ROOT/%{_libdir}/pkgconfig
 
-rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
+mkdir -p $RPM_BUILD_ROOT/%{_bindir}
+mv -f $RPM_BUILD_ROOT/bin/dbus-launch $RPM_BUILD_ROOT/%{_bindir}
 
-rm -f $RPM_BUILD_ROOT%{_libdir}/python*/site-packages/dbus/*.*a
-
-# move the base dbus libraries and executables to /bin and /lib
-mkdir -p $RPM_BUILD_ROOT/bin
-mkdir -p $RPM_BUILD_ROOT/%{_lib}
-
-mv -f $RPM_BUILD_ROOT%{_libdir}/*dbus-1*.so.* $RPM_BUILD_ROOT/%{_lib}
-mv -f $RPM_BUILD_ROOT%{_bindir}/dbus-daemon $RPM_BUILD_ROOT/bin
-mv -f $RPM_BUILD_ROOT%{_bindir}/dbus-send $RPM_BUILD_ROOT/bin
-mv -f $RPM_BUILD_ROOT%{_bindir}/dbus-cleanup-sockets $RPM_BUILD_ROOT/bin
-
-# Create a dummy file so that no matter how deep we are we can
-# find the root directory.
-touch $RPM_BUILD_ROOT/rootfile
-
-# We need to make relative links to dbus-send
-# Search for the file relative to the location of %%{_bindir}.
-root=..
-while [ ! -e $RPM_BUILD_ROOT/%{_bindir}/${root}/rootfile ] ; do
-        root=${root}/..
-done
-
-# Actually create the link.
-pushd $RPM_BUILD_ROOT/%{_bindir}
-ln -f -s ${root}/bin/dbus-send dbus-send
-popd
-	
-
-# We need to make relative links to the moved libaries
-# Search for the file relative to the location of %%{_libdir}.
-root=..
-while [ ! -e $RPM_BUILD_ROOT/%{_libdir}/${root}/rootfile ] ; do
-        root=${root}/..
-done
-
-# Actually create the link.
-pushd $RPM_BUILD_ROOT/%{_libdir}
-for so_file in *dbus-1*.so ; do 
-	ln -f -s ${root}/%{_lib}/$so_file.? $so_file
-done
-popd
-# Clean it up.
-rm $RPM_BUILD_ROOT/rootfile
+rm -f $RPM_BUILD_ROOT/%{_lib}/*.a
+rm -f $RPM_BUILD_ROOT/%{_lib}/*.la
 
 ## %find_lang %{gettext_package}
 
@@ -274,9 +129,6 @@ fi
 %postun
 /sbin/ldconfig
 
-%post glib -p /sbin/ldconfig
-%postun glib -p /sbin/ldconfig
-
 %files
 %defattr(-,root,root)
 
@@ -287,66 +139,33 @@ fi
 %config %{_sysconfdir}/rc.d/init.d/*
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_localstatedir}/run/dbus
-%dir %{_libdir}/dbus-1.0
+%dir /%{_lib}/dbus-1.0
 /bin/dbus-daemon
 /bin/dbus-send
-%{_bindir}/dbus-send
 /bin/dbus-cleanup-sockets
+/bin/dbus-monitor
 /%{_lib}/*dbus-1*.so.*
 %{_datadir}/man/man*/*
 %{_datadir}/dbus-1/services
-
-%files devel
-%defattr(-,root,root)
-
-%{_libdir}/lib*.so
-%{_libdir}/dbus-1.0/include
-%{_libdir}/pkgconfig/dbus-1.pc
-%{_libdir}/pkgconfig/dbus-glib-1.pc
-%{_includedir}/*
-
-%files glib
-%defattr(-,root,root)
-
-%{_libdir}/*glib*.so.*
-%{_bindir}/dbus-binding-tool
-%{_bindir}/dbus-monitor
-
-%if 0
-%files gtk
-%defattr(-,root,root)
-
-%{_bindir}/dbus-viewer
-
-%endif
-
-%if 0
-%files qt
-%defattr(-,root,root)
-
-%{_libdir}/*qt*.so.*
-%endif
 
 %files x11
 %defattr(-,root,root)
 
 %{_bindir}/dbus-launch
 
-%files python
+%files devel
 %defattr(-,root,root)
-%{_libdir}/python*/site-packages/dbus/*.so
-%{_libdir}/python*/site-packages/dbus.pth
-%{_libdir}/python*/site-packages/dbus/*.py*
 
-%ifarch %mono_archs
-%files sharp
-%defattr(-,root,root)
-%{_prefix}/lib/mono/dbus-sharp
-%{_prefix}/lib/mono/gac/dbus-sharp
-%{_libdir}/pkgconfig/dbus-sharp.pc
-%endif
+/%{_lib}/lib*.so
+/%{_lib}/dbus-1.0/include
+%{_libdir}/pkgconfig/dbus-1.pc
+%{_includedir}/*
 
 %changelog
+* Mon Jul 17 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-1
+- Update to upstream 0.90
+- Split out bindings
+
 * Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 0.62-1.1
 - rebuild
 
