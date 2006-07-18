@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.90
-Release: 1 
+Release: 2 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -30,6 +30,7 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
+Patch4: dbus-0.90-remove-glib.patch
 
 %description
 
@@ -62,6 +63,7 @@ in this separate package so server systems need not install X.
 
 %patch2 -p1 -b .selinux-avc-audit
 %patch3 -p1 -b .start-early
+%patch4 -p1 -b .remove-glib
 
 autoreconf -f -i
 
@@ -162,6 +164,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Jul 18 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-2
+- Remove some remnants of the GLIB bindings from configure.in
+
 * Mon Jul 17 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-1
 - Update to upstream 0.90
 - Split out bindings
