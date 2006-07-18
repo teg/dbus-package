@@ -68,7 +68,7 @@ in this separate package so server systems need not install X.
 autoreconf -f -i
 
 %build
-COMMON_ARGS="--enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid} --libdir=%{_lib} --bindir=/bin --sysconfdir=/etc --exec-prefix=/"
+COMMON_ARGS="--enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid} --libdir=/%{_lib} --bindir=/bin --sysconfdir=/etc --exec-prefix=/"
 
 ### this is some crack because bits of dbus can be 
 ### smp-compiled but others don't feel like working
@@ -165,7 +165,8 @@ fi
 
 %changelog
 * Tue Jul 18 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-3
-- s/--libdir=\/lib/--libdir=%{_lib}/ in configure stage
+- s/--libdir=\/lib/--libdir=% {_lib}/ in configure stage
+- add / before % {_lib}
 
 * Tue Jul 18 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-2
 - Remove some remnants of the GLIB bindings from configure.in
