@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.90
-Release: 5 
+Release: 6 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -100,7 +100,10 @@ rm -rf %{buildroot}
 make install DESTDIR=$RPM_BUILD_ROOT
 
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/pkgconfig
-mv -f $RPM_BUILD_ROOT/%{_lib}/pkgconfig/*.pc $RPM_BUILD_ROOT/%{_libdir}/pkgconfig
+
+#change the arch-deps.h include directory to /usr/lib[64] instead of /lib[64]
+sed -e 's@-I${libdir}@-I${prefix}/%{_lib}@' $RPM_BUILD_ROOT/%{_lib}/pkgconfig/dbus-1.pc > $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/dbus-1.pc
+rm -f $RPM_BUILD_ROOT/%{_lib}/pkgconfig/dbus-1.pc
 
 mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 mv -f $RPM_BUILD_ROOT/bin/dbus-launch $RPM_BUILD_ROOT/%{_bindir}
@@ -166,6 +169,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Jul 19 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-6
+- change the arch-deps.h include directory to /usr/lib[64] instead of /lib[64]
+  in the dbus-1.pc file after compile
+
 * Wed Jul 19 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-5
 - Move arch include file from lib to libdir
 
