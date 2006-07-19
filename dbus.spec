@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.90
-Release: 3 
+Release: 5 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -104,6 +104,8 @@ mv -f $RPM_BUILD_ROOT/%{_lib}/pkgconfig/*.pc $RPM_BUILD_ROOT/%{_libdir}/pkgconfi
 
 mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 mv -f $RPM_BUILD_ROOT/bin/dbus-launch $RPM_BUILD_ROOT/%{_bindir}
+mkdir -p $RPM_BUILD_ROOT/%{_libdir}/dbus-1.0/include/
+mv -f $RPM_BUILD_ROOT/%{_lib}/dbus-1.0/include/* $RPM_BUILD_ROOT/%{_libdir}/dbus-1.0/include/
 
 rm -f $RPM_BUILD_ROOT/%{_lib}/*.a
 rm -f $RPM_BUILD_ROOT/%{_lib}/*.la
@@ -159,11 +161,18 @@ fi
 %defattr(-,root,root)
 
 /%{_lib}/lib*.so
-/%{_lib}/dbus-1.0/include
+%{_libdir}/dbus-1.0/include/
 %{_libdir}/pkgconfig/dbus-1.pc
 %{_includedir}/*
 
 %changelog
+* Wed Jul 19 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-5
+- Move arch include file from lib to libdir
+
+* Tue Jul 18 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-4
+- add patch that pregenerates the xml introspect file so d-bus doesn't
+  have to be running suring the build.
+
 * Tue Jul 18 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-3
 - s/--libdir=\/lib/--libdir=% {_lib}/ in configure stage
 - add / before % {_lib}
