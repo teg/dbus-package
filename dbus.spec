@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.90
-Release: 6 
+Release: 7 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -31,6 +31,7 @@ Conflicts: cups < 1:1.1.20-4
 Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
 Patch4: dbus-0.90-remove-glib.patch
+Patch5: dbus-0.90-ref-unlocked.patch
 
 %description
 
@@ -64,6 +65,7 @@ in this separate package so server systems need not install X.
 %patch2 -p1 -b .selinux-avc-audit
 %patch3 -p1 -b .start-early
 %patch4 -p1 -b .remove-glib
+%patch5 -p1 -b .ref-unlocked
 
 autoreconf -f -i
 
@@ -169,6 +171,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Jul 20 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-7
+- add patch to fix taking a connection ref when it is locked
+
 * Wed Jul 19 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-6
 - change the arch-deps.h include directory to /usr/lib[64] instead of /lib[64]
   in the dbus-1.pc file after compile
