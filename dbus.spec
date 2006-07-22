@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.90
-Release: 7 
+Release: 8 
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -32,6 +32,7 @@ Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
 Patch4: dbus-0.90-remove-glib.patch
 Patch5: dbus-0.90-ref-unlocked.patch
+Patch6: dbus-0.90-fix-remove-timeout.patch
 
 %description
 
@@ -66,6 +67,7 @@ in this separate package so server systems need not install X.
 %patch3 -p1 -b .start-early
 %patch4 -p1 -b .remove-glib
 %patch5 -p1 -b .ref-unlocked
+%patch6 -p1 -b .fix-remove-timeout
 
 autoreconf -f -i
 
@@ -171,6 +173,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Jul 22 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-8
+- add patch to fix timeout removal assertion
+
 * Thu Jul 20 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-7
 - add patch to fix taking a connection ref when it is locked
 
