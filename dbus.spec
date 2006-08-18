@@ -30,9 +30,6 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
-Patch4: dbus-0.90-remove-glib.patch
-Patch5: dbus-0.90-ref-unlocked.patch
-Patch6: dbus-0.90-fix-remove-timeout.patch
 
 %description
 
