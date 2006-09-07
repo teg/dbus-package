@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.92
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -30,6 +30,7 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
+Patch4: dbus-0.92-audit-system.patch
 
 %description
 
@@ -62,7 +63,7 @@ in this separate package so server systems need not install X.
 
 %patch2 -p1 -b .selinux-avc-audit
 %patch3 -p1 -b .start-early
-
+%patch4 -p1 -b .audit_system
 autoreconf -f -i
 
 %build
@@ -167,6 +168,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Sep 6 2006 Dan Walsh <dwalsh@redhat.com> - 0.92-2
+- Only audit on the system bus
+
 * Fri Aug 18 2006 John (J5) Palmieri <johnp@redhat.com> - 0.92-1
 - Update to 0.92 
 - remove old patches

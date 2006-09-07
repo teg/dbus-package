@@ -1,0 +1,37 @@
+--- dbus-0.92/bus/selinux.c.audit_system	2006-09-07 13:13:21.000000000 -0400
++++ dbus-0.92/bus/selinux.c	2006-09-07 13:39:46.000000000 -0400
+@@ -126,6 +126,7 @@
+   va_list ap;
+   va_start(ap, fmt);
+ #ifdef HAVE_LIBAUDIT
++  if (audit_fd > = 0)
+   {
+      char buf[PATH_MAX*2];
+ 
+@@ -133,10 +134,10 @@
+      vsnprintf(buf, sizeof(buf), fmt, ap);
+      audit_log_user_avc_message(audit_fd, AUDIT_USER_AVC, buf, NULL, NULL,
+                                 NULL, getuid());
++     return;
+   }
+-#else
+-  vsyslog (LOG_INFO, fmt, ap);
+ #endif /* HAVE_LIBAUDIT */
++  vsyslog (LOG_INFO, fmt, ap);
+   va_end(ap);
+ }
+ 
+@@ -960,9 +961,12 @@
+     {
+       sidput (bus_sid);
+       bus_sid = SECSID_WILD;
+-      
++
+ #ifdef DBUS_ENABLE_VERBOSE_MODE
++      /*
++	TUrning off for now since this is misleading reporting as error message 
+       bus_avc_print_stats ();
++      */
+ #endif /* DBUS_ENABLE_VERBOSE_MODE */
+ 
+       avc_destroy ();
