@@ -110,8 +110,8 @@
  #### Set up final flags
  DBUS_CLIENT_CFLAGS=
  DBUS_CLIENT_LIBS=
---- dbus-0.61-orig/dbus/dbus-sysdeps-util.c.selinux-avc-audit	2006-02-24 10:46:45.000000000 -0500
-+++ dbus-0.61/dbus/dbus-sysdeps-util.c	2006-04-04 13:00:04.000000000 -0400
+--- dbus-0.61-orig/dbus/dbus-sysdeps-util-unix.c.selinux-avc-audit	2006-02-24 10:46:45.000000000 -0500
++++ dbus-0.61/dbus/dbus-sysdeps-util-unix.c	2006-04-04 13:00:04.000000000 -0400
 @@ -42,6 +42,11 @@
  #include <sys/socket.h>
  #include <dirent.h>

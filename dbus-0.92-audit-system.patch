@@ -4,7 +4,7 @@
    va_list ap;
    va_start(ap, fmt);
  #ifdef HAVE_LIBAUDIT
-+  if (audit_fd > = 0)
++  if (audit_fd >= 0)
    {
       char buf[PATH_MAX*2];
  
@@ -28,10 +28,10 @@
 -      
 +
  #ifdef DBUS_ENABLE_VERBOSE_MODE
-+      /*
-+	TUrning off for now since this is misleading reporting as error message 
++ 
++      if (_dbus_is_verbose()) 
        bus_avc_print_stats ();
-+      */
++ 
  #endif /* DBUS_ENABLE_VERBOSE_MODE */
  
        avc_destroy ();

@@ -7,8 +7,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.92
-Release: 2%{?dist}
+Version: 0.93
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -168,6 +168,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Sep 14 2006 John (J5) Palmieri <johnp@redhat.com> - 0.93-1
+- Updated from upstream D-Bus 1.0 RC 1 (0.93)
+
 * Wed Sep 6 2006 Dan Walsh <dwalsh@redhat.com> - 0.92-2
 - Only audit on the system bus
 
