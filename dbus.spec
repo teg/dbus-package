@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.93
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -25,6 +25,7 @@ BuildRequires: libX11-devel
 BuildRequires: libcap-devel
 BuildRequires: gettext
 Requires: libselinux >= %{libselinux_version}
+Requires: libxml2-python
 
 Conflicts: cups < 1:1.1.20-4
 
@@ -168,6 +169,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Sep 19 2006 Matthias Clasen <mclasen@redhat.com> - 0.93-2
+- Add a Requires for libxml2-python (#201877)
+
 * Thu Sep 14 2006 John (J5) Palmieri <johnp@redhat.com> - 0.93-1
 - Updated from upstream D-Bus 1.0 RC 1 (0.93)
 
