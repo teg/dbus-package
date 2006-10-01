@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.93
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -169,6 +169,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Sun Oct 01 2006 Jesse Keating <jkeating@redhat.com> - 0.93-3
+- rebuilt for unwind info generation, broken in gcc-4.1.1-21
+
 * Tue Sep 19 2006 Matthias Clasen <mclasen@redhat.com> - 0.93-2
 - Add a Requires for libxml2-python (#201877)
 
