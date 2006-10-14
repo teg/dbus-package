@@ -7,8 +7,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.93
-Release: 3%{?dist}
+Version: 0.94
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -127,6 +127,7 @@ rm -rf %{buildroot}
 /sbin/ldconfig
 /sbin/chkconfig --add messagebus 
 /sbin/chkconfig messagebus resetpriorities
+/bin/dbus-uuidgen --ensure
 
 %preun
 if [ $1 = 0 ]; then
@@ -151,6 +152,7 @@ fi
 /bin/dbus-send
 /bin/dbus-cleanup-sockets
 /bin/dbus-monitor
+/bin/dbus-uuidgen
 /%{_lib}/*dbus-1*.so.*
 %{_datadir}/man/man*/*
 %{_datadir}/dbus-1/services
@@ -169,6 +171,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Sat Oct 14 2006 John (J5) Palmieri <johnp@redhat.com> - 0.94-1
+- Update to D-Bus 1.0 RC 2 (0.94)
+
 * Sun Oct 01 2006 Jesse Keating <jkeating@redhat.com> - 0.93-3
 - rebuilt for unwind info generation, broken in gcc-4.1.1-21
 
