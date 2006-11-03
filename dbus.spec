@@ -7,7 +7,7 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.94
+Version: 0.95
 Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
@@ -82,7 +82,7 @@ function make_fast() {
 }
 
 #### Build once with tests to make check
-%configure $COMMON_ARGS --enable-tests=yes --enable-verbose-mode=yes --enable-asserts=yes
+%configure $COMMON_ARGS --enable-tests=no --enable-verbose-mode=yes --enable-asserts=yes
 make_fast
 
 #keep debug mode for now.
@@ -127,7 +127,6 @@ rm -rf %{buildroot}
 /sbin/ldconfig
 /sbin/chkconfig --add messagebus 
 /sbin/chkconfig messagebus resetpriorities
-/bin/dbus-uuidgen --ensure
 
 %preun
 if [ $1 = 0 ]; then
@@ -171,6 +170,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Fri Nov 03 2006 John (J5) Palmieri <johnp@redhat.com> - 0.95-1
+- Update to D-Bus 1.0 RC 3 (0.95)
+- don't build with tests on
+
 * Sat Oct 14 2006 John (J5) Palmieri <johnp@redhat.com> - 0.94-1
 - Update to D-Bus 1.0 RC 2 (0.94)
 
