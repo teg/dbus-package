@@ -146,7 +146,6 @@ fi
 %config %{_sysconfdir}/rc.d/init.d/*
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_localstatedir}/run/dbus
-%ghost %{_localstatedir}/lib/dbus/machine-id
 %dir %{_localstatedir}/lib/dbus/
 %dir /%{_lib}/dbus-1.0
 /bin/dbus-daemon
