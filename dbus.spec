@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.95
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -146,6 +146,8 @@ fi
 %config %{_sysconfdir}/rc.d/init.d/*
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_localstatedir}/run/dbus
+%ghost %{_localstatedir}/dbus/machine-id
+%dir %{_localstatedir}/dbus/
 %dir /%{_lib}/dbus-1.0
 /bin/dbus-daemon
 /bin/dbus-send
@@ -155,6 +157,7 @@ fi
 /%{_lib}/*dbus-1*.so.*
 %{_datadir}/man/man*/*
 %{_datadir}/dbus-1/services
+
 
 %files x11
 %defattr(-,root,root)
@@ -170,6 +173,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Mon Nov 06 2006 John (J5) Palmieri <johnp@redhat.com> - 0.95-2
+- Add /var/lib/dbus directory to %files
+
 * Fri Nov 03 2006 John (J5) Palmieri <johnp@redhat.com> - 0.95-1
 - Update to D-Bus 1.0 RC 3 (0.95)
 - don't build with tests on
