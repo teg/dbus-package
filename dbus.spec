@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 0.95
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -32,6 +32,7 @@ Conflicts: cups < 1:1.1.20-4
 Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
 Patch4: dbus-0.92-audit-system.patch
+Patch5: dbus-0.95-dont-crash.patch
 
 %description
 
@@ -65,6 +66,7 @@ in this separate package so server systems need not install X.
 %patch2 -p1 -b .selinux-avc-audit
 %patch3 -p1 -b .start-early
 %patch4 -p1 -b .audit_system
+%patch5 -p1 -b .dont-crash
 autoreconf -f -i
 
 %build
@@ -172,6 +174,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Sun Nov 12 2006 Ray Strode <rstrode@redhat.com> - 0.95-3
+- dont let dbus-launch session sitter crash in the
+  non-autolaunch code path (bug 214649)
+
 * Mon Nov 06 2006 John (J5) Palmieri <johnp@redhat.com> - 0.95-2
 - Add /var/lib/dbus directory to %files
 
