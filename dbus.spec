@@ -173,7 +173,7 @@ fi
 %{_includedir}/*
 
 %changelog
-* Mon Nov 13 2006 Ray Strode <rstrode@redhat.com> - 1.0.0-1
+* Mon Nov 13 2006 John (J5) Palmieir <johnp@redhat.com> - 1.0.0-1
 - update to D-Bus 1.0.0 "Blue Bird"
 - build with verbose mode on but tests and asserts off
 
