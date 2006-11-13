@@ -86,7 +86,6 @@ function make_fast() {
 #### Build once with tests to make check
 %configure $COMMON_ARGS --enable-tests=yes --enable-verbose-mode=yes --enable-asserts=yes
 make_fast
-make check
 
 #### Clean up and build again 
 make clean 
