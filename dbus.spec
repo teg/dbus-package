@@ -7,8 +7,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 0.95
-Release: 3%{?dist}
+Version: 1.0.0 
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -84,16 +84,16 @@ function make_fast() {
 }
 
 #### Build once with tests to make check
-%configure $COMMON_ARGS --enable-tests=no --enable-verbose-mode=yes --enable-asserts=yes
+%configure $COMMON_ARGS --enable-tests=yes --enable-verbose-mode=yes --enable-asserts=yes
 make_fast
-
-#keep debug mode for now.
-exit 0
+make check
 
 #### Clean up and build again 
 make clean 
 
-%configure $COMMON_ARGS --disable-tests --disable-verbose-mode --disable-asserts
+# leave verbose mode so people can debug their apps but make sure to
+# turn it off on stable releases with --disable-verbose-mode
+%configure $COMMON_ARGS --disable-tests --disable-asserts
 make
 
 %install
@@ -174,6 +174,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Mon Nov 13 2006 Ray Strode <rstrode@redhat.com> - 1.0.0-1
+- update to D-Bus 1.0.0 "Blue Bird"
+- build with verbose mode on but tests and asserts off
+
 * Sun Nov 12 2006 Ray Strode <rstrode@redhat.com> - 0.95-3
 - dont let dbus-launch session sitter crash in the
   non-autolaunch code path (bug 214649)
