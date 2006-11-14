@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.0.0 
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: %{name}-%{version}.tar.gz
 License: AFL/GPL
@@ -32,7 +32,7 @@ Conflicts: cups < 1:1.1.20-4
 Patch2: dbus-0.61-selinux-avc-audit.patch
 Patch3: dbus-0.60-start-early.patch
 Patch4: dbus-0.92-audit-system.patch
-Patch5: dbus-0.95-dont-crash.patch
+Patch5: dbus-1.0.0-thread.patch 
 
 %description
 
@@ -66,7 +66,7 @@ in this separate package so server systems need not install X.
 %patch2 -p1 -b .selinux-avc-audit
 %patch3 -p1 -b .start-early
 %patch4 -p1 -b .audit_system
-%patch5 -p1 -b .dont-crash
+%patch5 -p1 -b .thread
 autoreconf -f -i
 
 %build
@@ -173,6 +173,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Nov 14 2006 John (J5) Palmieir <johnp@redhat.com> - 1.0.0-2
+- add patch to fix dbus_threads_init_default
+
 * Mon Nov 13 2006 John (J5) Palmieir <johnp@redhat.com> - 1.0.0-1
 - update to D-Bus 1.0.0 "Blue Bird"
 - build with verbose mode on but tests and asserts off
