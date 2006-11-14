@@ -66,7 +66,7 @@ in this separate package so server systems need not install X.
 %patch2 -p1 -b .selinux-avc-audit
 %patch3 -p1 -b .start-early
 %patch4 -p1 -b .audit_system
-%patch5 -p1 -b .thread
+%patch5 -p0 -b .thread
 autoreconf -f -i
 
 %build
