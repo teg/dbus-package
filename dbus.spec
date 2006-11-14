@@ -173,10 +173,10 @@ fi
 %{_includedir}/*
 
 %changelog
-* Tue Nov 14 2006 John (J5) Palmieir <johnp@redhat.com> - 1.0.0-2
+* Tue Nov 14 2006 John (J5) Palmieri <johnp@redhat.com> - 1.0.0-2
 - add patch to fix dbus_threads_init_default
 
-* Mon Nov 13 2006 John (J5) Palmieir <johnp@redhat.com> - 1.0.0-1
+* Mon Nov 13 2006 John (J5) Palmieri <johnp@redhat.com> - 1.0.0-1
 - update to D-Bus 1.0.0 "Blue Bird"
 - build with verbose mode on but tests and asserts off
 
