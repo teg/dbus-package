@@ -7,10 +7,10 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 1.0.0 
-Release: 2%{?dist}
+Version: 1.0.1 
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
-Source0: %{name}-%{version}.tar.gz
+Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 License: AFL/GPL
 Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-root
@@ -29,10 +29,10 @@ Requires: libxml2-python
 
 Conflicts: cups < 1:1.1.20-4
 
-Patch2: dbus-0.61-selinux-avc-audit.patch
-Patch3: dbus-0.60-start-early.patch
-Patch4: dbus-0.92-audit-system.patch
-Patch5: dbus-1.0.0-thread.patch 
+Patch0: dbus-0.61-selinux-avc-audit.patch
+Patch1: dbus-0.60-start-early.patch
+Patch2: dbus-0.92-audit-system.patch
+Patch3: dbus-1.0.1-pthread-holder-fix.patch
 
 %description
 
@@ -63,29 +63,18 @@ in this separate package so server systems need not install X.
 %prep
 %setup -q
 
-%patch2 -p1 -b .selinux-avc-audit
-%patch3 -p1 -b .start-early
-%patch4 -p1 -b .audit_system
-%patch5 -p0 -b .thread
+%patch0 -p1 -b .selinux-avc-audit
+%patch1 -p1 -b .start-early
+%patch2 -p1 -b .audit_system
+%patch3 -p1 -b .pthread-holder-fix
 autoreconf -f -i
 
 %build
 COMMON_ARGS="--enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid} --libdir=/%{_lib} --bindir=/bin --sysconfdir=/etc --exec-prefix=/"
 
-### this is some crack because bits of dbus can be 
-### smp-compiled but others don't feel like working
-function make_fast() {
-        ### try to burn through it with SMP a couple times
-        make %{?_smp_mflags} || true
-        make %{?_smp_mflags} || true
-
-        ### then do a real make and don't ignore failure
-        DBUS_VERBOSE=1 make
-}
-
 #### Build once with tests to make check
 %configure $COMMON_ARGS --enable-tests=yes --enable-verbose-mode=yes --enable-asserts=yes
-make_fast
+DBUS_VERBOSE=1 make
 
 #### Clean up and build again 
 make clean 
@@ -173,6 +162,12 @@ fi
 %{_includedir}/*
 
 %changelog
+* Mon Nov 20 2006 Ray Strode <rstrode@redhat.com> - 1.0.1-1
+- Update to 1.0.1
+- Apply patch from Thiago Macieira <thiago@kde.org> to 
+  fix failed assertion in threading implementation
+- Drop some crazy looking build time speed optimization
+
 * Tue Nov 14 2006 John (J5) Palmieri <johnp@redhat.com> - 1.0.0-2
 - add patch to fix dbus_threads_init_default
 
