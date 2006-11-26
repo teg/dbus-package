@@ -27,11 +27,11 @@
 <xsl:template match="member">
   <xsl:param name="name"><xsl:value-of select="name"/></xsl:param>
   <xsl:param name="refid"><xsl:value-of select="@refid"/></xsl:param>
+  <xsl:param name="before"><xsl:value-of select="substring-before($refid,'_1')"/></xsl:param>
+  <xsl:param name="after"><xsl:value-of select="substring-after($refid,'_1')"/></xsl:param>
+  <xsl:param name="link"><xsl:value-of select="$before"/>.html#<xsl:value-of select="$after"/></xsl:param>
   <xsl:if test="starts-with($name,'dbus') or starts-with($name, 'DBus')">
     <xsl:if test="starts-with($refid,'group__') and contains($refid, '_1')">
-       <xsl:param name="before"><xsl:value-of select="substring-before($refid,'_1')"/></xsl:param>
-       <xsl:param name="after"><xsl:value-of select="substring-after($refid,'_1')"/></xsl:param>
-       <xsl:param name="link"><xsl:value-of select="$before"/>.html#<xsl:value-of select="$after"/></xsl:param>
        <function name="{$name}" link="{$prefix}api/{$link}"/>
     </xsl:if>
   </xsl:if>
