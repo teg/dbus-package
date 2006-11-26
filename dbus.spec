@@ -8,9 +8,10 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.0.1 
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
+Source1: doxygen_to_devhelp.xsl
 License: AFL/GPL
 Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-root
@@ -24,6 +25,9 @@ BuildRequires: audit-libs-devel >= 0.9
 BuildRequires: libX11-devel
 BuildRequires: libcap-devel
 BuildRequires: gettext
+BuildRequires: doxygen
+BuildRequires: xmlto
+BuildRequires: libxslt
 Requires: libselinux >= %{libselinux_version}
 Requires: libxml2-python
 
@@ -33,6 +37,7 @@ Patch0: dbus-0.61-selinux-avc-audit.patch
 Patch1: dbus-0.60-start-early.patch
 Patch2: dbus-0.92-audit-system.patch
 Patch3: dbus-1.0.1-pthread-holder-fix.patch
+Patch4: dbus-1.0.1-generate-xml-docs.patch
 
 %description
 
@@ -67,6 +72,7 @@ in this separate package so server systems need not install X.
 %patch1 -p1 -b .start-early
 %patch2 -p1 -b .audit_system
 %patch3 -p1 -b .pthread-holder-fix
+%patch4 -p1 -b .generate-xml-docs
 autoreconf -f -i
 
 %build
@@ -81,8 +87,12 @@ make clean
 
 # leave verbose mode so people can debug their apps but make sure to
 # turn it off on stable releases with --disable-verbose-mode
-%configure $COMMON_ARGS --disable-tests --disable-asserts
+%configure $COMMON_ARGS --disable-tests --disable-asserts --enable-doxygen-docs --enable-xml-docs
 make
+
+doxygen Doxyfile
+
+xsltproc -o dbus.devhelp %{SOURCE1} doc/api/xml/index.xml
 
 %install
 rm -rf %{buildroot}
@@ -102,6 +112,15 @@ mv -f $RPM_BUILD_ROOT/%{_lib}/dbus-1.0/include/* $RPM_BUILD_ROOT/%{_libdir}/dbus
 
 rm -f $RPM_BUILD_ROOT/%{_lib}/*.a
 rm -f $RPM_BUILD_ROOT/%{_lib}/*.la
+
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus/api
+
+cp dbus.devhelp $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus
+cp doc/dbus-specification.html $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus
+cp doc/dbus-faq.html $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus
+cp doc/dbus-tutorial.html $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus
+cp doc/api/html/* $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus/api
 
 ## %find_lang %{gettext_package}
 
@@ -147,7 +166,6 @@ fi
 %{_datadir}/man/man*/*
 %{_datadir}/dbus-1/services
 
-
 %files x11
 %defattr(-,root,root)
 
@@ -160,8 +178,12 @@ fi
 %{_libdir}/dbus-1.0/include/
 %{_libdir}/pkgconfig/dbus-1.pc
 %{_includedir}/*
+%{_datadir}/devhelp/books/dbus
 
 %changelog
+* Sun Nov 26 2006 Matthias Clasen <mclasen@redhat.com> - 1.0.1-2
+- Include docs, and make them show up in devhelp
+
 * Mon Nov 20 2006 Ray Strode <rstrode@redhat.com> - 1.0.1-1
 - Update to 1.0.1
 - Apply patch from Thiago Macieira <thiago@kde.org> to 
