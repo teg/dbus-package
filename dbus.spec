@@ -7,8 +7,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 1.0.1 
-Release: 3%{?dist}
+Version: 1.0.2 
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -36,9 +36,7 @@ Conflicts: cups < 1:1.1.20-4
 Patch0: dbus-0.61-selinux-avc-audit.patch
 Patch1: dbus-0.60-start-early.patch
 Patch2: dbus-0.92-audit-system.patch
-Patch3: dbus-1.0.1-pthread-holder-fix.patch
 Patch4: dbus-1.0.1-generate-xml-docs.patch
-Patch5: dbus-0.22-fix-match-rule-equal.patch
 
 %description
 
@@ -72,9 +70,7 @@ in this separate package so server systems need not install X.
 %patch0 -p1 -b .selinux-avc-audit
 %patch1 -p1 -b .start-early
 %patch2 -p1 -b .audit_system
-%patch3 -p1 -b .pthread-holder-fix
 %patch4 -p1 -b .generate-xml-docs
-%patch5 -p1 -b .dbus-0.22-fix-match-rule-equal.patch
 
 autoreconf -f -i
 
@@ -167,6 +163,7 @@ fi
 /bin/dbus-uuidgen
 /%{_lib}/*dbus-1*.so.*
 %{_datadir}/man/man*/*
+%dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/services
 
 %files x11
@@ -178,12 +175,18 @@ fi
 %defattr(-,root,root)
 
 /%{_lib}/lib*.so
+%dir %{_libdir}/dbus-1.0
 %{_libdir}/dbus-1.0/include/
 %{_libdir}/pkgconfig/dbus-1.pc
 %{_includedir}/*
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Sun Mar 25 2007 Matthias Clasen <mclasen@redhat.com> - 1.0.2-1
+- Update to 1.0.2
+- Drop obsolete patches
+- Fix directory ownership issues (#233753)
+
 * Fri Dec 15 2006 David Zeuthen <davidz@redhat.com> - 1.0.1-3%{?dist}
 - CVE-2006-6107: D-Bus denial of service
 
