@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.0.2 
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -58,6 +58,7 @@ Summary: X11-requiring add-ons for D-BUS
 Group: Development/Libraries
 Requires: libX11
 Requires: %name = %{version}-%{release}
+Requires: pkgconfig
 
 %description x11
 
@@ -182,6 +183,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Wed Mar 28 2007 Matthias Clasen <mclasen@redhat.com> - 1.0.2-2
+- Require pkgconfig in the -devel package
+
 * Sun Mar 25 2007 Matthias Clasen <mclasen@redhat.com> - 1.0.2-1
 - Update to 1.0.2
 - Drop obsolete patches
