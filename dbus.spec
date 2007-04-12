@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.0.2 
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -37,6 +37,7 @@ Patch0: dbus-0.61-selinux-avc-audit.patch
 Patch1: dbus-0.60-start-early.patch
 Patch2: dbus-0.92-audit-system.patch
 Patch4: dbus-1.0.1-generate-xml-docs.patch
+Patch5: dbus-1.0.2-selinux.patch
 
 %description
 
@@ -72,6 +73,7 @@ in this separate package so server systems need not install X.
 %patch1 -p1 -b .start-early
 %patch2 -p1 -b .audit_system
 %patch4 -p1 -b .generate-xml-docs
+%patch5 -p1 -b .selinux-send-to-audit
 
 autoreconf -f -i
 
@@ -183,6 +185,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Thu Apr 12 2007 David Zeuthen <davidz@redhat.com> - 1.0.2-3
+- Start SELinux thread after setuid call (#221168)
+
 * Wed Mar 28 2007 Matthias Clasen <mclasen@redhat.com> - 1.0.2-2
 - Require pkgconfig in the -devel package
 
