@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.0.2 
-Release: 3%{?dist}
+Release: 4%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -165,7 +165,11 @@ fi
 /bin/dbus-monitor
 /bin/dbus-uuidgen
 /%{_lib}/*dbus-1*.so.*
-%{_datadir}/man/man*/*
+%{_datadir}/man/man*/dbus-cleanup-sockets.1.gz
+%{_datadir}/man/man*/dbus-daemon.1.gz
+%{_datadir}/man/man*/dbus-monitor.1.gz
+%{_datadir}/man/man*/dbus-send.1.gz
+%{_datadir}/man/man*/dbus-uuidgen.1.gz
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/services
 
@@ -173,6 +177,7 @@ fi
 %defattr(-,root,root)
 
 %{_bindir}/dbus-launch
+%{_datadir}/man/man*/dbus-launch.1.gz
 
 %files devel
 %defattr(-,root,root)
@@ -185,6 +190,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Sat Apr 14 2007 Matthias Clasen <mclasen@redhat.com> - 1.0.2-4
+- Move the dbus-launch man page to the x11 subpackage
+
 * Thu Apr 12 2007 David Zeuthen <davidz@redhat.com> - 1.0.2-3
 - Start SELinux thread after setuid call (#221168)
 
