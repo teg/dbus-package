@@ -8,13 +8,13 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.0.2 
-Release: 4%{?dist}
+Release: 5%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
 License: AFL/GPL
 Group: System Environment/Libraries
-BuildRoot: %{_tmppath}/%{name}-root
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n) 
 PreReq: /usr/sbin/useradd
 Requires: chkconfig >= 1.3.26
 BuildPreReq: libtool
@@ -49,6 +49,7 @@ per-user-login-session messaging facility.
 Summary: Libraries and headers for D-BUS
 Group: Development/Libraries
 Requires: %name = %{version}-%{release}
+Requires: pkgconfig
 
 %description devel
 
@@ -59,7 +60,6 @@ Summary: X11-requiring add-ons for D-BUS
 Group: Development/Libraries
 Requires: libX11
 Requires: %name = %{version}-%{release}
-Requires: pkgconfig
 
 %description x11
 
@@ -190,6 +190,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Sun Jun 17 2007 Matthias Clasen <mclasen@redhat.com> - 1.0.2-5
+- Require pkgconfig in -devel, not in -x11 (#244385)
+
 * Sat Apr 14 2007 Matthias Clasen <mclasen@redhat.com> - 1.0.2-4
 - Move the dbus-launch man page to the x11 subpackage
 
