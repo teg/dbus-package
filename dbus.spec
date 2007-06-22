@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.0.2 
-Release: 5%{?dist}
+Release: 6%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -29,7 +29,6 @@ BuildRequires: doxygen
 BuildRequires: xmlto
 BuildRequires: libxslt
 Requires: libselinux >= %{libselinux_version}
-Requires: libxml2-python
 
 Conflicts: cups < 1:1.1.20-4
 
@@ -190,6 +189,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Fri Jun 22 2007 Matthias Clasen <mclasen@redhat.com> - 1.0.2-6
+- Don't require libxml-python needlessly (#245300)
+
 * Sun Jun 17 2007 Matthias Clasen <mclasen@redhat.com> - 1.0.2-5
 - Require pkgconfig in -devel, not in -x11 (#244385)
 
