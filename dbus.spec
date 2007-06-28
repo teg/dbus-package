@@ -7,8 +7,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 1.0.2 
-Release: 6%{?dist}
+Version: 1.1.1 
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -32,11 +32,8 @@ Requires: libselinux >= %{libselinux_version}
 
 Conflicts: cups < 1:1.1.20-4
 
-Patch0: dbus-0.61-selinux-avc-audit.patch
-Patch1: dbus-0.60-start-early.patch
-Patch2: dbus-0.92-audit-system.patch
-Patch4: dbus-1.0.1-generate-xml-docs.patch
-Patch5: dbus-1.0.2-selinux.patch
+Patch0: dbus-0.60-start-early.patch
+Patch1: dbus-1.0.1-generate-xml-docs.patch
 
 %description
 
@@ -68,23 +65,13 @@ in this separate package so server systems need not install X.
 %prep
 %setup -q
 
-%patch0 -p1 -b .selinux-avc-audit
-%patch1 -p1 -b .start-early
-%patch2 -p1 -b .audit_system
-%patch4 -p1 -b .generate-xml-docs
-%patch5 -p1 -b .selinux-send-to-audit
+%patch0 -p1 -b .start-early
+%patch1 -p1 -b .generate-xml-docs
 
 autoreconf -f -i
 
 %build
 COMMON_ARGS="--enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid} --libdir=/%{_lib} --bindir=/bin --sysconfdir=/etc --exec-prefix=/"
-
-#### Build once with tests to make check
-%configure $COMMON_ARGS --enable-tests=yes --enable-verbose-mode=yes --enable-asserts=yes
-DBUS_VERBOSE=1 make
-
-#### Clean up and build again 
-make clean 
 
 # leave verbose mode so people can debug their apps but make sure to
 # turn it off on stable releases with --disable-verbose-mode
@@ -189,6 +176,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Thu Jun 28 2007 Ray Strode <rstrode@redhat.com> - 1.1.1-1
+- Update to 1.1.1
+
 * Fri Jun 22 2007 Matthias Clasen <mclasen@redhat.com> - 1.0.2-6
 - Don't require libxml-python needlessly (#245300)
 
