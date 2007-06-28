@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.1.1 
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -142,6 +142,7 @@ fi
 %config %{_sysconfdir}/dbus-1/*.conf
 %config %{_sysconfdir}/rc.d/init.d/*
 %dir %{_sysconfdir}/dbus-1/system.d
+%dir %{_sysconfdir}/dbus-1/session.d
 %dir %{_localstatedir}/run/dbus
 %dir %{_localstatedir}/lib/dbus/
 %dir /%{_lib}/dbus-1.0
@@ -176,6 +177,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Thu Jun 28 2007 Ray Strode <rstrode@redhat.com> - 1.1.1-2
+- include session.d directory in package manifest
+
 * Thu Jun 28 2007 Ray Strode <rstrode@redhat.com> - 1.1.1-1
 - Update to 1.1.1
 
