@@ -1,0 +1,21 @@
+diff -up dbus-1.0.2/bus/messagebus.in.lsb dbus-1.0.2/bus/messagebus.in
+--- dbus-1.0.2/bus/messagebus.in.lsb	2007-07-06 22:13:15.000000000 -0400
++++ dbus-1.0.2/bus/messagebus.in	2007-07-06 22:15:54.000000000 -0400
+@@ -9,6 +9,17 @@
+ # processname: dbus-daemon
+ # pidfile: @DBUS_SYSTEM_PID_FILE@
+ #
++### BEGIN INIT INFO
++# Provides: messagebus
++# Required-Start: $syslog $local_fs
++# Required-Stop: $syslog $local_fs
++# Default-Start: 2 3 4 5
++# Default-Stop: 0 1 6
++# Short-Description: The D-Bus systemwide message bus
++# Description: This is a daemon which broadcasts notifications of system 
++#  events and other messages. See http://www.freedesktop.org/software/dbus
++### END INIT INFO
++
+ 
+ # Sanity checks.
+ [ -x /bin/dbus-daemon ] || exit 0
