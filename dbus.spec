@@ -7,8 +7,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 1.1.1 
-Release: 3%{?dist}
+Version: 1.1.2
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -162,6 +162,8 @@ fi
 %{_datadir}/man/man*/dbus-uuidgen.1.gz
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/services
+# FIXME should this live in /usr ?
+%{_libexecdir}/dbus-daemon-launch-helper
 
 %files x11
 %defattr(-,root,root)
@@ -180,6 +182,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Sat Jul 28 2007 Matthias Clasen <mclasen@redhat.com> - 1.1.2-1
+- Update to 1.1.2
+
 * Fri Jul  6 2007 Matthias Clasen <mclasen@redhat.com> - 1.1.1-3
 - Add LSB header to init script (#246902)
 
