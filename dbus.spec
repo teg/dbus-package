@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.1.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -74,7 +74,7 @@ in this separate package so server systems need not install X.
 autoreconf -f -i
 
 %build
-COMMON_ARGS="--enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=%{dbus_user_uid} --libdir=/%{_lib} --bindir=/bin --sysconfdir=/etc --exec-prefix=/"
+COMMON_ARGS="--enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=dbus --libdir=/%{_lib} --bindir=/bin --sysconfdir=/etc --exec-prefix=/ --libexecdir=/%{_lib}/dbus-1"
 
 # leave verbose mode so people can debug their apps but make sure to
 # turn it off on stable releases with --disable-verbose-mode
@@ -100,6 +100,7 @@ mkdir -p $RPM_BUILD_ROOT/%{_bindir}
 mv -f $RPM_BUILD_ROOT/bin/dbus-launch $RPM_BUILD_ROOT/%{_bindir}
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/dbus-1.0/include/
 mv -f $RPM_BUILD_ROOT/%{_lib}/dbus-1.0/include/* $RPM_BUILD_ROOT/%{_libdir}/dbus-1.0/include/
+rm -rf $RPM_BUILD_ROOT/%{_lib}/dbus-1.0
 
 rm -f $RPM_BUILD_ROOT/%{_lib}/*.a
 rm -f $RPM_BUILD_ROOT/%{_lib}/*.la
@@ -148,7 +149,6 @@ fi
 %dir %{_sysconfdir}/dbus-1/session.d
 %dir %{_localstatedir}/run/dbus
 %dir %{_localstatedir}/lib/dbus/
-%dir /%{_lib}/dbus-1.0
 /bin/dbus-daemon
 /bin/dbus-send
 /bin/dbus-cleanup-sockets
@@ -162,8 +162,11 @@ fi
 %{_datadir}/man/man*/dbus-uuidgen.1.gz
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/services
-# FIXME should this live in /usr ?
-%{_libexecdir}/dbus-daemon-launch-helper
+%{_datadir}/dbus-1/system-services
+%dir /%{_lib}/dbus-1
+# See doc/system-activation.txt in source tarball for the rationale
+# behind these permissions
+%attr(4750,root,dbus) /%{_lib}/dbus-1/dbus-daemon-launch-helper
 
 %files x11
 %defattr(-,root,root)
@@ -182,6 +185,14 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Wed Aug 01 2007 David Zeuthen <davidz@redhat.com> - 1.1.2-2%{?dist}
+- Move system bus activation helper to /{lib,lib64}/dbus-1. Also set
+  the correct mode and permissions. 
+- Own the directory /usr/share/dbus-1/system-services
+- Delete the diretory /{lib,lib64}/dbus-1.0 as it's not used
+- Pass 'dbus' instead of 81 as --with-dbus-user; otherwise the setuid
+  system bus activation helper fails
+
 * Sat Jul 28 2007 Matthias Clasen <mclasen@redhat.com> - 1.1.2-1
 - Update to 1.1.2
 
