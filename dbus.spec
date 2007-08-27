@@ -8,11 +8,11 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.1.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
-License: AFL/GPL
+License: GPLv2+ or AFL
 Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n) 
 PreReq: /usr/sbin/useradd
@@ -42,6 +42,14 @@ Patch2: dbus-1.0.2-lsb.patch
 D-BUS is a system for sending messages between applications. It is
 used both for the systemwide message bus service, and as a
 per-user-login-session messaging facility.
+
+%package libs
+Summary: Libraries for accessing D-BUS
+Group: Development/Libraries
+Requires: %name = %{version}-%{release}
+ 
+%description libs
+Lowlevel libraries for accessing D-BUS
 
 %package devel
 Summary: Libraries and headers for D-BUS
@@ -124,8 +132,9 @@ rm -rf %{buildroot}
 /usr/sbin/useradd -c 'System message bus' -u %{dbus_user_uid} \
 	-s /sbin/nologin -r -d '/' dbus 2> /dev/null || :
 
+%post libs -p /sbin/ldconfig
+
 %post
-/sbin/ldconfig
 /sbin/chkconfig --add messagebus 
 /sbin/chkconfig messagebus resetpriorities
 
@@ -134,8 +143,7 @@ if [ $1 = 0 ]; then
     /sbin/chkconfig --del messagebus
 fi
 
-%postun
-/sbin/ldconfig
+%postun libs -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root)
@@ -154,7 +162,6 @@ fi
 /bin/dbus-cleanup-sockets
 /bin/dbus-monitor
 /bin/dbus-uuidgen
-/%{_lib}/*dbus-1*.so.*
 %{_datadir}/man/man*/dbus-cleanup-sockets.1.gz
 %{_datadir}/man/man*/dbus-daemon.1.gz
 %{_datadir}/man/man*/dbus-monitor.1.gz
@@ -167,6 +174,11 @@ fi
 # See doc/system-activation.txt in source tarball for the rationale
 # behind these permissions
 %attr(4750,root,dbus) /%{_lib}/dbus-1/dbus-daemon-launch-helper
+
+
+%files libs
+%defattr(-,root,root,-)
+/%{_lib}/*dbus-1*.so.*
 
 %files x11
 %defattr(-,root,root)
@@ -185,6 +197,10 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Mon Aug 27 2007 Adel Gadllah <adel.gadllah@gmail.com> - 1.1.2-3
+- Add libs to a libs subpackage
+- Update license tag
+
 * Wed Aug 01 2007 David Zeuthen <davidz@redhat.com> - 1.1.2-2%{?dist}
 - Move system bus activation helper to /{lib,lib64}/dbus-1. Also set
   the correct mode and permissions. 
