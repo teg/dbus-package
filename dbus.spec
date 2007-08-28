@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.1.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -29,6 +29,7 @@ BuildRequires: doxygen
 BuildRequires: xmlto
 BuildRequires: libxslt
 Requires: libselinux >= %{libselinux_version}
+Requires: dbus-libs = %{version}-%{release}
 
 Conflicts: cups < 1:1.1.20-4
 
@@ -197,6 +198,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Tue Aug 28 2007 David Zeuthen <davidz@redhat.com> - 1.1.2-4%{?dist}
+- Make dbus require dbus-libs (#261721)
+
 * Mon Aug 27 2007 Adel Gadllah <adel.gadllah@gmail.com> - 1.1.2-3
 - Add libs to a libs subpackage
 - Update license tag
