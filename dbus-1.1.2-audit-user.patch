@@ -1,0 +1,55 @@
+diff -up dbus-1.1.2/dbus/dbus-sysdeps-util-unix.c.audit-user dbus-1.1.2/dbus/dbus-sysdeps-util-unix.c
+--- dbus-1.1.2/dbus/dbus-sysdeps-util-unix.c.audit-user	2007-07-24 11:39:09.000000000 -0400
++++ dbus-1.1.2/dbus/dbus-sysdeps-util-unix.c	2007-09-14 09:00:24.000000000 -0400
+@@ -300,7 +300,7 @@ _dbus_change_to_daemon_user  (const char
+    * run as ... doesn't really help. But keeps people happy.
+    */
+     
+-  if (!we_were_root)
++  if (we_were_root)
+     {
+       cap_value_t new_cap_list[] = { CAP_AUDIT_WRITE };
+       cap_value_t tmp_cap_list[] = { CAP_AUDIT_WRITE, CAP_SETUID, CAP_SETGID };
+@@ -376,7 +376,7 @@ _dbus_change_to_daemon_user  (const char
+     }
+   
+ #ifdef HAVE_LIBAUDIT
+-  if (!we_were_root)
++  if (we_were_root)
+     {
+       if (cap_set_proc (new_caps))
+         {
+@@ -395,6 +395,7 @@ _dbus_change_to_daemon_user  (const char
+                           _dbus_strerror (errno));
+           return FALSE;
+         }
++      audit_init();
+     }
+ #endif
+ 
+diff -up dbus-1.1.2/bus/selinux.c.audit-user dbus-1.1.2/bus/selinux.c
+--- dbus-1.1.2/bus/selinux.c.audit-user	2007-07-24 11:39:08.000000000 -0400
++++ dbus-1.1.2/bus/selinux.c	2007-09-14 08:31:14.000000000 -0400
+@@ -113,7 +113,7 @@ static const struct avc_lock_callback lo
+ static int audit_fd = -1;
+ #endif
+ 
+-static void
++void
+ audit_init(void)
+ {
+ #ifdef HAVE_LIBAUDIT  
+@@ -350,12 +350,8 @@ bus_selinux_full_init (void)
+ 
+   freecon (bus_context);
+   
+-  audit_init ();
+-
+-  return TRUE;
+-#else
+-  return TRUE;
+ #endif /* HAVE_SELINUX */
++  return TRUE;
+ }
+ 
+ /**
