@@ -37,7 +37,9 @@ Patch0: dbus-0.60-start-early.patch
 Patch1: dbus-1.0.1-generate-xml-docs.patch
 # https://bugs.freedesktop.org/show_bug.cgi?id=11491
 Patch2: dbus-1.0.2-lsb.patch
+# https://bugs.freedesktop.org/show_bug.cgi?id=12429
 Patch3: dbus-1.1.2-audit-user.patch
+# https://bugs.freedesktop.org/show_bug.cgi?id=12430
 Patch4: dbus-1.1.2-no-abort.patch
 
 %description
