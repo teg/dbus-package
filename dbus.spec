@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.1.2
-Release: 5%{?dist}
+Release: 6%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -38,6 +38,7 @@ Patch1: dbus-1.0.1-generate-xml-docs.patch
 # https://bugs.freedesktop.org/show_bug.cgi?id=11491
 Patch2: dbus-1.0.2-lsb.patch
 Patch3: dbus-1.1.2-audit-user.patch
+Patch4: dbus-1.1.2-no-abort.patch
 
 %description
 
@@ -81,6 +82,7 @@ in this separate package so server systems need not install X.
 %patch1 -p1 -b .generate-xml-docs
 %patch2 -p1 -b .lsb
 %patch3 -p1 -b .audit-user
+%patch4 -p1 -b .abort
 
 autoreconf -f -i
 
@@ -200,6 +202,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Fri Sep 14 2007 Bill Nottingham <notting@redhat.com> - 1.1.2-6%{?dist}
+- fix daemon abort when SELinux denies passing on a message (#283231)
+
 * Fri Sep 14 2007 Dan Walsh <dwalsh@redhat.com> - 1.1.2-5%{?dist}
 - Reverse we_were_root check to setpcap if we were root.  Also only init
 audit if we were root.  So error dbus message will not show up when policy 
