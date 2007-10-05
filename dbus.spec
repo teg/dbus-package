@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.1.2
-Release: 6%{?dist}
+Release: 7%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -41,6 +41,8 @@ Patch2: dbus-1.0.2-lsb.patch
 Patch3: dbus-1.1.2-audit-user.patch
 # https://bugs.freedesktop.org/show_bug.cgi?id=12430
 Patch4: dbus-1.1.2-no-abort.patch
+# from upstream git
+Patch5: dbus-pie.patch
 
 %description
 
@@ -85,6 +87,7 @@ in this separate package so server systems need not install X.
 %patch2 -p1 -b .lsb
 %patch3 -p1 -b .audit-user
 %patch4 -p1 -b .abort
+%patch5 -p1 -b .pie
 
 autoreconf -f -i
 
@@ -204,6 +207,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Thu Oct  4 2007 Matthias Clasen <mclasen@redhat.com> - 1.1.2-7
+- Make the daemon a PIE executable  (#210039)
+
 * Fri Sep 14 2007 Bill Nottingham <notting@redhat.com> - 1.1.2-6%{?dist}
 - fix daemon abort when SELinux denies passing on a message (#283231)
 
