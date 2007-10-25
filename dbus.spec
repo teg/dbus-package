@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.1.2
-Release: 7%{?dist}
+Release: 8%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -54,7 +54,8 @@ per-user-login-session messaging facility.
 Summary: Libraries for accessing D-BUS
 Group: Development/Libraries
 Requires: %name = %{version}-%{release}
- 
+Obsoletes: dbus < 1.1.2-3
+
 %description libs
 Lowlevel libraries for accessing D-BUS
 
@@ -207,6 +208,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Thu Oct 25 2007 Bill Nottingham <notting@redhat.com> - 1.1.2-8
+- have -libs obsolete older versions of the main package so that yum upgrades work
+
 * Thu Oct  4 2007 Matthias Clasen <mclasen@redhat.com> - 1.1.2-7
 - Make the daemon a PIE executable  (#210039)
 
