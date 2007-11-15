@@ -1,7 +1,7 @@
 %define gettext_package dbus
 
 %define expat_version           1.95.5
-%define libselinux_version	1.15.2	
+%define libselinux_version      1.15.2
 
 %define dbus_user_uid           81
 
@@ -304,7 +304,7 @@ only system will.
   non-autolaunch code path (bug 214649)
 
 * Mon Nov 06 2006 John (J5) Palmieri <johnp@redhat.com> - 0.95-2
-- Add /var/lib/dbus directory to %files
+- Add /var/lib/dbus directory to %%files
 
 * Fri Nov 03 2006 John (J5) Palmieri <johnp@redhat.com> - 0.95-1
 - Update to D-Bus 1.0 RC 3 (0.95)
@@ -347,8 +347,8 @@ only system will.
   have to be running suring the build.
 
 * Tue Jul 18 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-3
-- s/--libdir=\/lib/--libdir=% {_lib}/ in configure stage
-- add / before % {_lib}
+- s/--libdir=\/lib/--libdir=%%{_lib}/ in configure stage
+- add / before %%{_lib}
 
 * Tue Jul 18 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-2
 - Remove some remnants of the GLIB bindings from configure.in
@@ -442,8 +442,8 @@ only system will.
 
 * Tue Aug 23 2005 John (J5) Palmieri <johnp@redhat.com> - 0.36-1
 - Upgrade to dbus-0.36
-- Split modules that go into %{_lib}/python2.4/site-packages/dbus
-and those that go into %{python_sitelib}/dbus (they differ on 64bit)
+- Split modules that go into %%{_lib}/python2.4/site-packages/dbus
+and those that go into %%{python_sitelib}/dbus (they differ on 64bit)
 - Renable Qt bindings since packages in core can use them
 
 * Mon Jul 18 2005 John (J5) Palmieri <johnp@redhat.com> - 0.35.2-1
