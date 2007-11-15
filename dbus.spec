@@ -8,17 +8,15 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.1.2
-Release: 8%{?dist}
+Release: 9%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
 License: GPLv2+ or AFL
 Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n) 
-PreReq: /usr/sbin/useradd
-Requires: chkconfig >= 1.3.26
-BuildPreReq: libtool
-#BuildRequires: redhat-release 
+
+BuildRequires: libtool
 BuildRequires: expat-devel >= %{expat_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
 BuildRequires: audit-libs-devel >= 0.9
@@ -28,9 +26,14 @@ BuildRequires: gettext
 BuildRequires: doxygen
 BuildRequires: xmlto
 BuildRequires: libxslt
+
+Requires: chkconfig >= 1.3.26
 Requires: libselinux >= %{libselinux_version}
 Requires: dbus-libs = %{version}-%{release}
+Requires(pre): /usr/sbin/useradd
 
+# Conflict with cups prior to configuration file change, so that the
+# %postun service condrestart works.
 Conflicts: cups < 1:1.1.20-4
 
 Patch0: dbus-0.60-start-early.patch
@@ -72,7 +75,6 @@ Headers and static libraries for D-BUS.
 %package x11
 Summary: X11-requiring add-ons for D-BUS
 Group: Development/Libraries
-Requires: libX11
 Requires: %name = %{version}-%{release}
 
 %description x11
@@ -82,6 +84,10 @@ in this separate package so server systems need not install X.
 
 %prep
 %setup -q
+
+# For some reason upstream ships these files as executable
+# Make sure they are not
+/bin/chmod 0644 COPYING ChangeLog NEWS
 
 %patch0 -p1 -b .start-early
 %patch1 -p1 -b .generate-xml-docs
@@ -107,31 +113,31 @@ xsltproc -o dbus.devhelp %{SOURCE1} doc/api/xml/index.xml
 %install
 rm -rf %{buildroot}
 
-make install DESTDIR=$RPM_BUILD_ROOT
+make install DESTDIR=%{buildroot}
 
-mkdir -p $RPM_BUILD_ROOT/%{_libdir}/pkgconfig
+mkdir -p %{buildroot}/%{_libdir}/pkgconfig
 
 #change the arch-deps.h include directory to /usr/lib[64] instead of /lib[64]
-sed -e 's@-I${libdir}@-I${prefix}/%{_lib}@' $RPM_BUILD_ROOT/%{_lib}/pkgconfig/dbus-1.pc > $RPM_BUILD_ROOT/%{_libdir}/pkgconfig/dbus-1.pc
-rm -f $RPM_BUILD_ROOT/%{_lib}/pkgconfig/dbus-1.pc
+sed -e 's@-I${libdir}@-I${prefix}/%{_lib}@' %{buildroot}/%{_lib}/pkgconfig/dbus-1.pc > %{buildroot}/%{_libdir}/pkgconfig/dbus-1.pc
+rm -f %{buildroot}/%{_lib}/pkgconfig/dbus-1.pc
 
-mkdir -p $RPM_BUILD_ROOT/%{_bindir}
-mv -f $RPM_BUILD_ROOT/bin/dbus-launch $RPM_BUILD_ROOT/%{_bindir}
-mkdir -p $RPM_BUILD_ROOT/%{_libdir}/dbus-1.0/include/
-mv -f $RPM_BUILD_ROOT/%{_lib}/dbus-1.0/include/* $RPM_BUILD_ROOT/%{_libdir}/dbus-1.0/include/
-rm -rf $RPM_BUILD_ROOT/%{_lib}/dbus-1.0
+mkdir -p %{buildroot}/%{_bindir}
+mv -f %{buildroot}/bin/dbus-launch %{buildroot}/%{_bindir}
+mkdir -p %{buildroot}/%{_libdir}/dbus-1.0/include/
+mv -f %{buildroot}/%{_lib}/dbus-1.0/include/* %{buildroot}/%{_libdir}/dbus-1.0/include/
+rm -rf %{buildroot}/%{_lib}/dbus-1.0
 
-rm -f $RPM_BUILD_ROOT/%{_lib}/*.a
-rm -f $RPM_BUILD_ROOT/%{_lib}/*.la
+rm -f %{buildroot}/%{_lib}/*.a
+rm -f %{buildroot}/%{_lib}/*.la
 
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus/api
+mkdir -p %{buildroot}%{_datadir}/devhelp/books/dbus
+mkdir -p %{buildroot}%{_datadir}/devhelp/books/dbus/api
 
-cp dbus.devhelp $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus
-cp doc/dbus-specification.html $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus
-cp doc/dbus-faq.html $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus
-cp doc/dbus-tutorial.html $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus
-cp doc/api/html/* $RPM_BUILD_ROOT%{_datadir}/devhelp/books/dbus/api
+cp dbus.devhelp %{buildroot}%{_datadir}/devhelp/books/dbus
+cp doc/dbus-specification.html %{buildroot}%{_datadir}/devhelp/books/dbus
+cp doc/dbus-faq.html %{buildroot}%{_datadir}/devhelp/books/dbus
+cp doc/dbus-tutorial.html %{buildroot}%{_datadir}/devhelp/books/dbus
+cp doc/api/html/* %{buildroot}%{_datadir}/devhelp/books/dbus/api
 
 ## %find_lang %{gettext_package}
 
@@ -151,6 +157,7 @@ rm -rf %{buildroot}
 
 %preun
 if [ $1 = 0 ]; then
+    /sbin/service messagebus stop
     /sbin/chkconfig --del messagebus
 fi
 
@@ -162,8 +169,8 @@ fi
 %doc COPYING ChangeLog NEWS
 
 %dir %{_sysconfdir}/dbus-1
-%config %{_sysconfdir}/dbus-1/*.conf
-%config %{_sysconfdir}/rc.d/init.d/*
+%config(noreplace) %{_sysconfdir}/dbus-1/*.conf
+%{_sysconfdir}/rc.d/init.d/*
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_sysconfdir}/dbus-1/session.d
 %dir %{_localstatedir}/run/dbus
@@ -173,11 +180,11 @@ fi
 /bin/dbus-cleanup-sockets
 /bin/dbus-monitor
 /bin/dbus-uuidgen
-%{_datadir}/man/man*/dbus-cleanup-sockets.1.gz
-%{_datadir}/man/man*/dbus-daemon.1.gz
-%{_datadir}/man/man*/dbus-monitor.1.gz
-%{_datadir}/man/man*/dbus-send.1.gz
-%{_datadir}/man/man*/dbus-uuidgen.1.gz
+%{_mandir}/man*/dbus-cleanup-sockets.1.gz
+%{_mandir}/man*/dbus-daemon.1.gz
+%{_mandir}/man*/dbus-monitor.1.gz
+%{_mandir}/man*/dbus-send.1.gz
+%{_mandir}/man*/dbus-uuidgen.1.gz
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/services
 %{_datadir}/dbus-1/system-services
@@ -208,6 +215,9 @@ fi
 %{_datadir}/devhelp/books/dbus
 
 %changelog
+* Thu Nov 15 2007 John (J5) Palmieri <johnp@redhat.com> - 1.1.2-9
+- clean up spec file as per the merge review (#225676)
+
 * Thu Oct 25 2007 Bill Nottingham <notting@redhat.com> - 1.1.2-8
 - have -libs obsolete older versions of the main package so that yum upgrades work
 
