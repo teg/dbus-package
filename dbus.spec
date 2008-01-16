@@ -7,8 +7,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 1.1.2
-Release: 9%{?dist}
+Version: 1.1.3
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -38,14 +38,6 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch0: dbus-0.60-start-early.patch
 Patch1: dbus-1.0.1-generate-xml-docs.patch
-# https://bugs.freedesktop.org/show_bug.cgi?id=11491
-Patch2: dbus-1.0.2-lsb.patch
-# https://bugs.freedesktop.org/show_bug.cgi?id=12429
-Patch3: dbus-1.1.2-audit-user.patch
-# https://bugs.freedesktop.org/show_bug.cgi?id=12430
-Patch4: dbus-1.1.2-no-abort.patch
-# from upstream git
-Patch5: dbus-pie.patch
 
 %description
 
@@ -61,6 +53,16 @@ Obsoletes: dbus < 1.1.2-3
 
 %description libs
 Lowlevel libraries for accessing D-BUS
+
+%package doc
+Summary: Developer documentation for D-BUS
+Group: Documentation
+Requires: %name = %{version}-%{release}
+Requires: devhelp
+
+%description doc 
+This package contains DevHelp developer documentation for D-Bus along with
+other supporting documentation such as the introspect dtd file
 
 %package devel
 Summary: Libraries and headers for D-BUS
@@ -91,10 +93,6 @@ in this separate package so server systems need not install X.
 
 %patch0 -p1 -b .start-early
 %patch1 -p1 -b .generate-xml-docs
-%patch2 -p1 -b .lsb
-%patch3 -p1 -b .audit-user
-%patch4 -p1 -b .abort
-%patch5 -p1 -b .pie
 
 autoreconf -f -i
 
@@ -204,6 +202,11 @@ fi
 %{_bindir}/dbus-launch
 %{_datadir}/man/man*/dbus-launch.1.gz
 
+%files doc
+%defattr(-,root,root)
+%doc doc/introspect.dtd doc/introspect.xsl doc/system-activation.txt
+%{_datadir}/devhelp/books/dbus
+
 %files devel
 %defattr(-,root,root)
 
@@ -212,9 +215,12 @@ fi
 %{_libdir}/dbus-1.0/include/
 %{_libdir}/pkgconfig/dbus-1.pc
 %{_includedir}/*
-%{_datadir}/devhelp/books/dbus
 
 %changelog
+* Thu Jan 16 2008 John (J5) Palmieri <johnp@redhat.com> - 1.1.3-1
+- new upstream version which obsoletes a number of our patches
+- doc section added for the devhelp docs
+
 * Thu Nov 15 2007 John (J5) Palmieri <johnp@redhat.com> - 1.1.2-9
 - clean up spec file as per the merge review (#225676)
 
