@@ -7,7 +7,7 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 1.1.3
+Version: 1.1.4
 Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -217,7 +217,11 @@ fi
 %{_includedir}/*
 
 %changelog
-* Thu Jan 16 2008 John (J5) Palmieri <johnp@redhat.com> - 1.1.3-1
+* Thu Jan 17 2008 John (J5) Palmieri <johnp@redhat.com> - 1.1.4-1
+- new upstream version
+- fixes inotify patch which was consuming 100% cpu and memory
+
+* Wed Jan 16 2008 John (J5) Palmieri <johnp@redhat.com> - 1.1.3-1
 - new upstream version which obsoletes a number of our patches
 - doc section added for the devhelp docs
 
