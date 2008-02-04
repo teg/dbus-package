@@ -8,10 +8,11 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.1.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
+Source2: 00-start-message-bus.sh
 License: GPLv2+ or AFL
 Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n) 
@@ -139,6 +140,8 @@ cp doc/dbus-faq.html %{buildroot}%{_datadir}/devhelp/books/dbus
 cp doc/dbus-tutorial.html %{buildroot}%{_datadir}/devhelp/books/dbus
 cp doc/api/html/* %{buildroot}%{_datadir}/devhelp/books/dbus/api
 
+install -D -m755 %{SOURCE2} %{buildroot}%{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
+
 ## %find_lang %{gettext_package}
 
 %clean
@@ -203,6 +206,7 @@ fi
 
 %{_bindir}/dbus-launch
 %{_datadir}/man/man*/dbus-launch.1.gz
+%{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
 
 %files doc
 %defattr(-,root,root)
@@ -219,6 +223,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Mon Feb  4 2008 Ray Strode <rstrode@redhat.com> - 1.1.4-3
+- Start message bus from xinitrc.d instead of hard coding it
+at the end of Xsession
+
 * Mon Feb  4 2008 Matthias Clasen <mclasen@redhat.com> - 1.1.4-2
 - Make it build against the latest gcc/glibc
 
