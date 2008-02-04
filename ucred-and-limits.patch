@@ -1,0 +1,23 @@
+diff -up dbus-1.1.4/dbus/dbus-sysdeps-unix.c.ucred dbus-1.1.4/dbus/dbus-sysdeps-unix.c
+--- dbus-1.1.4/dbus/dbus-sysdeps-unix.c.ucred	2008-01-15 14:33:48.000000000 -0500
++++ dbus-1.1.4/dbus/dbus-sysdeps-unix.c	2008-02-04 12:02:57.000000000 -0500
+@@ -22,6 +22,8 @@
+  *
+  */
+ 
++#define _GNU_SOURCE 
++
+ #include "dbus-internals.h"
+ #include "dbus-sysdeps.h"
+ #include "dbus-sysdeps-unix.h"
+diff -up dbus-1.1.4/bus/selinux.c.ucred dbus-1.1.4/bus/selinux.c
+--- dbus-1.1.4/bus/selinux.c.ucred	2008-02-04 12:08:31.000000000 -0500
++++ dbus-1.1.4/bus/selinux.c	2008-02-04 12:07:37.000000000 -0500
+@@ -34,6 +34,7 @@
+ #ifdef HAVE_ERRNO_H
+ #include <errno.h>
+ #endif
++#include <limits.h>
+ #include <pthread.h>
+ #include <syslog.h>
+ #include <selinux/selinux.h>

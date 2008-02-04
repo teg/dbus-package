@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.1.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -38,6 +38,7 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch0: dbus-0.60-start-early.patch
 Patch1: dbus-1.0.1-generate-xml-docs.patch
+Patch2: ucred-and-limits.patch
 
 %description
 
@@ -93,6 +94,7 @@ in this separate package so server systems need not install X.
 
 %patch0 -p1 -b .start-early
 %patch1 -p1 -b .generate-xml-docs
+%patch2 -p1 -b .ucred-and-limits
 
 autoreconf -f -i
 
@@ -217,6 +219,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Mon Feb  4 2008 Matthias Clasen <mclasen@redhat.com> - 1.1.4-2
+- Make it build against the latest gcc/glibc
+
 * Thu Jan 17 2008 John (J5) Palmieri <johnp@redhat.com> - 1.1.4-1
 - new upstream version
 - fixes inotify patch which was consuming 100% cpu and memory
