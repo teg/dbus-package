@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.1.4
-Release: 5%{?dist}
+Release: 6%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -225,6 +225,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Feb 20 2008 Mamoru Tasaka <mtasaka@ioa.s.u-tokyo.ac.jp> - 1.1.4-6
+- Really rebuild against new libcap
+
 * Sun Feb 17 2008 Adam Tkac <atkac redhat com> - 1.1.4-5
 - rebuild against new libcap
 
