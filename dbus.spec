@@ -7,8 +7,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 1.1.4
-Release: 6%{?dist}
+Version: 1.1.20
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -39,8 +39,6 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch0: dbus-0.60-start-early.patch
 Patch1: dbus-1.0.1-generate-xml-docs.patch
-Patch2: ucred-and-limits.patch
-Patch3: babysitter-x.patch
 
 %description
 
@@ -96,8 +94,6 @@ in this separate package so server systems need not install X.
 
 %patch0 -p1 -b .start-early
 %patch1 -p1 -b .generate-xml-docs
-%patch2 -p1 -b .ucred-and-limits
-%patch3 -p1 -b .babysitter-x
 
 autoreconf -f -i
 
@@ -225,6 +221,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Feb 27 2008 David Zeuthen <davidz@redhat.com> - 1.1.20-1%{?dist}
+- Update to latest upstream release. Includes fix for CVE-2008-0595.
+- Drop some patches that went upstream already
+
 * Wed Feb 20 2008 Mamoru Tasaka <mtasaka@ioa.s.u-tokyo.ac.jp> - 1.1.4-6
 - Really rebuild against new libcap
 
