@@ -7,7 +7,7 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 1.1.20
+Version: 1.2.1
 Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -221,6 +221,11 @@ fi
 %{_includedir}/*
 
 %changelog
+* Fri Apr 04 2008 John (J5) Palmieri <johnp@redhat.com> - 1.2.1-1
+- update to latest upstream
+- major version change is really a maint release for 1.1.20
+  please read the NEWS file in the source for more information
+
 * Wed Feb 27 2008 David Zeuthen <davidz@redhat.com> - 1.1.20-1%{?dist}
 - Update to latest upstream release. Includes fix for CVE-2008-0595.
 - Drop some patches that went upstream already
