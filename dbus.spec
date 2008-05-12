@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.2.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -39,7 +39,6 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch0: dbus-0.60-start-early.patch
 Patch1: dbus-1.0.1-generate-xml-docs.patch
-Patch2: dbus-1.2.1-regenerate-uuid.patch
 
 %description
 
@@ -95,7 +94,6 @@ in this separate package so server systems need not install X.
 
 %patch0 -p1 -b .start-early
 %patch1 -p1 -b .generate-xml-docs
-%patch2 -p1 -b .regenerate-uuid
 
 autoreconf -f -i
 
@@ -157,11 +155,6 @@ rm -rf %{buildroot}
 %post
 /sbin/chkconfig --add messagebus 
 /sbin/chkconfig messagebus resetpriorities
-
-if [ ! -f %{_localstatedir}/lib/dbus/machine-id ]; then
-        dbus-uuidgen --ensure >& /dev/null ||:
-        touch %{_localstatedir}/lib/dbus/.regenerate-uuid
-fi
 
 %preun
 if [ $1 = 0 ]; then
@@ -229,6 +222,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Mon May 12 2008 Ray Strode <rstrode@redhat.com> - 1.2.1-3
+- drop last patch after discussion on dbus list
+
 * Mon May 12 2008 Ray Strode <rstrode@redhat.com> - 1.2.1-2
 - ensure uuid is created at post time
 
