@@ -1,0 +1,29 @@
+diff -up dbus-1.2.1/bus/Makefile.am.regenerate-uuid dbus-1.2.1/bus/Makefile.am
+diff -up dbus-1.2.1/bus/messagebus.in.regenerate-uuid dbus-1.2.1/bus/messagebus.in
+--- dbus-1.2.1/bus/messagebus.in.regenerate-uuid	2008-05-12 12:14:14.000000000 -0400
++++ dbus-1.2.1/bus/messagebus.in	2008-05-12 12:16:16.000000000 -0400
+@@ -35,6 +35,10 @@ RETVAL=0
+ start() {
+     echo -n $"Starting system message bus: "
+     if [ -x @EXPANDED_BINDIR@/dbus-uuidgen ] ; then
++        if [ -f @EXPANDED_LOCALSTATEDIR@/lib/dbus/.regenerate-uuid ]; then
++                rm -f @EXPANDED_LOCALSTATEDIR@/lib/dbus/machine-id
++                rm -f @EXPANDED_LOCALSTATEDIR@/lib/dbus/.regenerate-uuid
++        fi
+         @EXPANDED_BINDIR@/dbus-uuidgen --ensure
+     fi
+ 
+diff -up dbus-1.2.1/bus/rc.messagebus.in.regenerate-uuid dbus-1.2.1/bus/rc.messagebus.in
+--- dbus-1.2.1/bus/rc.messagebus.in.regenerate-uuid	2008-05-12 12:15:47.000000000 -0400
++++ dbus-1.2.1/bus/rc.messagebus.in	2008-05-12 12:16:14.000000000 -0400
+@@ -25,6 +25,10 @@
+ start() {
+     echo "Starting system message bus"
+     if [ -x @EXPANDED_BINDIR@/dbus-uuidgen ] ; then
++        if [ -f @EXPANDED_LOCALSTATEDIR@/lib/dbus/.regenerate-uuid ]; then
++                rm -f @EXPANDED_LOCALSTATEDIR@/lib/dbus/machine-id
++                rm -f @EXPANDED_LOCALSTATEDIR@/lib/dbus/.regenerate-uuid
++        fi
+         @EXPANDED_BINDIR@/dbus-uuidgen --ensure
+     fi
+ 
