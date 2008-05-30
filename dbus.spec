@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.2.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -39,6 +39,10 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch0: dbus-0.60-start-early.patch
 Patch1: dbus-1.0.1-generate-xml-docs.patch
+Patch2: dbus-reinit-addr-after-shutdown.patch
+Patch3: dbus-fix-guidless-conn-segfault.patch
+Patch4: dbus-compile-userdb-cache.patch
+Patch5: dbus-hold-ref-during-dispatch.patch
 
 %description
 
@@ -94,6 +98,10 @@ in this separate package so server systems need not install X.
 
 %patch0 -p1 -b .start-early
 %patch1 -p1 -b .generate-xml-docs
+%patch2 -p1 -b .reinit-addr-after-shutdown
+%patch3 -p1 -b .fix-guidless-conn-segfault
+%patch4 -p1 -b .compile-userdb-cache
+%patch5 -p1 -b .hold-ref-during-dispatch
 
 autoreconf -f -i
 
@@ -222,6 +230,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu May 29 2008 Casey Dahlin <cdahlin@redhat.com> - 1.2.1-4
+- Patches for fd.o bugs 15635, 15571, 15588, 15570
+
 * Mon May 12 2008 Ray Strode <rstrode@redhat.com> - 1.2.1-3
 - drop last patch after discussion on dbus list
 

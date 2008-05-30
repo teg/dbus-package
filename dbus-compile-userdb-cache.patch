@@ -1,0 +1,41 @@
+From ff997dd113565bb281c01b10d468e183992630df Mon Sep 17 00:00:00 2001
+From: Scott James Remnant <scott@netsplit.com>
+Date: Thu, 24 Apr 2008 16:00:16 +0100
+Subject: [PATCH] 	* dbus/dbus-userdb-util.c, dbus/dbus-userdb.c: Correct name of
+ 	macro used in #ifdef block to match that defined by configure,
+ 	otherwise the userdb cache will never be enabled.
+
+---
+ dbus/dbus-userdb-util.c |    2 +-
+ dbus/dbus-userdb.c      |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/dbus/dbus-userdb-util.c b/dbus/dbus-userdb-util.c
+index 30d5083..d03a7c7 100644
+--- a/dbus/dbus-userdb-util.c
++++ b/dbus/dbus-userdb-util.c
+@@ -223,7 +223,7 @@ _dbus_user_database_lookup_group (DBusUserDatabase *db,
+         gid = n;
+     }
+ 
+-#ifdef DBUS_ENABLE_USER_CACHE
++#ifdef DBUS_ENABLE_USERDB_CACHE
+   if (gid != DBUS_GID_UNSET)
+     info = _dbus_hash_table_lookup_ulong (db->groups, gid);
+   else
+diff --git a/dbus/dbus-userdb.c b/dbus/dbus-userdb.c
+index 0e430b2..03d263f 100644
+--- a/dbus/dbus-userdb.c
++++ b/dbus/dbus-userdb.c
+@@ -143,7 +143,7 @@ _dbus_user_database_lookup (DBusUserDatabase *db,
+         uid = n;
+     }
+ 
+-#ifdef DBUS_ENABLE_USER_CACHE  
++#ifdef DBUS_ENABLE_USERDB_CACHE  
+   if (uid != DBUS_UID_UNSET)
+     info = _dbus_hash_table_lookup_ulong (db->users, uid);
+   else
+-- 
+1.5.4.3
+
