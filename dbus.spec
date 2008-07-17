@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.2.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -43,6 +43,7 @@ Patch2: dbus-reinit-addr-after-shutdown.patch
 Patch3: dbus-fix-guidless-conn-segfault.patch
 Patch4: dbus-compile-userdb-cache.patch
 Patch5: dbus-hold-ref-during-dispatch.patch
+Patch6: dbus-1.2.1-increase-timeout.patch
 
 %description
 
@@ -102,6 +103,7 @@ in this separate package so server systems need not install X.
 %patch3 -p1 -b .fix-guidless-conn-segfault
 %patch4 -p1 -b .compile-userdb-cache
 %patch5 -p1 -b .hold-ref-during-dispatch
+%patch6 -p1 -b .increase-timeout
 
 autoreconf -f -i
 
@@ -230,6 +232,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Jul 17 2008 Casey Dahlin <cdahlin@redhat.com> - 1.2.1-5
+- Patch to increase max method timeout
+
 * Thu May 29 2008 Casey Dahlin <cdahlin@redhat.com> - 1.2.1-4
 - Patches for fd.o bugs 15635, 15571, 15588, 15570
 
