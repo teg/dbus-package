@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.2.1
-Release: 5%{?dist}
+Release: 6%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -37,13 +37,15 @@ Requires(pre): /usr/sbin/useradd
 # %postun service condrestart works.
 Conflicts: cups < 1:1.1.20-4
 
-Patch0: dbus-0.60-start-early.patch
+Patch0: start-early.patch
 Patch1: dbus-1.0.1-generate-xml-docs.patch
 Patch2: dbus-reinit-addr-after-shutdown.patch
 Patch3: dbus-fix-guidless-conn-segfault.patch
 Patch4: dbus-compile-userdb-cache.patch
 Patch5: dbus-hold-ref-during-dispatch.patch
 Patch6: dbus-1.2.1-increase-timeout.patch
+# from upstream git
+Patch7: activation-env.patch
 
 %description
 
@@ -104,6 +106,7 @@ in this separate package so server systems need not install X.
 %patch4 -p1 -b .compile-userdb-cache
 %patch5 -p1 -b .hold-ref-during-dispatch
 %patch6 -p1 -b .increase-timeout
+%patch7 -p1 -b .activation-env
 
 autoreconf -f -i
 
@@ -232,6 +235,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Fri Jul 18 2008 Matthias Clasen <mclasen@redhat.com> - 1.2.1-6
+- Add a patch from upstream git that adds a method
+  for changing the activation environment on the session bus
+
 * Thu Jul 17 2008 Casey Dahlin <cdahlin@redhat.com> - 1.2.1-5
 - Patch to increase max method timeout
 
