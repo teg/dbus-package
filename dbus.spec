@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.2.1
-Release: 6%{?dist}
+Release: 7%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -153,6 +153,8 @@ cp doc/api/html/* %{buildroot}%{_datadir}/devhelp/books/dbus/api
 
 install -D -m755 %{SOURCE2} %{buildroot}%{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
 
+mkdir -p %{buildroot}%{_datadir}/dbus-1/interfaces
+
 ## %find_lang %{gettext_package}
 
 %clean
@@ -203,6 +205,7 @@ fi
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/services
 %{_datadir}/dbus-1/system-services
+%{_datadir}/dbus-1/interfaces
 %dir /%{_lib}/dbus-1
 # See doc/system-activation.txt in source tarball for the rationale
 # behind these permissions
@@ -235,6 +238,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Jul 23 2008 Matthias Clasen <mclasen@redhat.com> - 1.2.1-7
+- Own /usr/share/dbus-1/interfaces
+
 * Fri Jul 18 2008 Matthias Clasen <mclasen@redhat.com> - 1.2.1-6
 - Add a patch from upstream git that adds a method
   for changing the activation environment on the session bus
