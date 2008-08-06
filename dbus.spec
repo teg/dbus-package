@@ -7,8 +7,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 1.2.1
-Release: 7%{?dist}
+Version: 1.2.3
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -39,13 +39,7 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch0: start-early.patch
 Patch1: dbus-1.0.1-generate-xml-docs.patch
-Patch2: dbus-reinit-addr-after-shutdown.patch
-Patch3: dbus-fix-guidless-conn-segfault.patch
-Patch4: dbus-compile-userdb-cache.patch
-Patch5: dbus-hold-ref-during-dispatch.patch
 Patch6: dbus-1.2.1-increase-timeout.patch
-# from upstream git
-Patch7: activation-env.patch
 
 %description
 
@@ -101,12 +95,7 @@ in this separate package so server systems need not install X.
 
 %patch0 -p1 -b .start-early
 %patch1 -p1 -b .generate-xml-docs
-%patch2 -p1 -b .reinit-addr-after-shutdown
-%patch3 -p1 -b .fix-guidless-conn-segfault
-%patch4 -p1 -b .compile-userdb-cache
-%patch5 -p1 -b .hold-ref-during-dispatch
 %patch6 -p1 -b .increase-timeout
-%patch7 -p1 -b .activation-env
 
 autoreconf -f -i
 
@@ -183,7 +172,7 @@ fi
 %files
 %defattr(-,root,root)
 
-%doc COPYING ChangeLog NEWS
+%doc COPYING
 
 %dir %{_sysconfdir}/dbus-1
 %config(noreplace) %{_sysconfdir}/dbus-1/*.conf
@@ -238,6 +227,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Aug 06 2008 Colin Walters <walters@redhat.com> - 1.2.3-1
+- New upstream 1.2.2
+- Drop patches that were upstreamed
+
 * Wed Jul 23 2008 Matthias Clasen <mclasen@redhat.com> - 1.2.1-7
 - Own /usr/share/dbus-1/interfaces
 
