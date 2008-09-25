@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.2.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -175,7 +175,7 @@ fi
 %doc COPYING
 
 %dir %{_sysconfdir}/dbus-1
-%config(noreplace) %{_sysconfdir}/dbus-1/*.conf
+%config %{_sysconfdir}/dbus-1/*.conf
 %{_sysconfdir}/rc.d/init.d/*
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_sysconfdir}/dbus-1/session.d
@@ -227,6 +227,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Sep 25 2008 David Zeuthen <davidz@redhat.com> - 1.2.3-2%{?dist}
+- Avoid using noreplace for files that aren't really config files
+
 * Wed Aug 06 2008 Colin Walters <walters@redhat.com> - 1.2.3-1
 - New upstream 1.2.2
 - Drop patches that were upstreamed
