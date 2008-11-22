@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.2.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -42,9 +42,8 @@ Patch1: dbus-1.0.1-generate-xml-docs.patch
 Patch6: dbus-1.2.1-increase-timeout.patch
 
 %description
-
 D-BUS is a system for sending messages between applications. It is
-used both for the systemwide message bus service, and as a
+used both for the system-wide message bus service, and as a
 per-user-login-session messaging facility.
 
 %package libs
@@ -54,7 +53,7 @@ Requires: %name = %{version}-%{release}
 Obsoletes: dbus < 1.1.2-3
 
 %description libs
-Lowlevel libraries for accessing D-BUS
+This package contains lowlevel libraries for accessing D-BUS.
 
 %package doc
 Summary: Developer documentation for D-BUS
@@ -63,18 +62,18 @@ Requires: %name = %{version}-%{release}
 Requires: devhelp
 
 %description doc 
-This package contains DevHelp developer documentation for D-Bus along with
-other supporting documentation such as the introspect dtd file
+This package contains developer documentation for D-Bus along with
+other supporting documentation such as the introspect dtd file.
 
 %package devel
-Summary: Libraries and headers for D-BUS
+Summary: Development files for D-BUS
 Group: Development/Libraries
 Requires: %name = %{version}-%{release}
 Requires: pkgconfig
 
 %description devel
-
-Headers and static libraries for D-BUS.
+This package contains libraries and header files needed for
+developing software that uses D-BUS.
 
 %package x11
 Summary: X11-requiring add-ons for D-BUS
@@ -82,7 +81,6 @@ Group: Development/Libraries
 Requires: %name = %{version}-%{release}
 
 %description x11
-
 D-BUS contains some tools that require Xlib to be installed, those are
 in this separate package so server systems need not install X.
 
@@ -227,6 +225,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Fri Nov 21 2008 Matthias Clasen <mclasen@redhat.com> - 1.2.4-2
+- Tweak descriptions
+
 * Mon Oct 06 2008 Colin Walters <walters@redhat.com> - 1.2.4-1
 - New upstream 1.2.4
 
