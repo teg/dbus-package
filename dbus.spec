@@ -7,8 +7,8 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 1.2.4
-Release: 2%{?dist}
+Version: 1.2.6
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -225,6 +225,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Fri Dec 05 2008 Colin Walters <walters@redhat.com> - 1.2.6-1
+- New upstream 1.2.6
+
 * Fri Nov 21 2008 Matthias Clasen <mclasen@redhat.com> - 1.2.4-2
 - Tweak descriptions
 
