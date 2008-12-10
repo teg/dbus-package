@@ -1,0 +1,190 @@
+From cde84d96106bd005a98d064fe392301ba1f87743 Mon Sep 17 00:00:00 2001
+From: Colin Walters <walters@verbum.org>
+Date: Wed, 10 Dec 2008 14:17:02 -0500
+Subject: [PATCH] Add syslog of security denials and configuration file reloads
+
+We need to start logging denials so that they become more easily trackable
+and debuggable.
+---
+ bus/bus.c                     |   41 +++++++++++++++++++++++++++++++----------
+ bus/main.c                    |    1 +
+ dbus/dbus-sysdeps-unix.c      |    1 -
+ dbus/dbus-sysdeps-util-unix.c |   38 ++++++++++++++++++++++++++++++++++++++
+ dbus/dbus-sysdeps.h           |    3 +++
+ 5 files changed, 73 insertions(+), 11 deletions(-)
+
+diff --git a/bus/bus.c b/bus/bus.c
+index 42cc295..8d7879a 100644
+--- a/bus/bus.c
++++ b/bus/bus.c
+@@ -834,6 +834,7 @@ bus_context_reload_config (BusContext *context,
+     }
+   ret = TRUE;
+ 
++  _dbus_log_info ("Reloaded configuration\n");
+  failed:  
+   if (parser != NULL)
+     bus_config_parser_unref (parser);
+@@ -1315,13 +1316,13 @@ bus_context_check_security_policy (BusContext     *context,
+                                          message))
+     {
+       const char *dest;
++      const char *msg = "A security policy in place prevents this sender "
++                        "from sending this message to this recipient, "
++                        "see message bus configuration file (rejected message "
++                        "had interface \"%s\" member \"%s\" error name \"%s\" destination \"%s\")";
+ 
+       dest = dbus_message_get_destination (message);
+-      dbus_set_error (error, DBUS_ERROR_ACCESS_DENIED,
+-                      "A security policy in place prevents this sender "
+-                      "from sending this message to this recipient, "
+-                      "see message bus configuration file (rejected message "
+-                      "had interface \"%s\" member \"%s\" error name \"%s\" destination \"%s\")",
++      dbus_set_error (error, DBUS_ERROR_ACCESS_DENIED, msg,
+                       dbus_message_get_interface (message) ?
+                       dbus_message_get_interface (message) : "(unset)",
+                       dbus_message_get_member (message) ?
+@@ -1329,6 +1330,15 @@ bus_context_check_security_policy (BusContext     *context,
+                       dbus_message_get_error_name (message) ?
+                       dbus_message_get_error_name (message) : "(unset)",
+                       dest ? dest : DBUS_SERVICE_DBUS);
++      /* Needs to be duplicated to avoid calling malloc and having to handle OOM */
++      _dbus_log_security (msg,
++                          dbus_message_get_interface (message) ?
++                          dbus_message_get_interface (message) : "(unset)",
++                          dbus_message_get_member (message) ?
++                          dbus_message_get_member (message) : "(unset)",
++                          dbus_message_get_error_name (message) ?
++                          dbus_message_get_error_name (message) : "(unset)",
++                          dest ? dest : DBUS_SERVICE_DBUS);
+       _dbus_verbose ("security policy disallowing message due to sender policy\n");
+       return FALSE;
+     }
+@@ -1341,14 +1351,14 @@ bus_context_check_security_policy (BusContext     *context,
+                                             addressed_recipient, proposed_recipient,
+                                             message))
+     {
++      const char *msg = "A security policy in place prevents this recipient "
++                        "from receiving this message from this sender, "
++                        "see message bus configuration file (rejected message "
++                        "had interface \"%s\" member \"%s\" error name \"%s\" destination \"%s\" reply serial %u requested_reply=%d)";
+       const char *dest;
+ 
+       dest = dbus_message_get_destination (message);
+-      dbus_set_error (error, DBUS_ERROR_ACCESS_DENIED,
+-                      "A security policy in place prevents this recipient "
+-                      "from receiving this message from this sender, "
+-                      "see message bus configuration file (rejected message "
+-                      "had interface \"%s\" member \"%s\" error name \"%s\" destination \"%s\" reply serial %u requested_reply=%d)",
++      dbus_set_error (error, DBUS_ERROR_ACCESS_DENIED, msg,
+                       dbus_message_get_interface (message) ?
+                       dbus_message_get_interface (message) : "(unset)",
+                       dbus_message_get_member (message) ?
+@@ -1358,6 +1368,17 @@ bus_context_check_security_policy (BusContext     *context,
+                       dest ? dest : DBUS_SERVICE_DBUS,
+                       dbus_message_get_reply_serial (message),
+                       requested_reply);
++      /* Needs to be duplicated to avoid calling malloc and having to handle OOM */
++      _dbus_log_security (error, DBUS_ERROR_ACCESS_DENIED, msg,
++                          dbus_message_get_interface (message) ?
++                          dbus_message_get_interface (message) : "(unset)",
++                          dbus_message_get_member (message) ?
++                          dbus_message_get_member (message) : "(unset)",
++                          dbus_message_get_error_name (message) ?
++                          dbus_message_get_error_name (message) : "(unset)",
++                          dest ? dest : DBUS_SERVICE_DBUS,
++                          dbus_message_get_reply_serial (message),
++                          requested_reply);
+       _dbus_verbose ("security policy disallowing message due to recipient policy\n");
+       return FALSE;
+     }
+diff --git a/bus/main.c b/bus/main.c
+index 51538fe..23ebb3e 100644
+--- a/bus/main.c
++++ b/bus/main.c
+@@ -178,6 +178,7 @@ handle_reload_watch (DBusWatch    *watch,
+ 		    dbus_error_has_name (&error, DBUS_ERROR_NO_MEMORY));
+       _dbus_warn ("Unable to reload configuration: %s\n",
+ 		  error.message);
++      _dbus_log_info ("Unable to reload configuration: %s\n", error.message);
+       dbus_error_free (&error);
+     }
+   return TRUE;
+diff --git a/dbus/dbus-sysdeps-unix.c b/dbus/dbus-sysdeps-unix.c
+index fb40d5a..01516a1 100644
+--- a/dbus/dbus-sysdeps-unix.c
++++ b/dbus/dbus-sysdeps-unix.c
+@@ -2786,7 +2786,6 @@ _dbus_full_duplex_pipe (int        *fd1,
+ #endif
+ }
+ 
+-
+ /**
+  * Measure the length of the given format string and arguments,
+  * not including the terminating nul.
+diff --git a/dbus/dbus-sysdeps-util-unix.c b/dbus/dbus-sysdeps-util-unix.c
+index d8718c2..0b0badd 100644
+--- a/dbus/dbus-sysdeps-util-unix.c
++++ b/dbus/dbus-sysdeps-util-unix.c
+@@ -456,6 +456,44 @@ _dbus_change_to_daemon_user  (const char    *user,
+  return FALSE;
+ }
+ 
++/**
++ * Log an informative message.  Intended for use primarily by
++ * the system bus.
++ *
++ * @param msg a printf-style format string
++ * @param args arguments for the format string
++ */
++void 
++_dbus_log_info (const char *msg, ...)
++{
++  va_list args;
++
++  va_start (args, msg);
++
++  vsyslog (LOG_DAEMON|LOG_NOTICE, msg, args);
++ 
++  va_end (args);
++}
++
++/**
++ * Log a security-related message.  Intended for use primarily by
++ * the system bus.
++ *
++ * @param msg a printf-style format string
++ * @param args arguments for the format string
++ */
++void 
++_dbus_log_security (const char *msg, ...)
++{
++  va_list args;
++
++  va_start (args, msg);
++
++  vsyslog (LOG_AUTH|LOG_NOTICE, msg, args);
++ 
++  va_end (args);
++}
++
+ /** Installs a UNIX signal handler
+  *
+  * @param sig the signal to handle
+diff --git a/dbus/dbus-sysdeps.h b/dbus/dbus-sysdeps.h
+index 469b5e5..1a67d0c 100644
+--- a/dbus/dbus-sysdeps.h
++++ b/dbus/dbus-sysdeps.h
+@@ -421,6 +421,9 @@ void _dbus_set_signal_handler (int               sig,
+ dbus_bool_t _dbus_user_at_console (const char *username,
+                                    DBusError  *error);
+ 
++void _dbus_log_info (const char *msg, ...);
++void _dbus_log_security (const char *msg, ...);
++
+ /* Define DBUS_VA_COPY() to do the right thing for copying va_list variables. 
+  * config.h may have already defined DBUS_VA_COPY as va_copy or __va_copy. 
+  */
+-- 
+1.6.0.4
+
