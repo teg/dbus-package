@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Version: 1.2.8
-Release: 3%{?dist}
+Release: 4%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -95,7 +95,7 @@ in this separate package so server systems need not install X.
 %patch0 -p1 -b .start-early
 %patch1 -p1 -b .generate-xml-docs
 %patch6 -p1 -b .increase-timeout
-%patch7 -p1 -b .syslog
+#%patch7 -p1 -b .syslog
 
 autoreconf -f -i
 
@@ -227,6 +227,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Dec 11 2008 Colin Walters <walters@redhat.com> - 1.2.8-4
+- And drop it again, needs more work
+
 * Wed Dec 10 2008 Colin Walters <walters@redhat.com> - 1.2.8-3
 - Add back working syslog patch
 
