@@ -7,8 +7,9 @@
 
 Summary: D-BUS message bus
 Name: dbus
-Version: 1.2.8
-Release: 4%{?dist}
+Epoch: 1
+Version: 1.2.4
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -30,7 +31,7 @@ BuildRequires: libxslt
 
 Requires: chkconfig >= 1.3.26
 Requires: libselinux >= %{libselinux_version}
-Requires: dbus-libs = %{version}-%{release}
+Requires: dbus-libs = %{epoch}:%{version}-%{release}
 Requires(pre): /usr/sbin/useradd
 
 # Conflict with cups prior to configuration file change, so that the
@@ -40,7 +41,6 @@ Conflicts: cups < 1:1.1.20-4
 Patch0: start-early.patch
 Patch1: dbus-1.0.1-generate-xml-docs.patch
 Patch6: dbus-1.2.1-increase-timeout.patch
-Patch7: dbus-1.2.8-syslog.patch
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -50,7 +50,7 @@ per-user-login-session messaging facility.
 %package libs
 Summary: Libraries for accessing D-BUS
 Group: Development/Libraries
-Requires: %name = %{version}-%{release}
+Requires: %name = %{epoch}:%{version}-%{release}
 Obsoletes: dbus < 1.1.2-3
 
 %description libs
@@ -59,7 +59,7 @@ This package contains lowlevel libraries for accessing D-BUS.
 %package doc
 Summary: Developer documentation for D-BUS
 Group: Documentation
-Requires: %name = %{version}-%{release}
+Requires: %name = %{epoch}:%{version}-%{release}
 Requires: devhelp
 
 %description doc 
@@ -69,7 +69,7 @@ other supporting documentation such as the introspect dtd file.
 %package devel
 Summary: Development files for D-BUS
 Group: Development/Libraries
-Requires: %name = %{version}-%{release}
+Requires: %name = %{epoch}:%{version}-%{release}
 Requires: pkgconfig
 
 %description devel
@@ -79,7 +79,7 @@ developing software that uses D-BUS.
 %package x11
 Summary: X11-requiring add-ons for D-BUS
 Group: Development/Libraries
-Requires: %name = %{version}-%{release}
+Requires: %name = %{epoch}:%{version}-%{release}
 
 %description x11
 D-BUS contains some tools that require Xlib to be installed, those are
@@ -95,7 +95,6 @@ in this separate package so server systems need not install X.
 %patch0 -p1 -b .start-early
 %patch1 -p1 -b .generate-xml-docs
 %patch6 -p1 -b .increase-timeout
-#%patch7 -p1 -b .syslog
 
 autoreconf -f -i
 
@@ -227,6 +226,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Fri Dec 12 2008 Colin Walters <walters@redhat.com> - 1:1.2.4-1
+- Revert to upstream 1.2.4, add epoch
+
 * Thu Dec 11 2008 Colin Walters <walters@redhat.com> - 1.2.8-4
 - And drop it again, needs more work
 
