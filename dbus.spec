@@ -8,8 +8,8 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.2.4
-Release: 2%{?dist}
+Version: 1.2.4.2permissive
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -226,6 +226,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Dec 18 2008 Colin Walters <walters@redhat.com> - 1:1.2.4.2.permissive-1
+- New upstream
+
 * Fri Dec 12 2008 Colin Walters <walters@redhat.com> - 1:1.2.4-2
 - Revert to upstream 1.2.4, add epoch
 
