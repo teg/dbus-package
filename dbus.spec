@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.2.4.2permissive
+Version: 1.2.4.4permissive
 Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -226,6 +226,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Jan 06 2009 Colin Walters <walters@redhat.com> - 1:1.2.4.4.permissive-1
+- New upstream
+
 * Thu Dec 18 2008 Colin Walters <walters@redhat.com> - 1:1.2.4.2.permissive-1
 - New upstream
 
