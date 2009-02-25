@@ -9,7 +9,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.2.4.4permissive
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -61,6 +61,7 @@ Summary: Developer documentation for D-BUS
 Group: Documentation
 Requires: %name = %{epoch}:%{version}-%{release}
 Requires: devhelp
+BuildArch: noarch
 
 %description doc 
 This package contains developer documentation for D-Bus along with
@@ -226,6 +227,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Feb 24 2009 Matthias Clasen <mclasen@redhat.com> - 1:1.2.4.4permissive-2
+- Make -doc noarch
+
 * Tue Feb 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.2.4.4permissive-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
