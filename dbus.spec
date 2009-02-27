@@ -9,7 +9,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.2.4.4permissive
-Release: 3%{?dist}
+Release: 4%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -215,7 +215,7 @@ fi
 %files doc
 %defattr(-,root,root)
 %doc doc/introspect.dtd doc/introspect.xsl doc/system-activation.txt
-%{_datadir}/devhelp/books/dbus
+%doc %{_datadir}/devhelp/books/dbus
 
 %files devel
 %defattr(-,root,root)
@@ -227,6 +227,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Fri Feb 27 2009 Matthias Clasen <mclasen@redhat.com> - 1:1.2.4.4permissive-4
+- Mark -doc content as %%doc
+
 * Tue Feb 24 2009 Matthias Clasen <mclasen@redhat.com> - 1:1.2.4.4permissive-2
 - Make -doc noarch
 
