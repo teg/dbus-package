@@ -8,8 +8,8 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.2.4.4permissive
-Release: 4%{?dist}
+Version: 1.2.12
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -227,6 +227,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Mar 12 2009 Colin Walters <walters@verbum.org> - 1:1.2.12-1
+- Switch to non-permissive branch:
+  http://fedoraproject.org/wiki/Features/DBusPolicy
+
 * Fri Feb 27 2009 Matthias Clasen <mclasen@redhat.com> - 1:1.2.4.4permissive-4
 - Mark -doc content as %%doc
 
