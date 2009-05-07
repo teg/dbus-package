@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.2.12
+Version: 1.2.14
 Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -227,6 +227,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Apr 22 2009 Colin Walters <walters@verbum.org> - 1:1.2.14-1
+- CVE-2009-1189
+  * Update to 1.2.14
+
 * Thu Mar 12 2009 Colin Walters <walters@verbum.org> - 1:1.2.12-1
 - Switch to non-permissive branch:
   http://fedoraproject.org/wiki/Features/DBusPolicy
