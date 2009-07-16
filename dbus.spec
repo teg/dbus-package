@@ -8,8 +8,8 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.2.14
-Release: 2%{?dist}
+Version: 1.2.16
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -40,9 +40,6 @@ Conflicts: cups < 1:1.1.20-4
 
 Patch0: start-early.patch
 Patch1: dbus-1.0.1-generate-xml-docs.patch
-Patch6: dbus-1.2.1-increase-timeout.patch
-# https://bugs.freedesktop.org/show_bug.cgi?id=22516
-Patch7: dbus-inotify-fd-leak.patch
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -97,8 +94,6 @@ in this separate package so server systems need not install X.
 
 %patch0 -p1 -b .start-early
 %patch1 -p1 -b .generate-xml-docs
-%patch6 -p1 -b .increase-timeout
-%patch7 -p1 -b .inotify-fd-leak
 
 autoreconf -f -i
 
@@ -230,6 +225,12 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Jul 14 2009 Colin Walters <walters@redhat.com> - 1:1.2.16-1
+- Upstream 1.2.16
+- Remove inotify patch, now upstreamed
+- Remove timeout patch, obsolete with upstream change to infinite
+  timeout maximum by default
+
 * Sat Jun 27 2009 Matthias Clasen <mclasen@redhat.com> - 1:1.2.14-2
 - Don't leak inotify fd (#505338)
 
