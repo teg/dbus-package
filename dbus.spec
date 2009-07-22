@@ -9,7 +9,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.2.16
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -148,8 +148,9 @@ mkdir -p %{buildroot}%{_datadir}/dbus-1/interfaces
 rm -rf %{buildroot}
 
 %pre
-# Add the "dbus" user
-/usr/sbin/useradd -c 'System message bus' -u %{dbus_user_uid} \
+# Add the "dbus" user and group
+/usr/sbin/groupadd -r -g %{dbus_user_uid} dbus 2>/dev/null || :
+/usr/sbin/useradd -c 'System message bus' -u %{dbus_user_uid} -g %{dbus_user_uid} -U \
 	-s /sbin/nologin -r -d '/' dbus 2> /dev/null || :
 
 %post libs -p /sbin/ldconfig
@@ -225,6 +226,11 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Jul 22 2009 Colin Walters <walters@redhat.com> - 1:1.2.16-2
+- Explicitly add a dbus group id, fixes dbus files getting a
+  random group id in cases where the RPM install order varies.
+  Fixes https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=458183
+
 * Tue Jul 14 2009 Colin Walters <walters@redhat.com> - 1:1.2.16-1
 - Upstream 1.2.16
 - Remove inotify patch, now upstreamed
