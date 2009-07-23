@@ -9,7 +9,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.2.16
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -150,7 +150,7 @@ rm -rf %{buildroot}
 %pre
 # Add the "dbus" user and group
 /usr/sbin/groupadd -r -g %{dbus_user_uid} dbus 2>/dev/null || :
-/usr/sbin/useradd -c 'System message bus' -u %{dbus_user_uid} -g %{dbus_user_uid} -U \
+/usr/sbin/useradd -c 'System message bus' -u %{dbus_user_uid} -g %{dbus_user_uid} \
 	-s /sbin/nologin -r -d '/' dbus 2> /dev/null || :
 
 %post libs -p /sbin/ldconfig
@@ -226,6 +226,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Jul 23 2009 Colin Walters <walters@redhat.co> - 1:1.2.16-3
+- Remove conflicting -U option to useradd
+
 * Wed Jul 22 2009 Colin Walters <walters@redhat.com> - 1:1.2.16-2
 - Explicitly add a dbus group id, fixes dbus files getting a
   random group id in cases where the RPM install order varies.
