@@ -10,7 +10,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.2.16
-Release: 10%{?dist}
+Release: 11%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
@@ -74,7 +74,6 @@ per-user-login-session messaging facility.
 %package libs
 Summary: Libraries for accessing D-BUS
 Group: Development/Libraries
-Requires: %name = %{epoch}:%{version}-%{release}
 Obsoletes: dbus < 1.1.2-3
 
 %description libs
@@ -262,6 +261,16 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Jan 21 2010 Colin Walters <walters@verbum.org> - 1:1.2.16-11
+- Drop dbus-libs requiring dbus; this was unnecessary for programs
+  which happened to speak the dbus protocol but don't require
+  the daemon.
+  Note that libdbus does support autolaunching dbus-daemon in
+  the session as an emergency fallback for legacy situations; however,
+  these cases were likely to have dbus installed already (via comps).
+  If they don't, well one turned to the wrong page in the choose your
+  own adventure book.
+  
 * Tue Jan 12 2010 Matthias Clasen <mclasen@redhat.com> - 1:1.2.16-10
 - Don't link libdub against libcap-ng
 
