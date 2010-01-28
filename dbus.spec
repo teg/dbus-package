@@ -44,17 +44,17 @@ Conflicts: cups < 1:1.1.20-4
 Patch0: start-early.patch
 Patch1: dbus-1.0.1-generate-xml-docs.patch
 
-# from upstream
+# http://bugs.freedesktop.org/24254
 Patch2: fix-timeout-accounting.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=518541
 Patch3: dbus-1.2.16-capability.patch
 
 # https://bugzilla.redhat.com/show_bug.cgi?id=545267
-# http://bugs.freedesktop.org/25642
+# http://bugs.freedesktop.org/25697
 Patch4: fix-reload-leak.patch
 
-# http://bugs.freedesktop.org/25697
+# http://bugs.freedesktop.org/25642
 Patch5: fix-daemon-activation.patch
 
 # http://bugs.freedesktop.org/24350
