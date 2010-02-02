@@ -9,14 +9,12 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.2.16
-Release: 11%{?dist}
+Version: 1.2.18
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
 Source2: 00-start-message-bus.sh
-Source3: diagram.png
-Source4: diagram.svg
 License: GPLv2+ or AFL
 Group: System Environment/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -41,30 +39,10 @@ Requires(pre): /usr/sbin/useradd
 # %postun service condrestart works.
 Conflicts: cups < 1:1.1.20-4
 
-Patch0: start-early.patch
+# FIXME this should be upstreamed; need --daemon-bindir=/bin and --bindir=/usr/bin or something?
+Patch0: bindir.patch
+# Not sure about this one
 Patch1: dbus-1.0.1-generate-xml-docs.patch
-
-# http://bugs.freedesktop.org/24254
-Patch2: fix-timeout-accounting.patch
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=518541
-Patch3: dbus-1.2.16-capability.patch
-
-# https://bugzilla.redhat.com/show_bug.cgi?id=545267
-# http://bugs.freedesktop.org/25697
-Patch4: fix-reload-leak.patch
-
-# http://bugs.freedesktop.org/25642
-Patch5: fix-daemon-activation.patch
-
-# http://bugs.freedesktop.org/24350
-Patch6: keep-pending-activations.patch
-
-# http://bugs.freedesktop.org/21597
-Patch7: fix-reload-race.patch
-
-# http://bugs.freedesktop.org/show_bug.cgi?id=26018
-Patch8: dbus-libcap.patch
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -116,15 +94,8 @@ in this separate package so server systems need not install X.
 # Make sure they are not
 /bin/chmod 0644 COPYING ChangeLog NEWS
 
-%patch0 -p1 -b .start-early
+%patch0 -p1 -b .bindir
 %patch1 -p1 -b .generate-xml-docs
-%patch2 -p1 -b .fix-timeout-accounting
-%patch3 -p1 -b .capability
-%patch4 -p1 -b .fix-reload-leak
-%patch5 -p1 -b .fix-daemon-activation
-%patch6 -p1 -b .keep-pending-activations
-%patch7 -p1 -b .fix-reload-race
-%patch8 -p1 -b .dbus-libcap
 
 autoreconf -f -i
 
@@ -160,6 +131,7 @@ rm -rf %{buildroot}/%{_lib}/dbus-1.0
 rm -f %{buildroot}/%{_lib}/*.a
 rm -f %{buildroot}/%{_lib}/*.la
 
+# FIXME put all this goo upstream in make install
 mkdir -p %{buildroot}%{_datadir}/devhelp/books/dbus
 mkdir -p %{buildroot}%{_datadir}/devhelp/books/dbus/api
 
@@ -168,10 +140,8 @@ cp doc/dbus-specification.html %{buildroot}%{_datadir}/devhelp/books/dbus
 cp doc/dbus-faq.html %{buildroot}%{_datadir}/devhelp/books/dbus
 cp doc/dbus-tutorial.html %{buildroot}%{_datadir}/devhelp/books/dbus
 cp doc/api/html/* %{buildroot}%{_datadir}/devhelp/books/dbus/api
-
-# missing diagrams
-cp %{SOURCE3} %{buildroot}%{_datadir}/devhelp/books/dbus
-cp %{SOURCE4} %{buildroot}%{_datadir}/devhelp/books/dbus
+cp doc/diagram.png %{buildroot}%{_datadir}/devhelp/books/dbus
+cp doc/diagram.svg %{buildroot}%{_datadir}/devhelp/books/dbus
 
 install -D -m755 %{SOURCE2} %{buildroot}%{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
 
@@ -261,6 +231,13 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Feb 02 2010 Colin Walters <walters@verbum.org> - 1:1.2.18-1
+- New upstream release
+  Drop all upstreamed patches.
+- start-early.patch had both bindir changes and start-early; the
+  latter was upstreamed, so start-early is now bindir.patch.
+  Ideally later get this partial-bindir stuff upstream.
+
 * Thu Jan 21 2010 Colin Walters <walters@verbum.org> - 1:1.2.16-11
 - Drop dbus-libs requiring dbus; this was unnecessary for programs
   which happened to speak the dbus protocol but don't require
