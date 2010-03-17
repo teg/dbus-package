@@ -9,7 +9,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.2.20
+Version: 1.2.22
 Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus#dbus-1.2
@@ -232,6 +232,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Mar 17 2010 Colin Walters <walters@verbum.org> - 1:1.2.22-1
+- New upstream release
+
 * Wed Feb 03 2010 Colin Walters <walters@verbum.org> - 1:1.2.20-1
 - New upstream release
 - Actually add start-early.patch
