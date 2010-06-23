@@ -9,7 +9,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.2.24
+Version: 1.3.1
 Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus#dbus-1.2
@@ -232,6 +232,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Jun 23 2010 Lennart Poettering <lpoetter@redhat.com> - 1:1.3.1-1
+- New upstream release
+
 * Wed Mar 24 2010 Colin Walters <walters@verbum.org> - 1:1.2.24-1
 - New upstream release
 - Drop upstreamed patch
