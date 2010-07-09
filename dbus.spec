@@ -6,14 +6,16 @@
 %define dbus_user_uid           81
 %define _default_patch_fuzz     999
 
+%define githash .885483
+
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.3.1
-Release: 1%{?dist}
+Version: 1.3.2
+Release: 0.0%{?githash}%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
-Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
+Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}%{?githash}.tar.gz
 Source1: doxygen_to_devhelp.xsl
 Source2: 00-start-message-bus.sh
 License: GPLv2+ or AFL
@@ -34,6 +36,7 @@ BuildRequires: libxslt
 Requires: chkconfig >= 1.3.26
 Requires: libselinux >= %{libselinux_version}
 Requires: dbus-libs = %{epoch}:%{version}-%{release}
+Requires: systemd-units
 Requires(pre): /usr/sbin/useradd
 
 # Conflict with cups prior to configuration file change, so that the
@@ -89,7 +92,7 @@ D-BUS contains some tools that require Xlib to be installed, those are
 in this separate package so server systems need not install X.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}
 
 # For some reason upstream ships these files as executable
 # Make sure they are not
@@ -105,7 +108,7 @@ COMMON_ARGS="--enable-libaudit --enable-selinux=yes --with-init-scripts=redhat -
 
 # leave verbose mode so people can debug their apps but make sure to
 # turn it off on stable releases with --disable-verbose-mode
-%configure $COMMON_ARGS --disable-tests --disable-asserts --enable-doxygen-docs --enable-xml-docs
+%configure $COMMON_ARGS --disable-tests --disable-asserts --enable-doxygen-docs --enable-xml-docs --with-systemdsystemunitdir=/lib/systemd/system/
 make
 
 doxygen Doxyfile
@@ -148,6 +151,11 @@ install -D -m755 %{SOURCE2} %{buildroot}%{_sysconfdir}/X11/xinit/xinitrc.d/00-st
 
 mkdir -p %{buildroot}%{_datadir}/dbus-1/interfaces
 
+# Make sure that when somebody asks for D-Bus under the name of the
+# old SysV script, that he ends up with the standard dbus.service name
+# now.
+ln -s dbus.service %{buildroot}/lib/systemd/system/messagebus.service
+
 ## %find_lang %{gettext_package}
 
 %clean
@@ -164,11 +172,13 @@ rm -rf %{buildroot}
 %post
 /sbin/chkconfig --add messagebus
 /sbin/chkconfig messagebus resetpriorities
+/usr/bin/systemd-install --realize=reload enable dbus.service >/dev/null 2>&1 || :
 
 %preun
 if [ $1 = 0 ]; then
     /sbin/service messagebus stop
     /sbin/chkconfig --del messagebus
+    /usr/bin/systemd-install --realize=reload disable dbus.service >/dev/null 2>&1 || :
 fi
 
 %postun libs -p /sbin/ldconfig
@@ -204,7 +214,10 @@ fi
 # See doc/system-activation.txt in source tarball for the rationale
 # behind these permissions
 %attr(4750,root,dbus) /%{_lib}/dbus-1/dbus-daemon-launch-helper
-
+/lib/systemd/system/dbus.service
+/lib/systemd/system/dbus.socket
+/lib/systemd/system/dbus.target.wants/dbus.socket
+/lib/systemd/system/messagebus.service
 
 %files libs
 %defattr(-,root,root,-)
@@ -232,6 +245,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Jul 9 2010 Lennart Poettering <lpoetter@redhat.com> - 1:1.3.2-0.0.885483
+- git Snapshot with systemd activation
+
 * Wed Jun 23 2010 Lennart Poettering <lpoetter@redhat.com> - 1:1.3.1-1
 - New upstream release
 
@@ -265,7 +281,7 @@ fi
   these cases were likely to have dbus installed already (via comps).
   If they don't, well one turned to the wrong page in the choose your
   own adventure book.
-  
+
 * Tue Jan 12 2010 Matthias Clasen <mclasen@redhat.com> - 1:1.2.16-10
 - Don't link libdub against libcap-ng
 
@@ -428,8 +444,8 @@ at the end of Xsession
 
 * Fri Sep 14 2007 Dan Walsh <dwalsh@redhat.com> - 1.1.2-5%{?dist}
 - Reverse we_were_root check to setpcap if we were root.  Also only init
-audit if we were root.  So error dbus message will not show up when policy 
-reload happens.  dbus -session will no longer try to send audit message, 
+audit if we were root.  So error dbus message will not show up when policy
+reload happens.  dbus -session will no longer try to send audit message,
 only system will.
 
 * Tue Aug 28 2007 David Zeuthen <davidz@redhat.com> - 1.1.2-4%{?dist}
@@ -441,7 +457,7 @@ only system will.
 
 * Wed Aug 01 2007 David Zeuthen <davidz@redhat.com> - 1.1.2-2%{?dist}
 - Move system bus activation helper to /{lib,lib64}/dbus-1. Also set
-  the correct mode and permissions. 
+  the correct mode and permissions.
 - Own the directory /usr/share/dbus-1/system-services
 - Delete the diretory /{lib,lib64}/dbus-1.0 as it's not used
 - Pass 'dbus' instead of 81 as --with-dbus-user; otherwise the setuid
@@ -487,7 +503,7 @@ only system will.
 
 * Mon Nov 20 2006 Ray Strode <rstrode@redhat.com> - 1.0.1-1
 - Update to 1.0.1
-- Apply patch from Thiago Macieira <thiago@kde.org> to 
+- Apply patch from Thiago Macieira <thiago@kde.org> to
   fix failed assertion in threading implementation
 - Drop some crazy looking build time speed optimization
 
@@ -525,7 +541,7 @@ only system will.
 - Only audit on the system bus
 
 * Fri Aug 18 2006 John (J5) Palmieri <johnp@redhat.com> - 0.92-1
-- Update to 0.92 
+- Update to 0.92
 - remove old patches
 
 * Thu Jul 22 2006 John (J5) Palmieri <johnp@redhat.com> - 0.90-8
@@ -566,7 +582,7 @@ only system will.
 * Tue Jun  6 2006 Matthias Clasen <mclasen@redhat.com> 0.61-6
 - Rebuild
 
-* Wed May 17 2006 Karsten Hopp <karsten@redhat.de> 0.61-5.2 
+* Wed May 17 2006 Karsten Hopp <karsten@redhat.de> 0.61-5.2
 - add buildrequires libICE-devel, libSM-devel, libcap-devel
 - change buildrequires form libX11 to libX11-devel
 
@@ -700,7 +716,7 @@ uint16's in the python bindings
 * Wed Mar 23 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-4
 - Pyrex has been patched to generate gcc4.0 complient code
 - Rebuild for gcc4.0
- 
+
 * Wed Mar 16 2005 John (J5) Palmieri <johnp@redhat.com> - 0.31-3
 - change compat-gcc requirement to compat-gcc-32
 - rebuild with gcc 3.2
@@ -729,8 +745,8 @@ uint16's in the python bindings
 
 * Fri Jan 21 2005 John (J5) Palmieri <johnp@redhat.com> - 0.23-1
 - Update to upstream version 0.23
-- Drop all patches except for the UDI patch as they have been 
-  integrated upstream 
+- Drop all patches except for the UDI patch as they have been
+  integrated upstream
 - List of API changes:
       * add setgroups() to drop supplementary groups
       * removed dbus_bug_get_with_g_main since it's been replaced by dbus_g_bus_get
@@ -742,7 +758,7 @@ uint16's in the python bindings
 
 * Tue Nov 02 2004 John (J5) Palmieri <johnp@redhat.com>
 - Add a requires for glib2-devel in the devel package
-- Add SE-Linux backport from Colin Walters that fixes 
+- Add SE-Linux backport from Colin Walters that fixes
   messages getting lost in SE-Linux contexts
 
 * Wed Oct 13 2004 John (J5) Palmieri <johnp@redhat.com>
@@ -758,7 +774,7 @@ uint16's in the python bindings
 
 * Wed Sep 22 2004 John (J5) Palmieri <johnp@redhat.com>
 - Adding patch to move /usr/lib/dbus-1.0/services to
-  /usr/share/dbus-1.0/services 
+  /usr/share/dbus-1.0/services
 
 * Thu Sep 16 2004 John (J5) Palmieri <johnp@redhat.com>
 - reverting BuildRequires: redhat-release because of issues with build system
@@ -786,7 +802,7 @@ uint16's in the python bindings
 * Thu Aug 12 2004 John (J5) Palmieri <johnp@redhat.com>
 - Update to new 0.22 release
 
-* Thu Aug 05 2004 John (J5) Palmieri <johnp@redhat.com> 
+* Thu Aug 05 2004 John (J5) Palmieri <johnp@redhat.com>
 - Added BuildRequires for libselinux-devel and Requires for libselinux
 
 * Tue Aug 02 2004 Colin Walters <walters@redhat.com>
@@ -799,7 +815,7 @@ uint16's in the python bindings
 * Fri Jul 30 2004 John (J5) Palmieri <johnp@redhat.com>
 - Updated console-auth patch
 - rebuild
- 
+
 * Thu Jul 22 2004 John (J5) Palmieri <johnp@redhat.com>
 - Update to upstream CVS build
 - Added console-auth patch
@@ -817,9 +833,9 @@ uint16's in the python bindings
 - rebuilt
 
 * Fri Jun 04 2004 John (J5) Palmieri <johnp@redhat.com>
-- Moved dbus-viewer, dbus-monitor and dbus-glib-tool 
+- Moved dbus-viewer, dbus-monitor and dbus-glib-tool
   into the dbus-glib package so that the main dbus
-  package does not depend on glib (Bug #125285) 
+  package does not depend on glib (Bug #125285)
 
 * Thu Jun 03 2004 John (J5) Palmieri <johnp@redhat.com>
 - rebuilt
@@ -827,7 +843,7 @@ uint16's in the python bindings
 * Thu May 27 2004 John (J5) Palmieri <johnp@redhat.com>
 - added my Python patch
 - took out the qt build requires
-- added a gtk+ build requires 
+- added a gtk+ build requires
 
 * Fri Apr 23 2004 John (J5) Palmieri <johnp@redhat.com>
 - Changed build requirement to version 0.9-3 of Pyrex
@@ -912,7 +928,7 @@ uint16's in the python bindings
 - update from CVS with a fix to set uid after gid
 
 * Tue Apr  1 2003 Havoc Pennington <hp@redhat.com> 0.6.93-1
-- new cvs snap that actually forks to background and changes 
+- new cvs snap that actually forks to background and changes
   user it's running as and so forth
 - create our system user in pre
 
@@ -926,4 +942,3 @@ uint16's in the python bindings
 
 * Mon Mar 31 2003 Havoc Pennington <hp@redhat.com> 0.6.90-1
 - initial build
-
