@@ -12,7 +12,7 @@ Epoch: 1
 Version: 1.3.1
 Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
-#VCS: git:git://git.freedesktop.org/git/dbus/dbus#dbus-1.2
+#VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
 Source2: 00-start-message-bus.sh
