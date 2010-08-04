@@ -12,7 +12,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.3.2
-Release: 0.0%{?githash}%{?dist}
+Release: 0.1%{?githash}%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}%{?githash}.tar.gz
@@ -172,17 +172,19 @@ rm -rf %{buildroot}
 %post
 /sbin/chkconfig --add messagebus
 /sbin/chkconfig messagebus resetpriorities
-/usr/bin/systemd-install --realize=reload enable dbus.service >/dev/null 2>&1 || :
+
+# D-Bus should always be started, since systemd needs it. Hence we
+# enable it even on upgrades, not only on new installations
+/bin/systemctl enable dbus.service >/dev/null 2>&1 || :
 
 %preun
 if [ $1 = 0 ]; then
     /sbin/service messagebus stop
     /sbin/chkconfig --del messagebus
-    /usr/bin/systemd-install --realize=reload disable dbus.service >/dev/null 2>&1 || :
+    /bin/systemctl disable dbus.service >/dev/null 2>&1 || :
 fi
 
 %postun libs -p /sbin/ldconfig
-
 
 %files
 %defattr(-,root,root)
@@ -245,6 +247,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Jul 29 2010 Lennart Poettering <lpoetter@redhat.com> - 1:1.3.2-0.1.885483%{?dist}
+- Conversion from systemd-install to systemctl
+
 * Wed Jul 9 2010 Lennart Poettering <lpoetter@redhat.com> - 1:1.3.2-0.0.885483
 - git Snapshot with systemd activation
 
