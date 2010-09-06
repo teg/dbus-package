@@ -6,16 +6,14 @@
 %define dbus_user_uid           81
 %define _default_patch_fuzz     999
 
-%define githash .885483
-
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.3.2
-Release: 0.1%{?githash}%{?dist}
+Version: 1.4.0
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
-Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}%{?githash}.tar.gz
+Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
 Source1: doxygen_to_devhelp.xsl
 Source2: 00-start-message-bus.sh
 License: GPLv2+ or AFL
@@ -173,15 +171,10 @@ rm -rf %{buildroot}
 /sbin/chkconfig --add messagebus
 /sbin/chkconfig messagebus resetpriorities
 
-# D-Bus should always be started, since systemd needs it. Hence we
-# enable it even on upgrades, not only on new installations
-/bin/systemctl enable dbus.service >/dev/null 2>&1 || :
-
 %preun
 if [ $1 = 0 ]; then
     /sbin/service messagebus stop
     /sbin/chkconfig --del messagebus
-    /bin/systemctl disable dbus.service >/dev/null 2>&1 || :
 fi
 
 %postun libs -p /sbin/ldconfig
@@ -220,6 +213,8 @@ fi
 /lib/systemd/system/dbus.socket
 /lib/systemd/system/dbus.target.wants/dbus.socket
 /lib/systemd/system/messagebus.service
+/lib/systemd/system/multi-user.target.wants/dbus.service
+/lib/systemd/system/sockets.target.wants/dbus.socket
 
 %files libs
 %defattr(-,root,root,-)
@@ -247,6 +242,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Mon Sep  6 2010 Lennart Poettering <lpoetter@redhat.com> - 1:1.4.0-1
+- New upstream release
+
 * Thu Jul 29 2010 Lennart Poettering <lpoetter@redhat.com> - 1:1.3.2-0.1.885483%{?dist}
 - Conversion from systemd-install to systemctl
 
