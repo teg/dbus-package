@@ -10,7 +10,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.4.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -189,7 +189,7 @@ fi
 %{_sysconfdir}/rc.d/init.d/*
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_sysconfdir}/dbus-1/session.d
-%dir %{_localstatedir}/run/dbus
+%ghost %dir %{_localstatedir}/run/dbus
 %dir %{_localstatedir}/lib/dbus/
 /bin/dbus-daemon
 /bin/dbus-send
@@ -242,6 +242,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Fri Jan 28 2011 Matthias Clasen <mclasen@redhat.com> - 1:1.4.0-2
+- %%ghost /var/run content (#656571)
+
 * Mon Sep  6 2010 Lennart Poettering <lpoetter@redhat.com> - 1:1.4.0-1
 - New upstream release
 
