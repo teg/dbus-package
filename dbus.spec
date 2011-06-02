@@ -9,12 +9,11 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.4.0
-Release: 3%{?dist}
+Version: 1.4.10
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
-Source1: doxygen_to_devhelp.xsl
 Source2: 00-start-message-bus.sh
 License: GPLv2+ or AFL
 Group: System Environment/Libraries
@@ -43,8 +42,6 @@ Conflicts: cups < 1:1.1.20-4
 
 # FIXME this should be upstreamed; need --daemon-bindir=/bin and --bindir=/usr/bin or something?
 Patch0: bindir.patch
-# Not sure about this one
-Patch1: dbus-1.0.1-generate-xml-docs.patch
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -63,7 +60,6 @@ This package contains lowlevel libraries for accessing D-BUS.
 Summary: Developer documentation for D-BUS
 Group: Documentation
 Requires: %name = %{epoch}:%{version}-%{release}
-Requires: devhelp
 BuildArch: noarch
 
 %description doc
@@ -97,7 +93,6 @@ in this separate package so server systems need not install X.
 /bin/chmod 0644 COPYING ChangeLog NEWS
 
 %patch0 -p1 -b .bindir
-%patch1 -p1 -b .generate-xml-docs
 
 autoreconf -f -i
 
@@ -108,10 +103,6 @@ COMMON_ARGS="--enable-libaudit --enable-selinux=yes --with-init-scripts=redhat -
 # turn it off on stable releases with --disable-verbose-mode
 %configure $COMMON_ARGS --disable-tests --disable-asserts --enable-doxygen-docs --enable-xml-docs --with-systemdsystemunitdir=/lib/systemd/system/
 make
-
-doxygen Doxyfile
-
-xsltproc -o dbus.devhelp %{SOURCE1} doc/api/xml/index.xml
 
 %install
 rm -rf %{buildroot}
@@ -132,18 +123,6 @@ rm -rf %{buildroot}/%{_lib}/dbus-1.0
 
 rm -f %{buildroot}/%{_lib}/*.a
 rm -f %{buildroot}/%{_lib}/*.la
-
-# FIXME put all this goo upstream in make install
-mkdir -p %{buildroot}%{_datadir}/devhelp/books/dbus
-mkdir -p %{buildroot}%{_datadir}/devhelp/books/dbus/api
-
-cp dbus.devhelp %{buildroot}%{_datadir}/devhelp/books/dbus
-cp doc/dbus-specification.html %{buildroot}%{_datadir}/devhelp/books/dbus
-cp doc/dbus-faq.html %{buildroot}%{_datadir}/devhelp/books/dbus
-cp doc/dbus-tutorial.html %{buildroot}%{_datadir}/devhelp/books/dbus
-cp doc/api/html/* %{buildroot}%{_datadir}/devhelp/books/dbus/api
-cp doc/diagram.png %{buildroot}%{_datadir}/devhelp/books/dbus
-cp doc/diagram.svg %{buildroot}%{_datadir}/devhelp/books/dbus
 
 install -D -m755 %{SOURCE2} %{buildroot}%{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
 
@@ -230,7 +209,7 @@ fi
 %files doc
 %defattr(-,root,root)
 %doc doc/introspect.dtd doc/introspect.xsl doc/system-activation.txt
-%doc %{_datadir}/devhelp/books/dbus
+%doc %{_datadir}/doc/dbus/api
 
 %files devel
 %defattr(-,root,root)
@@ -242,6 +221,12 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Jun  2 2011 Colin Walters <walters@verbum.org> - 1:1.4.10-1
+- New upstream version
+- Drop XML docs patch which is now upstream
+- Drop devhelp stuff; people should be using GDBus now.  If you
+  don't, the raw doxygen is fine.
+
 * Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.4.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
