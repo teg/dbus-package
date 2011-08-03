@@ -10,7 +10,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.4.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -29,11 +29,12 @@ BuildRequires: gettext
 BuildRequires: doxygen
 BuildRequires: xmlto
 BuildRequires: libxslt
-
-Requires: chkconfig >= 1.3.26
+BuildRequires:  systemd-units
+Requires(post): systemd-units systemd-sysv chkconfig 
+Requires(preun): systemd-units
+Requires(postun): systemd-units 
 Requires: libselinux >= %{libselinux_version}
 Requires: dbus-libs = %{epoch}:%{version}-%{release}
-Requires: systemd-units
 Requires(pre): /usr/sbin/useradd
 
 # Conflict with cups prior to configuration file change, so that the
@@ -134,6 +135,9 @@ mkdir -p %{buildroot}%{_datadir}/dbus-1/interfaces
 ln -s dbus.service %{buildroot}/lib/systemd/system/messagebus.service
 
 ## %find_lang %{gettext_package}
+# Delete the old legacy sysv init script
+rm -rf %{buildroot}%{_initrddir}
+
 
 %clean
 rm -rf %{buildroot}
@@ -146,17 +150,30 @@ rm -rf %{buildroot}
 
 %post libs -p /sbin/ldconfig
 
-%post
-/sbin/chkconfig --add messagebus
-/sbin/chkconfig messagebus resetpriorities
+%post 
+if [ $1 -eq 1 ] ; then
+    /bin/systemctl enable dbus.service >/dev/null 2>&1 || :
+fi
 
-%preun
+%preun 
 if [ $1 = 0 ]; then
-    /sbin/service messagebus stop
-    /sbin/chkconfig --del messagebus
+  /bin/systemctl --no-reload dbus.service > /dev/null 2>&1 || :
+  /bin/systemctl stop dbus.service > /dev/null 2>&1 || :
 fi
 
 %postun libs -p /sbin/ldconfig
+%postun
+/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+if [ $1 -ge 1 ] ; then
+    /bin/systemctl try-restart dbus.service >/dev/null 2>&1 || :
+fi
+
+%triggerun -- dbus < 1.4.10-2
+%{_bindir}/systemd-sysv-convert --save messagebus >/dev/null 2>&1 ||:
+/bin/systemctl enable dbus.service >/dev/null 2>&1
+/sbin/chkconfig --del messagebus >/dev/null 2>&1 || :
+/bin/systemctl try-restart dbus.service >/dev/null 2>&1 || :
+
 
 %files
 %defattr(-,root,root)
@@ -165,7 +182,6 @@ fi
 
 %dir %{_sysconfdir}/dbus-1
 %config %{_sysconfdir}/dbus-1/*.conf
-%{_sysconfdir}/rc.d/init.d/*
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_sysconfdir}/dbus-1/session.d
 %ghost %dir %{_localstatedir}/run/dbus
@@ -221,6 +237,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Aug 03 2011 David Zeuthen <davidz@redhat.com> - 1:1.4.10-2
+- Drop SysV support, #697523 (from Jóhann B. Guðmundsson <johannbg@gmail.com>)
+
 * Thu Jun  2 2011 Colin Walters <walters@verbum.org> - 1:1.4.10-1
 - New upstream version
 - Drop XML docs patch which is now upstream
