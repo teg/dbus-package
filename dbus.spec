@@ -10,7 +10,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.4.10
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -30,9 +30,9 @@ BuildRequires: doxygen
 BuildRequires: xmlto
 BuildRequires: libxslt
 BuildRequires:  systemd-units
-Requires(post): systemd-units systemd-sysv chkconfig 
+Requires(post): systemd-units systemd-sysv chkconfig
 Requires(preun): systemd-units
-Requires(postun): systemd-units 
+Requires(postun): systemd-units
 Requires: libselinux >= %{libselinux_version}
 Requires: dbus-libs = %{epoch}:%{version}-%{release}
 Requires(pre): /usr/sbin/useradd
@@ -150,30 +150,19 @@ rm -rf %{buildroot}
 
 %post libs -p /sbin/ldconfig
 
-%post 
-if [ $1 -eq 1 ] ; then
-    /bin/systemctl enable dbus.service >/dev/null 2>&1 || :
-fi
-
-%preun 
+%preun
 if [ $1 = 0 ]; then
-  /bin/systemctl --no-reload dbus.service > /dev/null 2>&1 || :
-  /bin/systemctl stop dbus.service > /dev/null 2>&1 || :
+  /bin/systemctl stop dbus.service dbus.socket > /dev/null 2>&1 || :
 fi
 
 %postun libs -p /sbin/ldconfig
+
 %postun
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
-if [ $1 -ge 1 ] ; then
-    /bin/systemctl try-restart dbus.service >/dev/null 2>&1 || :
-fi
 
 %triggerun -- dbus < 1.4.10-2
 %{_bindir}/systemd-sysv-convert --save messagebus >/dev/null 2>&1 ||:
-/bin/systemctl enable dbus.service >/dev/null 2>&1
 /sbin/chkconfig --del messagebus >/dev/null 2>&1 || :
-/bin/systemctl try-restart dbus.service >/dev/null 2>&1 || :
-
 
 %files
 %defattr(-,root,root)
@@ -237,6 +226,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Mon Aug 22 2011 Lennart Poettering <lpoetter@redhat.com> - 1:1.4.10-3
+- Don't restart D-Bus on upgrades, dont' enable D-Bus, since it is statically enabled.
+- https://bugzilla.redhat.com/show_bug.cgi?id=732426
+
 * Wed Aug 03 2011 David Zeuthen <davidz@redhat.com> - 1:1.4.10-2
 - Drop SysV support, #697523 (from Jóhann B. Guðmundsson <johannbg@gmail.com>)
 
