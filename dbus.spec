@@ -9,8 +9,8 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.4.10
-Release: 4%{?dist}
+Version: 1.4.20
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -138,6 +138,7 @@ ln -s dbus.service %{buildroot}/lib/systemd/system/messagebus.service
 # Delete the old legacy sysv init script
 rm -rf %{buildroot}%{_initrddir}
 
+mkdir -p %{buildroot}/var/lib/dbus
 
 %clean
 rm -rf %{buildroot}
@@ -214,7 +215,7 @@ fi
 %files doc
 %defattr(-,root,root)
 %doc doc/introspect.dtd doc/introspect.xsl doc/system-activation.txt
-%doc %{_datadir}/doc/dbus/api
+%doc %{_datadir}/doc/dbus
 
 %files devel
 %defattr(-,root,root)
@@ -226,6 +227,12 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Apr 13 2012 Colin Walters <walters@verbum.org>
+- Update to 1.4.20; closes #806082
+- Ensure /var/lib/dbus exists; this seems to have been
+  dropped from upstream build rules.
+- Adapt to documentation actually being installed
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.4.10-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
