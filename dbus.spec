@@ -4,13 +4,12 @@
 %define libselinux_version      1.15.2
 
 %define dbus_user_uid           81
-%define _default_patch_fuzz     999
 
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.4.20
-Release: 2%{?dist}
+Version: 1.6.0
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -43,10 +42,6 @@ Conflicts: cups < 1:1.1.20-4
 
 # FIXME this should be upstreamed; need --daemon-bindir=/bin and --bindir=/usr/bin or something?
 Patch0: bindir.patch
-
-# Posted upstream, makes D-Bus work in Linux containers.
-# https://bugs.freedesktop.org/show_bug.cgi?id=49062
-Patch1: 0001-selinux-when-dropping-capabilities-only-include-AUDI.patch
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -98,7 +93,6 @@ in this separate package so server systems need not install X.
 /bin/chmod 0644 COPYING ChangeLog NEWS
 
 %patch0 -p1 -b .bindir
-%patch1 -p1
 
 autoreconf -f -i
 
@@ -232,6 +226,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Jun  5 2012 Colin Walters <walters@verbum.org> - 1:1.6.0-1
+- Update to 1.6.0
+
 * Sun Apr 22 2012 Lennart Poettering <lpoetter@redhat.com> - 1:1.4.20-2
 - Make D-Bus work in containers
 
