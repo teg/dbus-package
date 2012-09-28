@@ -8,7 +8,7 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.6.6
+Version: 1.6.8
 Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
@@ -226,6 +226,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Fri Sep 28 2012 Colin Walters <walters@verbum.org> - 1:1.6.8-1
+- 1.6.8
+
 * Fri Sep 28 2012 Colin Walters <walters@verbum.org> - 1:1.6.6-1
 - 1.6.6
 
