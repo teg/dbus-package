@@ -8,8 +8,8 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.6.0
-Release: 3%{?dist}
+Version: 1.6.6
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -42,8 +42,6 @@ Conflicts: cups < 1:1.1.20-4
 
 # FIXME this should be upstreamed; need --daemon-bindir=/bin and --bindir=/usr/bin or something?
 Patch0: bindir.patch
-# CVE-2012-3524
-Patch1: 0001-CVE-2012-3524-Don-t-access-environment-variables-or-.patch
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -95,7 +93,6 @@ in this separate package so server systems need not install X.
 /bin/chmod 0644 COPYING ChangeLog NEWS
 
 %patch0 -p1 -b .bindir
-%patch1 -p1
 
 autoreconf -f -i
 
@@ -229,6 +226,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Fri Sep 28 2012 Colin Walters <walters@verbum.org> - 1:1.6.6-1
+- 1.6.6
+
 * Thu Sep 13 2012 Colin Walters <walters@verbum.org> - 1:1.6.0-3
 - CVE-2012-3524
 
