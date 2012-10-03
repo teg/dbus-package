@@ -8,8 +8,8 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.6.0
-Release: 3%{?dist}
+Version: 1.6.8
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -225,8 +225,17 @@ fi
 %{_includedir}/*
 
 %changelog
-* Wed Oct  3 2012 Bill Nottingham <notting@redhat.com> - 1:1.6.0-3
+* Wed Oct  3 2012 Bill Nottingham <notting@redhat.com> - 1:1.6.8-2
 - Drop systemd-sysv-convert in trigger, and resulting dependency (#852822)
+
+* Fri Sep 28 2012 Colin Walters <walters@verbum.org> - 1:1.6.8-1
+- 1.6.8
+
+* Fri Sep 28 2012 Colin Walters <walters@verbum.org> - 1:1.6.6-1
+- 1.6.6
+
+* Thu Sep 13 2012 Colin Walters <walters@verbum.org> - 1:1.6.0-3
+- CVE-2012-3524
 
 * Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.6.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
