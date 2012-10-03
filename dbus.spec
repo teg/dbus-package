@@ -9,7 +9,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.6.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -29,7 +29,7 @@ BuildRequires: doxygen
 BuildRequires: xmlto
 BuildRequires: libxslt
 BuildRequires:  systemd-units
-Requires(post): systemd-units systemd-sysv chkconfig
+Requires(post): systemd-units chkconfig
 Requires(preun): systemd-units
 Requires(postun): systemd-units
 Requires: libselinux >= %{libselinux_version}
@@ -161,7 +161,6 @@ fi
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 
 %triggerun -- dbus < 1.4.10-2
-%{_bindir}/systemd-sysv-convert --save messagebus >/dev/null 2>&1 ||:
 /sbin/chkconfig --del messagebus >/dev/null 2>&1 || :
 
 %files
@@ -226,6 +225,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Oct  3 2012 Bill Nottingham <notting@redhat.com> - 1:1.6.0-3
+- Drop systemd-sysv-convert in trigger, and resulting dependency (#852822)
+
 * Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.6.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
