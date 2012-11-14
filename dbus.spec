@@ -9,7 +9,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.6.8
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -32,13 +32,9 @@ BuildRequires:  systemd-units
 Requires(post): systemd-units chkconfig
 Requires(preun): systemd-units
 Requires(postun): systemd-units
-Requires: libselinux >= %{libselinux_version}
-Requires: dbus-libs = %{epoch}:%{version}-%{release}
+Requires: libselinux%{?_isa} >= %{libselinux_version}
+Requires: dbus-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires(pre): /usr/sbin/useradd
-
-# Conflict with cups prior to configuration file change, so that the
-# %postun service condrestart works.
-Conflicts: cups < 1:1.1.20-4
 
 # FIXME this should be upstreamed; need --daemon-bindir=/bin and --bindir=/usr/bin or something?
 Patch0: bindir.patch
@@ -51,7 +47,6 @@ per-user-login-session messaging facility.
 %package libs
 Summary: Libraries for accessing D-BUS
 Group: Development/Libraries
-Obsoletes: dbus < 1.1.2-3
 
 %description libs
 This package contains lowlevel libraries for accessing D-BUS.
@@ -59,7 +54,7 @@ This package contains lowlevel libraries for accessing D-BUS.
 %package doc
 Summary: Developer documentation for D-BUS
 Group: Documentation
-Requires: %name = %{epoch}:%{version}-%{release}
+Requires: %{name} = %{epoch}:%{version}-%{release}
 BuildArch: noarch
 
 %description doc
@@ -69,8 +64,7 @@ other supporting documentation such as the introspect dtd file.
 %package devel
 Summary: Development files for D-BUS
 Group: Development/Libraries
-Requires: %name = %{epoch}:%{version}-%{release}
-Requires: pkgconfig
+Requires: %{name} = %{epoch}:%{version}-%{release}
 
 %description devel
 This package contains libraries and header files needed for
@@ -79,7 +73,7 @@ developing software that uses D-BUS.
 %package x11
 Summary: X11-requiring add-ons for D-BUS
 Group: Development/Libraries
-Requires: %name = %{epoch}:%{version}-%{release}
+Requires: %{name} = %{epoch}:%{version}-%{release}
 
 %description x11
 D-BUS contains some tools that require Xlib to be installed, those are
@@ -225,6 +219,11 @@ fi
 %{_includedir}/*
 
 %changelog
+* Sun Oct 14 2012 Rex Dieter <rdieter@fedoraproject.org> - 1:1.6.8-3
+- minor .spec cleanups
+- tighten lib deps via %%{?_isa}
+- drop old Conflicts/Obsoletes/patches
+
 * Wed Oct  3 2012 Bill Nottingham <notting@redhat.com> - 1:1.6.8-2
 - Drop systemd-sysv-convert in trigger, and resulting dependency (#852822)
 
