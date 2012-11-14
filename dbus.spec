@@ -9,7 +9,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.6.8
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -33,7 +33,7 @@ Requires(post): systemd-units chkconfig
 Requires(preun): systemd-units
 Requires(postun): systemd-units
 Requires: libselinux >= %{libselinux_version}
-Requires: dbus-libs = %{epoch}:%{version}-%{release}
+Requires: %{name}-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires(pre): /usr/sbin/useradd
 
 # Conflict with cups prior to configuration file change, so that the
@@ -59,7 +59,7 @@ This package contains lowlevel libraries for accessing D-BUS.
 %package doc
 Summary: Developer documentation for D-BUS
 Group: Documentation
-Requires: %name = %{epoch}:%{version}-%{release}
+Requires: %{name} = %{epoch}:%{version}-%{release}
 BuildArch: noarch
 
 %description doc
@@ -69,8 +69,7 @@ other supporting documentation such as the introspect dtd file.
 %package devel
 Summary: Development files for D-BUS
 Group: Development/Libraries
-Requires: %name = %{epoch}:%{version}-%{release}
-Requires: pkgconfig
+Requires: %{name}%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description devel
 This package contains libraries and header files needed for
@@ -79,7 +78,7 @@ developing software that uses D-BUS.
 %package x11
 Summary: X11-requiring add-ons for D-BUS
 Group: Development/Libraries
-Requires: %name = %{epoch}:%{version}-%{release}
+Requires: %{name}%{?_isa} = %{epoch}:%{version}-%{release}
 
 %description x11
 D-BUS contains some tools that require Xlib to be installed, those are
@@ -102,7 +101,7 @@ COMMON_ARGS="--enable-libaudit --enable-selinux=yes --with-init-scripts=redhat -
 # leave verbose mode so people can debug their apps but make sure to
 # turn it off on stable releases with --disable-verbose-mode
 %configure $COMMON_ARGS --disable-tests --disable-asserts --enable-doxygen-docs --enable-xml-docs --with-systemdsystemunitdir=/lib/systemd/system/
-make
+make %{?_smp_mflags} V=1
 
 %install
 rm -rf %{buildroot}
@@ -201,7 +200,7 @@ fi
 
 %files libs
 %defattr(-,root,root,-)
-/%{_lib}/*dbus-1*.so.*
+/%{_lib}/libdbus-1.so.3*
 
 %files x11
 %defattr(-,root,root)
@@ -218,13 +217,20 @@ fi
 %files devel
 %defattr(-,root,root)
 
-/%{_lib}/lib*.so
-%dir %{_libdir}/dbus-1.0
+/%{_lib}/libdbus-1.so
+%dir %{_libdir}/dbus-1.0/
 %{_libdir}/dbus-1.0/include/
 %{_libdir}/pkgconfig/dbus-1.pc
-%{_includedir}/*
+%{_includedir}/dbus-1.0/
 
 %changelog
+* Wed Nov 14 2012 Rex Dieter <rdieter@fedoraproject.org> 
+- 1:1.6.8-3
+- %%build: verbose build, use %%_smp_mflags
+- %%files: tighten up, use less globs
+- tighten deps via %%_isa
+- drop old/unused patches
+
 * Wed Oct  3 2012 Bill Nottingham <notting@redhat.com> - 1:1.6.8-2
 - Drop systemd-sysv-convert in trigger, and resulting dependency (#852822)
 
