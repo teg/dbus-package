@@ -5,11 +5,13 @@
 
 %define dbus_user_uid           81
 
+%define dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=dbus --libdir=/%{_lib} --bindir=/bin --sysconfdir=/etc --exec-prefix=/ --libexecdir=/%{_lib}/dbus-1 --with-systemdsystemunitdir=/lib/systemd/system/ --enable-doxygen-docs --enable-xml-docs --disable-silent-rules
+
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.6.8
-Release: 3%{?dist}
+Release: 4%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -88,14 +90,9 @@ in this separate package so server systems need not install X.
 
 %patch0 -p1 -b .bindir
 
-autoreconf -f -i
-
 %build
-COMMON_ARGS="--enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=dbus --libdir=/%{_lib} --bindir=/bin --sysconfdir=/etc --exec-prefix=/ --libexecdir=/%{_lib}/dbus-1"
-
-# leave verbose mode so people can debug their apps but make sure to
-# turn it off on stable releases with --disable-verbose-mode
-%configure $COMMON_ARGS --disable-tests --disable-asserts --enable-doxygen-docs --enable-xml-docs --with-systemdsystemunitdir=/lib/systemd/system/
+if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf -v -f -i; fi
+%configure %{dbus_common_config_opts} --disable-tests --disable-asserts
 make
 
 %install
@@ -132,6 +129,13 @@ ln -s dbus.service %{buildroot}/lib/systemd/system/messagebus.service
 rm -rf %{buildroot}%{_initrddir}
 
 mkdir -p %{buildroot}/var/lib/dbus
+
+%check
+if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf -v -f -i; fi
+%configure %{dbus_common_config_opts} --enable-asserts --enable-verbose-mode
+
+make clean
+DBUS_TEST_SLOW=1 make check
 
 %clean
 rm -rf %{buildroot}
@@ -219,6 +223,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Feb 05 2013 Colin Walters <walters@redhat.com> - 1:1.6.8-4
+- Add patch from Matej Cepl to enable check section, modified by me
+  to use common configure opts.
+
 * Sun Oct 14 2012 Rex Dieter <rdieter@fedoraproject.org> - 1:1.6.8-3
 - minor .spec cleanups
 - tighten lib deps via %%{?_isa}
