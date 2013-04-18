@@ -1,3 +1,5 @@
+%global _hardened_build 1
+
 %define gettext_package dbus
 
 %define expat_version           1.95.5
@@ -11,7 +13,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.6.8
-Release: 4%{?dist}
+Release: 5%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -223,6 +225,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Apr 18 2013 Matthias Clasen <mclasen@redhat.com> - 1:1.6.8-5
+- Hardened build
+
 * Tue Feb 05 2013 Colin Walters <walters@redhat.com> - 1:1.6.8-4
 - Add patch from Matej Cepl to enable check section, modified by me
   to use common configure opts.
