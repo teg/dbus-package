@@ -12,8 +12,8 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.6.8
-Release: 5%{?dist}
+Version: 1.6.12
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -225,6 +225,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Mon Jun 17 2013 Colin Walters <walters@verbum.org> - 1:1.6.12-1
+- New upstream release
+- CVE-2013-2168
+
 * Thu Apr 18 2013 Matthias Clasen <mclasen@redhat.com> - 1:1.6.8-5
 - Hardened build
 
