@@ -13,7 +13,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.6.12
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -40,8 +40,17 @@ Requires: libselinux%{?_isa} >= %{libselinux_version}
 Requires: dbus-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires(pre): /usr/sbin/useradd
 
+# Note: These is only required for --enable-tests; when bootstrapping,
+# you can remove this and drop the --enable-tests configure argument.
+BuildRequires: pkgconfig(gio-2.0)
+BuildRequires: pkgconfig(dbus-glib-1)
+BuildRequires: dbus-python
+BuildRequires: pygobject2
+BuildRequires: /usr/bin/Xvfb
+
 # FIXME this should be upstreamed; need --daemon-bindir=/bin and --bindir=/usr/bin or something?
 Patch0: bindir.patch
+Patch1: 0001-name-test-Don-t-run-test-autolaunch-if-we-don-t-have.patch
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -91,6 +100,7 @@ in this separate package so server systems need not install X.
 /bin/chmod 0644 COPYING ChangeLog NEWS
 
 %patch0 -p1 -b .bindir
+%patch1 -p1
 
 %build
 if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf -v -f -i; fi
@@ -134,9 +144,13 @@ mkdir -p %{buildroot}/var/lib/dbus
 
 %check
 if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf -v -f -i; fi
-%configure %{dbus_common_config_opts} --enable-asserts --enable-verbose-mode
+%configure %{dbus_common_config_opts} --enable-asserts --enable-verbose-mode --enable-tests
 
 make clean
+# TODO: better script for this...
+export DISPLAY=42
+{ Xvfb :${DISPLAY} -nolisten tcp -auth /dev/null >/dev/null 2>&1 &
+  trap "kill -15 $! " 0 HUP INT QUIT TRAP TERM; };
 DBUS_TEST_SLOW=1 make check
 
 %clean
@@ -225,6 +239,13 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Jul 18 2013 Colin Walters <walters@verbum.org> - 1:1.6.12-2
+- Enable all upstream tests
+  Resolves: #955532
+  This is fairly hacky; a much better replacement would be
+  something like the InstalledTests system.  But we have to live
+  with rpm and stuff for now...
+
 * Mon Jun 17 2013 Colin Walters <walters@verbum.org> - 1:1.6.12-1
 - New upstream release
 - CVE-2013-2168
