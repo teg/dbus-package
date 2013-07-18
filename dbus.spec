@@ -13,7 +13,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.6.12
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -150,8 +150,13 @@ make clean
 # TODO: better script for this...
 export DISPLAY=42
 { Xvfb :${DISPLAY} -nolisten tcp -auth /dev/null >/dev/null 2>&1 &
-  trap "kill -15 $! " 0 HUP INT QUIT TRAP TERM; };
-DBUS_TEST_SLOW=1 make check
+  trap "kill -15 $! || true" 0 HUP INT QUIT TRAP TERM; };
+if ! env DBUS_TEST_SLOW=1 make check; then
+    echo "Tests failed, finding all Automake logs..." 1>&2;
+    find . -type f -name '*.trs' | while read trs; do cat ${trs}; cat ${trs%%.trs}.log; done
+    echo  "Exiting abnormally due to make check failure above" 1>&2;
+    exit 1;
+fi
 
 %clean
 rm -rf %{buildroot}
@@ -239,6 +244,10 @@ fi
 %{_includedir}/*
 
 %changelog
+* Thu Jul 18 2013 Colin Walters <walters@verbum.org> - 1:1.6.12-3
+- Find all logs automake has hidden and cat them for visibility
+  into the mock logs.
+
 * Thu Jul 18 2013 Colin Walters <walters@verbum.org> - 1:1.6.12-2
 - Enable all upstream tests
   Resolves: #955532
