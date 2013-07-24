@@ -13,7 +13,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.6.12
-Release: 3%{?dist}
+Release: 4%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -51,6 +51,7 @@ BuildRequires: /usr/bin/Xvfb
 # FIXME this should be upstreamed; need --daemon-bindir=/bin and --bindir=/usr/bin or something?
 Patch0: bindir.patch
 Patch1: 0001-name-test-Don-t-run-test-autolaunch-if-we-don-t-have.patch
+Patch2: 0001-test-marshal-Ensure-we-use-suitably-aligned-buffers.patch
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -101,6 +102,7 @@ in this separate package so server systems need not install X.
 
 %patch0 -p1 -b .bindir
 %patch1 -p1
+%patch2 -p1
 
 %build
 if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf -v -f -i; fi
@@ -244,6 +246,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Jul 24 2013 Colin Walters <walters@verbum.org> - 1:1.6.12-4
+- Add patch to fix test-marshal on s390.
+
 * Thu Jul 18 2013 Colin Walters <walters@verbum.org> - 1:1.6.12-3
 - Find all logs automake has hidden and cat them for visibility
   into the mock logs.
