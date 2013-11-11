@@ -51,6 +51,7 @@ BuildRequires: /usr/bin/Xvfb
 # FIXME this should be upstreamed; need --daemon-bindir=/bin and --bindir=/usr/bin or something?
 Patch0: bindir.patch
 Patch1: 0001-name-test-Don-t-run-test-autolaunch-if-we-don-t-have.patch
+Patch2: avoid-undefined-7c00ed22d9b5c33f5b33221e906946b11a9bde3b.patch
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -101,6 +102,7 @@ in this separate package so server systems need not install X.
 
 %patch0 -p1 -b .bindir
 %patch1 -p1
+%patch2 -p1
 
 %build
 if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf -v -f -i; fi
@@ -246,6 +248,8 @@ fi
 %changelog
 * Mon Nov 11 2013 Colin Walters <walters@verbum.org> - 1:1.6.18-1
 - New upstream version
+- Added backported patch which should fix the test suite; thanks to
+  Yanko Kaneti for the suggestion.
 
 * Wed Jul 24 2013 Colin Walters <walters@verbum.org> - 1:1.6.12-4
 - Add patch to fix test-marshal on s390.
