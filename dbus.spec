@@ -14,7 +14,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.6.18
-Release: 3%{?dist}
+Release: 4%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -247,6 +247,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.6.18-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
 * Tue Jan 21 2014 Ville Skyttä <ville.skytta@iki.fi> - 1:1.6.18-3
 - Adapt to unversioned docdirs; don't ship all docs in main package.
 - Fix bogus dates in %%changelog and tabs vs spaces warning.
