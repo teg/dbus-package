@@ -14,7 +14,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.8.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -34,6 +34,7 @@ BuildRequires: doxygen
 BuildRequires: xmlto
 BuildRequires: libxslt
 BuildRequires:  systemd-units
+BuildRequires:  systemd-devel
 Requires(post): systemd-units chkconfig
 Requires(preun): systemd-units
 Requires(postun): systemd-units
@@ -229,10 +230,11 @@ fi
 %{_includedir}/*
 
 %changelog
-* Tue Jun 10 2014 Colin Walters <walters@verbum.org> - 1:1.8.4-1
+* Tue Jun 10 2014 Colin Walters <walters@verbum.org> - 1:1.8.4-2
 - New upstream version:
 - Fixes CVE-2014-3477 (fd.o#78979): "local DoS in dbus-daemon"
 - Drop "make check" for now, per http://lists.freedesktop.org/archives/dbus/2014-June/016223.html
+- BR systemd-devel
 
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.6.18-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
