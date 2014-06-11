@@ -13,8 +13,8 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.6.18
-Release: 4%{?dist}
+Version: 1.8.4
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -51,8 +51,6 @@ BuildRequires: /usr/bin/Xvfb
 
 # FIXME this should be upstreamed; need --daemon-bindir=/bin and --bindir=/usr/bin or something?
 Patch0: bindir.patch
-Patch1: 0001-name-test-Don-t-run-test-autolaunch-if-we-don-t-have.patch
-Patch2: avoid-undefined-7c00ed22d9b5c33f5b33221e906946b11a9bde3b.patch
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -98,8 +96,6 @@ in this separate package so server systems need not install X.
 %setup -q -n %{name}-%{version}
 
 %patch0 -p1 -b .bindir
-%patch1 -p1
-%patch2 -p1
 
 %build
 if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf -v -f -i; fi
@@ -144,22 +140,6 @@ mkdir -p %{buildroot}/var/lib/dbus
 install -pm 644 -t %{buildroot}%{_pkgdocdir} \
     COPYING doc/introspect.dtd doc/introspect.xsl doc/system-activation.txt
 
-%check
-if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf -v -f -i; fi
-%configure %{dbus_common_config_opts} --enable-asserts --enable-verbose-mode --enable-tests
-
-make clean
-# TODO: better script for this...
-export DISPLAY=42
-{ Xvfb :${DISPLAY} -nolisten tcp -auth /dev/null >/dev/null 2>&1 &
-  trap "kill -15 $! || true" 0 HUP INT QUIT TRAP TERM; };
-if ! env DBUS_TEST_SLOW=1 make check; then
-    echo "Tests failed, finding all Automake logs..." 1>&2;
-    find . -type f -name '*.trs' | while read trs; do cat ${trs}; cat ${trs%%.trs}.log; done
-    echo  "Exiting abnormally due to make check failure above" 1>&2;
-    exit 1;
-fi
-
 %clean
 rm -rf %{buildroot}
 
@@ -199,10 +179,12 @@ fi
 /bin/dbus-daemon
 /bin/dbus-send
 /bin/dbus-cleanup-sockets
+/bin/dbus-run-session
 /bin/dbus-monitor
 /bin/dbus-uuidgen
 %{_mandir}/man*/dbus-cleanup-sockets.1.gz
 %{_mandir}/man*/dbus-daemon.1.gz
+%{_mandir}/man*/dbus-run-session.1.gz
 %{_mandir}/man*/dbus-monitor.1.gz
 %{_mandir}/man*/dbus-send.1.gz
 %{_mandir}/man*/dbus-uuidgen.1.gz
@@ -247,6 +229,11 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Jun 10 2014 Colin Walters <walters@verbum.org> - 1:1.8.4-1
+- New upstream version:
+- Fixes CVE-2014-3477 (fd.o#78979): "local DoS in dbus-daemon"
+- Drop "make check" for now, per http://lists.freedesktop.org/archives/dbus/2014-June/016223.html
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.6.18-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
