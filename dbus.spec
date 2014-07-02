@@ -13,8 +13,8 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.8.4
-Release: 2%{?dist}
+Version: 1.8.6
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -230,6 +230,11 @@ fi
 %{_includedir}/*
 
 %changelog
+* Tue Jul 10 2014 Colin Walters <walters@verbum.org> - 1:1.8.6-1
+- New upstream version
+- Fixes CVE-2014-3477 (fd.o#80163)
+- Fixes CVE-2014-3533 (fd.o#79694)
+
 * Tue Jun 10 2014 Colin Walters <walters@verbum.org> - 1:1.8.4-2
 - New upstream version:
 - Fixes CVE-2014-3477 (fd.o#78979): "local DoS in dbus-daemon"
