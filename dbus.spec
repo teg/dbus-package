@@ -14,7 +14,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.8.6
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -139,7 +139,7 @@ rm -rf %{buildroot}%{_initrddir}
 mkdir -p %{buildroot}/var/lib/dbus
 
 install -pm 644 -t %{buildroot}%{_pkgdocdir} \
-    COPYING doc/introspect.dtd doc/introspect.xsl doc/system-activation.txt
+    doc/introspect.dtd doc/introspect.xsl doc/system-activation.txt
 
 %clean
 rm -rf %{buildroot}
@@ -167,10 +167,13 @@ fi
 
 %files
 %defattr(-,root,root)
-
+# Strictly speaking, we could remove the COPYING from this subpackage and 
+# just have it be in libs, because dbus Requires dbus-libs
+# However, since it lived here before, I left it in place.
+# Maintainer, feel free to remove it from here if you wish.
+%{!?_licensedir:%global license %%doc}
+%license COPYING
 %dir %{_pkgdocdir}
-%{_pkgdocdir}/COPYING
-
 %dir %{_sysconfdir}/dbus-1
 %config %{_sysconfdir}/dbus-1/*.conf
 %dir %{_sysconfdir}/dbus-1/system.d
@@ -206,6 +209,8 @@ fi
 
 %files libs
 %defattr(-,root,root,-)
+%{!?_licensedir:%global license %%doc}
+%license COPYING
 /%{_lib}/*dbus-1*.so.*
 
 %files x11
@@ -218,7 +223,6 @@ fi
 %files doc
 %defattr(-,root,root)
 %{_pkgdocdir}/*
-%exclude %{_pkgdocdir}/COPYING
 
 %files devel
 %defattr(-,root,root)
@@ -230,7 +234,10 @@ fi
 %{_includedir}/*
 
 %changelog
-* Tue Jul 10 2014 Colin Walters <walters@verbum.org> - 1:1.8.6-1
+* Fri Jul 11 2014 Tom Callaway <spot@fedoraproject.org> - 1:1.8.6-2
+- fix license handling
+
+* Thu Jul 10 2014 Colin Walters <walters@verbum.org> - 1:1.8.6-1
 - New upstream version
 - Fixes CVE-2014-3477 (fd.o#80163)
 - Fixes CVE-2014-3533 (fd.o#79694)
