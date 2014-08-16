@@ -14,7 +14,7 @@ Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.8.6
-Release: 2%{?dist}
+Release: 3%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -234,6 +234,9 @@ fi
 %{_includedir}/*
 
 %changelog
+* Sat Aug 16 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.8.6-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
 * Fri Jul 11 2014 Tom Callaway <spot@fedoraproject.org> - 1:1.8.6-2
 - fix license handling
 
