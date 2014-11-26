@@ -13,8 +13,8 @@
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
-Version: 1.8.6
-Release: 3%{?dist}
+Version: 1.8.12
+Release: 1%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -234,6 +234,15 @@ fi
 %{_includedir}/*
 
 %changelog
+* Wed Nov 26 2014 David King <amigadave@amigadave.com> - 1:1.8.12-1
+- Update to 1.8.12 (#1168438)
+- Fixes CVE-2014-3635 (fd.o#83622)
+- Fixes CVE-2014-3636 (fd.o#82820)
+- Fixes CVE-2014-3637 (fd.o#80559)
+- Fixes CVE-2014-3638 (fd.o#81053)
+- Fixes CVE-2014-3639 (fd.o#80919)
+- Fixes CVE-2014-7824 (fd.o#85105)
+
 * Sat Aug 16 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.8.6-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
