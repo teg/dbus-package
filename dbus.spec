@@ -10,6 +10,9 @@
 
 %global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --docdir=%{_pkgdocdir} --enable-doxygen-docs --enable-xml-docs
 
+# Disabled in June 2014: http://lists.freedesktop.org/archives/dbus/2014-June/016223.html
+%bcond_with tests
+
 Name:    dbus
 Epoch:   1
 Version: 1.8.12
@@ -48,13 +51,15 @@ Requires:      libselinux%{?_isa} >= %{libselinux_version}
 Requires:      dbus-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires(pre): /usr/sbin/useradd
 
-# Note: These is only required for --enable-tests; when bootstrapping,
-# you can remove this and drop the --enable-tests configure argument.
+# Note: These is only required for --with-tests; when bootstrapping, you can
+# pass --without-tests.
+%if %{with tests}
 BuildRequires: pkgconfig(gio-2.0)
 BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: dbus-python
 BuildRequires: pygobject2
 BuildRequires: /usr/bin/Xvfb
+%endif
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -136,6 +141,25 @@ install -pm 644 -t %{buildroot}%{_pkgdocdir} \
 # Make sure that the documentation shows up in Devhelp.
 mkdir -p %{buildroot}%{_datadir}/gtk-doc/html
 ln -s %{_pkgdocdir} %{buildroot}%{_datadir}/gtk-doc/html/dbus
+
+
+%if %{with tests}
+%check
+# TODO: configure in a separate build dir.
+%configure %{dbus_common_config_opts} --enable-asserts --enable-verbose-mode --enable-tests
+
+make clean
+# TODO: better script for this...
+export DISPLAY=42
+{ Xvfb :${DISPLAY} -nolisten tcp -auth /dev/null >/dev/null 2>&1 &
+  trap "kill -15 $! || true" 0 HUP INT QUIT TRAP TERM; };
+if ! env DBUS_TEST_SLOW=1 make check; then
+    echo "Tests failed, finding all Automake logs..." 1>&2;
+    find . -type f -name '*.trs' | while read trs; do cat ${trs}; cat ${trs%%.trs}.log; done
+    echo  "Exiting abnormally due to make check failure above" 1>&2;
+    exit 1;
+fi
+%endif
 
 
 %pre
@@ -234,6 +258,7 @@ ln -s %{_pkgdocdir} %{buildroot}%{_datadir}/gtk-doc/html/dbus
 - Use macroized systemd scriptlets (#850083)
 - Add some more documentation from the upstream tarball
 - Tighten subpackage dependencies by using %%{?_isa}
+- Use --with-tests to conditionalize test dependencies
 
 * Wed Nov 26 2014 David King <amigadave@amigadave.com> - 1:1.8.12-1
 - Update to 1.8.12 (#1168438)
