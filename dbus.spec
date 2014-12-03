@@ -8,7 +8,7 @@
 
 %global dbus_user_uid           81
 
-%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --docdir=%{_pkgdocdir} --enable-doxygen-docs --enable-xml-docs
+%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-socket=/run/dbus/system_bus_socket --with-system-pid-file=/run/dbus/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --docdir=%{_pkgdocdir} --enable-doxygen-docs --enable-xml-docs
 
 # Disabled in June 2014: http://lists.freedesktop.org/archives/dbus/2014-June/016223.html
 %bcond_with tests
@@ -195,7 +195,7 @@ fi
 %config %{_sysconfdir}/dbus-1/*.conf
 %dir %{_sysconfdir}/dbus-1/system.d
 %dir %{_sysconfdir}/dbus-1/session.d
-%ghost %dir %{_localstatedir}/run/dbus
+%ghost %dir /run/%{name}
 %dir %{_localstatedir}/lib/dbus/
 %{_bindir}/dbus-daemon
 %{_bindir}/dbus-send
@@ -259,6 +259,7 @@ fi
 - Add some more documentation from the upstream tarball
 - Tighten subpackage dependencies by using %%{?_isa}
 - Use --with-tests to conditionalize test dependencies
+- Use /run instead of /var/run
 
 * Wed Nov 26 2014 David King <amigadave@amigadave.com> - 1:1.8.12-1
 - Update to 1.8.12 (#1168438)
