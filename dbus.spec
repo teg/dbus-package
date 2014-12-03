@@ -1,20 +1,20 @@
 %global _hardened_build 1
 %{!?_pkgdocdir: %global _pkgdocdir %{_docdir}/%{name}-%{version}}
 
-%define gettext_package dbus
+%global gettext_package         dbus-1
 
-%define expat_version           1.95.5
-%define libselinux_version      1.15.2
+%global expat_version           1.95.5
+%global libselinux_version      1.15.2
 
-%define dbus_user_uid           81
+%global dbus_user_uid           81
 
-%define dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=dbus --libdir=/%{_lib} --bindir=/bin --sysconfdir=/etc --exec-prefix=/ --libexecdir=/%{_lib}/dbus-1 --with-systemdsystemunitdir=/lib/systemd/system/ --docdir=%{_pkgdocdir} --enable-doxygen-docs --enable-xml-docs --disable-silent-rules
+%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --with-systemdsystemunitdir=/lib/systemd/system/ --docdir=%{_pkgdocdir} --enable-doxygen-docs --enable-xml-docs
 
 Summary: D-BUS message bus
 Name: dbus
 Epoch: 1
 Version: 1.8.12
-Release: 1%{?dist}
+Release: 2%{?dist}
 URL: http://www.freedesktop.org/software/dbus/
 #VCS: git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
@@ -49,9 +49,6 @@ BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: dbus-python
 BuildRequires: pygobject2
 BuildRequires: /usr/bin/Xvfb
-
-# FIXME this should be upstreamed; need --daemon-bindir=/bin and --bindir=/usr/bin or something?
-Patch0: bindir.patch
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -96,32 +93,18 @@ in this separate package so server systems need not install X.
 %prep
 %setup -q -n %{name}-%{version}
 
-%patch0 -p1 -b .bindir
-
 %build
-if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf -v -f -i; fi
+# Avoid rpath.
+if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf --verbose --force --install; fi
+
 %configure %{dbus_common_config_opts} --disable-tests --disable-asserts
-make
+make V=1 %{?_smp_mflags}
 
 %install
-rm -rf %{buildroot}
+make install DESTDIR=%{buildroot} INSTALL="install -p"
 
-make install DESTDIR=%{buildroot}
-
-mkdir -p %{buildroot}/%{_libdir}/pkgconfig
-
-#change the arch-deps.h include directory to /usr/lib[64] instead of /lib[64]
-sed -e 's@-I${libdir}@-I${prefix}/%{_lib}@' %{buildroot}/%{_lib}/pkgconfig/dbus-1.pc > %{buildroot}/%{_libdir}/pkgconfig/dbus-1.pc
-rm -f %{buildroot}/%{_lib}/pkgconfig/dbus-1.pc
-
-mkdir -p %{buildroot}/%{_bindir}
-mv -f %{buildroot}/bin/dbus-launch %{buildroot}/%{_bindir}
-mkdir -p %{buildroot}/%{_libdir}/dbus-1.0/include/
-mv -f %{buildroot}/%{_lib}/dbus-1.0/include/* %{buildroot}/%{_libdir}/dbus-1.0/include/
-rm -rf %{buildroot}/%{_lib}/dbus-1.0
-
-rm -f %{buildroot}/%{_lib}/*.a
-rm -f %{buildroot}/%{_lib}/*.la
+find %{buildroot} -name '*.a' -type f -delete
+find %{buildroot} -name '*.la' -type f -delete
 
 install -D -m755 %{SOURCE2} %{buildroot}%{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
 
@@ -166,7 +149,6 @@ fi
 /sbin/chkconfig --del messagebus >/dev/null 2>&1 || :
 
 %files
-%defattr(-,root,root)
 # Strictly speaking, we could remove the COPYING from this subpackage and 
 # just have it be in libs, because dbus Requires dbus-libs
 # However, since it lived here before, I left it in place.
@@ -180,12 +162,12 @@ fi
 %dir %{_sysconfdir}/dbus-1/session.d
 %ghost %dir %{_localstatedir}/run/dbus
 %dir %{_localstatedir}/lib/dbus/
-/bin/dbus-daemon
-/bin/dbus-send
-/bin/dbus-cleanup-sockets
-/bin/dbus-run-session
-/bin/dbus-monitor
-/bin/dbus-uuidgen
+%{_bindir}/dbus-daemon
+%{_bindir}/dbus-send
+%{_bindir}/dbus-cleanup-sockets
+%{_bindir}/dbus-run-session
+%{_bindir}/dbus-monitor
+%{_bindir}/dbus-uuidgen
 %{_mandir}/man*/dbus-cleanup-sockets.1.gz
 %{_mandir}/man*/dbus-daemon.1.gz
 %{_mandir}/man*/dbus-run-session.1.gz
@@ -196,10 +178,10 @@ fi
 %{_datadir}/dbus-1/services
 %{_datadir}/dbus-1/system-services
 %{_datadir}/dbus-1/interfaces
-%dir /%{_lib}/dbus-1
+%dir %{_libexecdir}/dbus-1
 # See doc/system-activation.txt in source tarball for the rationale
 # behind these permissions
-%attr(4750,root,dbus) /%{_lib}/dbus-1/dbus-daemon-launch-helper
+%attr(4750,root,dbus) %{_libexecdir}/dbus-1/dbus-daemon-launch-helper
 /lib/systemd/system/dbus.service
 /lib/systemd/system/dbus.socket
 /lib/systemd/system/dbus.target.wants/dbus.socket
@@ -208,32 +190,29 @@ fi
 /lib/systemd/system/sockets.target.wants/dbus.socket
 
 %files libs
-%defattr(-,root,root,-)
 %{!?_licensedir:%global license %%doc}
 %license COPYING
-/%{_lib}/*dbus-1*.so.*
+%{_libdir}/*dbus-1*.so.*
 
 %files x11
-%defattr(-,root,root)
-
 %{_bindir}/dbus-launch
 %{_datadir}/man/man*/dbus-launch.1.gz
 %{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
 
 %files doc
-%defattr(-,root,root)
 %{_pkgdocdir}/*
 
 %files devel
-%defattr(-,root,root)
-
-/%{_lib}/lib*.so
+%{_libdir}/lib*.so
 %dir %{_libdir}/dbus-1.0
 %{_libdir}/dbus-1.0/include/
 %{_libdir}/pkgconfig/dbus-1.pc
 %{_includedir}/*
 
 %changelog
+* Wed Dec 03 2014 David King <amigadave@amigadave.com> - 1:1.8.12-2
+- Drop bindir patch, and update to comply with UsrMove
+
 * Wed Nov 26 2014 David King <amigadave@amigadave.com> - 1:1.8.12-1
 - Update to 1.8.12 (#1168438)
 - Fixes CVE-2014-3635 (fd.o#83622)
