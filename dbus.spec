@@ -10,18 +10,20 @@
 
 %global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --with-systemdsystemunitdir=/lib/systemd/system/ --docdir=%{_pkgdocdir} --enable-doxygen-docs --enable-xml-docs
 
-Summary: D-BUS message bus
-Name: dbus
-Epoch: 1
+Name:    dbus
+Epoch:   1
 Version: 1.8.12
 Release: 2%{?dist}
-URL: http://www.freedesktop.org/software/dbus/
-#VCS: git:git://git.freedesktop.org/git/dbus/dbus
-Source0: http://dbus.freedesktop.org/releases/dbus/%{name}-%{version}.tar.gz
-Source2: 00-start-message-bus.sh
-License: GPLv2+ or AFL
-Group: System Environment/Libraries
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Summary: D-BUS message bus
+
+Group:   System Environment/Libraries
+# The effective license of the majority of the package, including the shared
+# library, is "GPL-2+ or AFL-2.1". Certain utilities are "GPL-2+" only.
+License: (GPLv2+ or AFL) and GPLv2+
+URL:     http://www.freedesktop.org/Software/dbus/
+#VCS:    git:git://git.freedesktop.org/git/dbus/dbus
+Source0: http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
+Source1: 00-start-message-bus.sh
 
 BuildRequires: libtool
 BuildRequires: expat-devel >= %{expat_version}
@@ -106,7 +108,7 @@ make install DESTDIR=%{buildroot} INSTALL="install -p"
 find %{buildroot} -name '*.a' -type f -delete
 find %{buildroot} -name '*.la' -type f -delete
 
-install -D -m755 %{SOURCE2} %{buildroot}%{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
+install -Dp -m755 %{SOURCE1} %{buildroot}%{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
 
 mkdir -p %{buildroot}%{_datadir}/dbus-1/interfaces
 
@@ -212,6 +214,7 @@ fi
 %changelog
 * Wed Dec 03 2014 David King <amigadave@amigadave.com> - 1:1.8.12-2
 - Drop bindir patch, and update to comply with UsrMove
+- Correct license description for multiple licenses
 
 * Wed Nov 26 2014 David King <amigadave@amigadave.com> - 1:1.8.12-1
 - Update to 1.8.12 (#1168438)
