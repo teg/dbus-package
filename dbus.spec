@@ -8,7 +8,7 @@
 
 %global dbus_user_uid           81
 
-%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --with-systemdsystemunitdir=/lib/systemd/system/ --docdir=%{_pkgdocdir} --enable-doxygen-docs --enable-xml-docs
+%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-pid-file=%{_localstatedir}/run/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --docdir=%{_pkgdocdir} --enable-doxygen-docs --enable-xml-docs
 
 Name:    dbus
 Epoch:   1
@@ -31,17 +31,21 @@ BuildRequires: libselinux-devel >= %{libselinux_version}
 BuildRequires: audit-libs-devel >= 0.9
 BuildRequires: libX11-devel
 BuildRequires: libcap-ng-devel
-BuildRequires: gettext
+BuildRequires: pkgconfig(libsystemd)
+BuildRequires: pkgconfig(systemd)
 BuildRequires: doxygen
+# For building XML documentation.
+BuildRequires: /usr/bin/xsltproc
 BuildRequires: xmlto
-BuildRequires: libxslt
-BuildRequires:  systemd-units
-BuildRequires:  systemd-devel
-Requires(post): systemd-units chkconfig
-Requires(preun): systemd-units
-Requires(postun): systemd-units
-Requires: libselinux%{?_isa} >= %{libselinux_version}
-Requires: dbus-libs%{?_isa} = %{epoch}:%{version}-%{release}
+
+#For macroized scriptlets.
+Requires(post):   systemd
+Requires(preun):  systemd
+Requires(postun): systemd
+BuildRequires:    systemd
+
+Requires:      libselinux%{?_isa} >= %{libselinux_version}
+Requires:      dbus-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires(pre): /usr/sbin/useradd
 
 # Note: These is only required for --enable-tests; when bootstrapping,
@@ -115,7 +119,7 @@ mkdir -p %{buildroot}%{_datadir}/dbus-1/interfaces
 # Make sure that when somebody asks for D-Bus under the name of the
 # old SysV script, that he ends up with the standard dbus.service name
 # now.
-ln -s dbus.service %{buildroot}/lib/systemd/system/messagebus.service
+ln -s dbus.service %{buildroot}%{_unitdir}/messagebus.service
 
 ## %find_lang %{gettext_package}
 # Delete the old legacy sysv init script
@@ -138,17 +142,13 @@ rm -rf %{buildroot}
 %post libs -p /sbin/ldconfig
 
 %preun
-if [ $1 = 0 ]; then
-  /bin/systemctl stop dbus.service dbus.socket > /dev/null 2>&1 || :
-fi
+%systemd_preun stop dbus.service dbus.socket
 
 %postun libs -p /sbin/ldconfig
 
 %postun
-/bin/systemctl daemon-reload >/dev/null 2>&1 || :
+%systemd_postun
 
-%triggerun -- dbus < 1.4.10-2
-/sbin/chkconfig --del messagebus >/dev/null 2>&1 || :
 
 %files
 # Strictly speaking, we could remove the COPYING from this subpackage and 
@@ -184,12 +184,12 @@ fi
 # See doc/system-activation.txt in source tarball for the rationale
 # behind these permissions
 %attr(4750,root,dbus) %{_libexecdir}/dbus-1/dbus-daemon-launch-helper
-/lib/systemd/system/dbus.service
-/lib/systemd/system/dbus.socket
-/lib/systemd/system/dbus.target.wants/dbus.socket
-/lib/systemd/system/messagebus.service
-/lib/systemd/system/multi-user.target.wants/dbus.service
-/lib/systemd/system/sockets.target.wants/dbus.socket
+%{_unitdir}/dbus.service
+%{_unitdir}/dbus.socket
+%{_unitdir}/dbus.target.wants/dbus.socket
+%{_unitdir}/messagebus.service
+%{_unitdir}/multi-user.target.wants/dbus.service
+%{_unitdir}/sockets.target.wants/dbus.socket
 
 %files libs
 %{!?_licensedir:%global license %%doc}
@@ -215,6 +215,7 @@ fi
 * Wed Dec 03 2014 David King <amigadave@amigadave.com> - 1:1.8.12-2
 - Drop bindir patch, and update to comply with UsrMove
 - Correct license description for multiple licenses
+- Use macroized systemd scriptlets (#850083)
 
 * Wed Nov 26 2014 David King <amigadave@amigadave.com> - 1:1.8.12-1
 - Update to 1.8.12 (#1168438)
