@@ -130,8 +130,10 @@ mkdir -p %{buildroot}/var/lib/dbus
 install -pm 644 -t %{buildroot}%{_pkgdocdir} \
     doc/introspect.dtd doc/introspect.xsl doc/system-activation.txt
 
-%clean
-rm -rf %{buildroot}
+# Make sure that the documentation shows up in Devhelp.
+mkdir -p %{buildroot}%{_datadir}/gtk-doc/html
+ln -s %{_pkgdocdir} %{buildroot}%{_datadir}/gtk-doc/html/dbus
+
 
 %pre
 # Add the "dbus" user and group
@@ -152,12 +154,16 @@ rm -rf %{buildroot}
 
 %files
 # Strictly speaking, we could remove the COPYING from this subpackage and 
-# just have it be in libs, because dbus Requires dbus-libs
-# However, since it lived here before, I left it in place.
-# Maintainer, feel free to remove it from here if you wish.
+# just have it be in libs, because dbus Requires dbus-libs.
 %{!?_licensedir:%global license %%doc}
 %license COPYING
-%dir %{_pkgdocdir}
+%doc AUTHORS ChangeLog HACKING NEWS README
+%exclude %{_pkgdocdir}/api
+%exclude %{_pkgdocdir}/dbus.devhelp
+%exclude %{_pkgdocdir}/diagram.*
+%exclude %{_pkgdocdir}/introspect.*
+%exclude %{_pkgdocdir}/system-activation.txt
+%exclude %{_pkgdocdir}/*.html
 %dir %{_sysconfdir}/dbus-1
 %config %{_sysconfdir}/dbus-1/*.conf
 %dir %{_sysconfdir}/dbus-1/system.d
@@ -203,6 +209,12 @@ rm -rf %{buildroot}
 
 %files doc
 %{_pkgdocdir}/*
+%{_datadir}/gtk-doc
+%exclude %{_pkgdocdir}/AUTHORS
+%exclude %{_pkgdocdir}/ChangeLog
+%exclude %{_pkgdocdir}/HACKING
+%exclude %{_pkgdocdir}/NEWS
+%exclude %{_pkgdocdir}/README
 
 %files devel
 %{_libdir}/lib*.so
@@ -216,6 +228,7 @@ rm -rf %{buildroot}
 - Drop bindir patch, and update to comply with UsrMove
 - Correct license description for multiple licenses
 - Use macroized systemd scriptlets (#850083)
+- Add some more documentation from the upstream tarball
 
 * Wed Nov 26 2014 David King <amigadave@amigadave.com> - 1:1.8.12-1
 - Update to 1.8.12 (#1168438)
