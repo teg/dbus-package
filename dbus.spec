@@ -142,6 +142,9 @@ install -pm 644 -t %{buildroot}%{_pkgdocdir} \
 mkdir -p %{buildroot}%{_datadir}/gtk-doc/html
 ln -s %{_pkgdocdir} %{buildroot}%{_datadir}/gtk-doc/html/dbus
 
+# dbus.target was removed, in favor of dbus.socket, from systemd 21.
+rm -r %{buildroot}%{_unitdir}/dbus.target.wants
+
 
 %if %{with tests}
 %check
@@ -219,7 +222,6 @@ fi
 %attr(4750,root,dbus) %{_libexecdir}/dbus-1/dbus-daemon-launch-helper
 %{_unitdir}/dbus.service
 %{_unitdir}/dbus.socket
-%{_unitdir}/dbus.target.wants/dbus.socket
 %{_unitdir}/messagebus.service
 %{_unitdir}/multi-user.target.wants/dbus.service
 %{_unitdir}/sockets.target.wants/dbus.socket
@@ -260,6 +262,7 @@ fi
 - Tighten subpackage dependencies by using %%{?_isa}
 - Use --with-tests to conditionalize test dependencies
 - Use /run instead of /var/run
+- Remove obsolete dbus.target.wants (#1084087)
 
 * Wed Nov 26 2014 David King <amigadave@amigadave.com> - 1:1.8.12-1
 - Update to 1.8.12 (#1168438)
