@@ -16,7 +16,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.8.12
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -86,7 +86,8 @@ other supporting documentation such as the introspect dtd file.
 %package devel
 Summary: Development files for D-BUS
 Group: Development/Libraries
-Requires: %{name}%{?_isa} = %{epoch}:%{version}-%{release}
+# The server package can be a different architecture.
+Requires: %{name} = %{epoch}:%{version}-%{release}
 
 %description devel
 This package contains libraries and header files needed for
@@ -95,7 +96,8 @@ developing software that uses D-BUS.
 %package x11
 Summary: X11-requiring add-ons for D-BUS
 Group: Development/Libraries
-Requires: %{name}%{?_isa} = %{epoch}:%{version}-%{release}
+# The server package can be a different architecture.
+Requires: %{name} = %{epoch}:%{version}-%{release}
 Requires: xorg-x11-xinit
 
 %description x11
@@ -254,6 +256,9 @@ fi
 
 
 %changelog
+* Thu Dec 18 2014 David King <amigadave@amigadave.com> - 1:1.8.12-3
+- Relax subpackage dependencies (#1175837)
+
 * Wed Dec 03 2014 David King <amigadave@amigadave.com> - 1:1.8.12-2
 - Drop bindir patch, and update to comply with UsrMove
 - Correct license description for multiple licenses
