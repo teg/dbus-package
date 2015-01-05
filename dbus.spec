@@ -15,8 +15,8 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.8.12
-Release: 3%{?dist}
+Version: 1.8.14
+Release: 1%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -256,6 +256,9 @@ fi
 
 
 %changelog
+* Mon Jan 05 2015 David King <amigadave@amigadave.com> - 1:1.8.14-1
+- Update to 1.8.14
+
 * Thu Dec 18 2014 David King <amigadave@amigadave.com> - 1:1.8.12-3
 - Relax subpackage dependencies (#1175837)
 
