@@ -8,7 +8,7 @@
 
 %global dbus_user_uid           81
 
-%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-socket=/run/dbus/system_bus_socket --with-system-pid-file=/run/dbus/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --docdir=%{_pkgdocdir}
+%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-socket=/run/dbus/system_bus_socket --with-system-pid-file=/run/dbus/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --docdir=%{_pkgdocdir} --enable-installed-tests
 
 # Disabled in June 2014: http://lists.freedesktop.org/archives/dbus/2014-June/016223.html
 %bcond_with tests
@@ -92,6 +92,15 @@ Requires: %{name} = %{epoch}:%{version}-%{release}
 This package contains libraries and header files needed for
 developing software that uses D-BUS.
 
+%package tests
+Summary: Tests for the %{name} package
+Group: Development/Libraries
+Requires: %{name}%{?_isa} = %{epoch}:%{version}-%{release}
+
+%description tests
+The %{name}-tests package contains tests that can be used to verify
+the functionality of the installed %{name} package.
+
 %package x11
 Summary: X11-requiring add-ons for D-BUS
 Group: Development/Libraries
@@ -116,7 +125,7 @@ mkdir build
 pushd build
 # See /usr/lib/rpm/macros
 %global _configure ../configure
-%configure %{dbus_common_config_opts} --enable-doxygen-docs --enable-xml-docs --disable-tests --disable-asserts
+%configure %{dbus_common_config_opts} --enable-doxygen-docs --enable-xml-docs --disable-asserts
 make V=1 %{?_smp_mflags}
 popd
 
@@ -161,6 +170,45 @@ ln -s %{_pkgdocdir} %{buildroot}%{_datadir}/gtk-doc/html/dbus
 
 # dbus.target was removed, in favor of dbus.socket, from systemd 21.
 rm -r %{buildroot}%{_unitdir}/dbus.target.wants
+
+# Shell wrapper for installed tests, modified from Debian package.
+cat > dbus-run-installed-tests <<EOF
+#!/bin/sh
+# installed-tests wrapper for dbus. Outputs TAP format because why not
+
+set -e
+
+timeout="timeout 300s"
+ret=0
+i=0
+tmpdir=\$(mktemp --directory --tmpdir dbus-run-installed-tests.XXXXXX)
+
+for t in %{_libexecdir}/dbus-1/installed-tests/dbus/test-*; do
+    i=\$(( \$i + 1 ))
+    echo "# \$i - \$t ..."
+    echo "x" > "\$tmpdir/result"
+    ( set +e; \$timeout \$t; echo "\$?" > "\$tmpdir/result" ) 2>&1 | sed 's/^/# /'
+    e="\$(cat "\$tmpdir/result")"
+    case "\$e" in
+        (0)
+            echo "ok \$i - \$t"
+            ;;
+        (77)
+            echo "ok \$i # SKIP \$t"
+            ;;
+        (*)
+            echo "not ok \$i - \$t (\$e)"
+            ret=1
+            ;;
+    esac
+done
+
+rm -rf tmpdir
+echo "1..\$i"
+exit \$ret
+EOF
+
+install -pm 755 -t %{buildroot}%{_libexecdir}/dbus-1 dbus-run-installed-tests
 
 
 %if %{with tests}
@@ -240,6 +288,7 @@ popd
 # See doc/system-activation.txt in source tarball for the rationale
 # behind these permissions
 %attr(4750,root,dbus) %{_libexecdir}/dbus-1/dbus-daemon-launch-helper
+%exclude %{_libexecdir}/dbus-1/dbus-run-installed-tests
 %{_unitdir}/dbus.service
 %{_unitdir}/dbus.socket
 %{_unitdir}/messagebus.service
@@ -250,6 +299,11 @@ popd
 %{!?_licensedir:%global license %%doc}
 %license COPYING
 %{_libdir}/*dbus-1*.so.*
+
+%files tests
+%{_libexecdir}/dbus-1/installed-tests
+%{_libexecdir}/dbus-1/dbus-run-installed-tests
+%{_datadir}/installed-tests
 
 %files x11
 %{_bindir}/dbus-launch
@@ -278,6 +332,7 @@ popd
 - Update to 1.9.14
 - Update man page globs in files section
 - Build tests in a separate build directory
+- Enable installed tests, with new -tests subpackage
 
 * Mon Mar 16 2015 Than Ngo <than@redhat.com> - 1:1.8.16-2
 - bump release and rebuild so that koji-shadow can rebuild it
