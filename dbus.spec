@@ -8,7 +8,7 @@
 
 %global dbus_user_uid           81
 
-%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-socket=/run/dbus/system_bus_socket --with-system-pid-file=/run/dbus/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --docdir=%{_pkgdocdir} --enable-doxygen-docs --enable-xml-docs
+%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-socket=/run/dbus/system_bus_socket --with-system-pid-file=/run/dbus/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --docdir=%{_pkgdocdir}
 
 # Disabled in June 2014: http://lists.freedesktop.org/archives/dbus/2014-June/016223.html
 %bcond_with tests
@@ -112,11 +112,27 @@ in this separate package so server systems need not install X.
 # Avoid rpath.
 if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf --verbose --force --install; fi
 
-%configure %{dbus_common_config_opts} --disable-tests --disable-asserts
+mkdir build
+pushd build
+# See /usr/lib/rpm/macros
+%global _configure ../configure
+%configure %{dbus_common_config_opts} --enable-doxygen-docs --enable-xml-docs --disable-tests --disable-asserts
 make V=1 %{?_smp_mflags}
+popd
+
+%if %{with tests}
+mkdir build-tests
+pushd build-tests
+%configure %{dbus_common_config_opts} --enable-asserts --enable-verbose-mode --enable-tests
+make V=1 %{?_smp_mflags}
+popd
+%endif
+
 
 %install
+pushd build
 make install DESTDIR=%{buildroot} INSTALL="install -p"
+popd
 
 find %{buildroot} -name '*.a' -type f -delete
 find %{buildroot} -name '*.la' -type f -delete
@@ -149,10 +165,8 @@ rm -r %{buildroot}%{_unitdir}/dbus.target.wants
 
 %if %{with tests}
 %check
-# TODO: configure in a separate build dir.
-%configure %{dbus_common_config_opts} --enable-asserts --enable-verbose-mode --enable-tests
+pushd build-tests
 
-make clean
 # TODO: better script for this...
 export DISPLAY=42
 { Xvfb :${DISPLAY} -nolisten tcp -auth /dev/null >/dev/null 2>&1 &
@@ -163,6 +177,7 @@ if ! env DBUS_TEST_SLOW=1 make check; then
     echo  "Exiting abnormally due to make check failure above" 1>&2;
     exit 1;
 fi
+popd
 %endif
 
 
@@ -262,6 +277,7 @@ fi
 * Thu Apr 23 2015 David King <amigadave@amigadave.com> - 1:1.9.14-1
 - Update to 1.9.14
 - Update man page globs in files section
+- Build tests in a separate build directory
 
 * Mon Mar 16 2015 Than Ngo <than@redhat.com> - 1:1.8.16-2
 - bump release and rebuild so that koji-shadow can rebuild it
@@ -270,7 +286,6 @@ fi
 * Mon Feb 09 2015 David King <amigadave@amigadave.com> - 1:1.8.16-1
 - Update to 1.8.16
 - Fixes CVE-2015-0245 (fd.o#88811)
-
 * Mon Jan 05 2015 David King <amigadave@amigadave.com> - 1:1.8.14-1
 - Update to 1.8.14
 
