@@ -10,8 +10,10 @@
 
 %global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-socket=/run/dbus/system_bus_socket --with-system-pid-file=/run/dbus/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --docdir=%{_pkgdocdir} --enable-installed-tests
 
+# Allow extra dependencies required for some tests to be disabled.
+%bcond_without tests
 # Disabled in June 2014: http://lists.freedesktop.org/archives/dbus/2014-June/016223.html
-%bcond_with tests
+%bcond_with check
 
 Name:    dbus
 Epoch:   1
@@ -57,6 +59,8 @@ Requires(pre): /usr/sbin/useradd
 BuildRequires: pkgconfig(gio-2.0)
 BuildRequires: dbus-python
 BuildRequires: pygobject3
+%endif
+%if %{with check}
 BuildRequires: /usr/bin/Xvfb
 %endif
 
@@ -129,9 +133,9 @@ pushd build
 make V=1 %{?_smp_mflags}
 popd
 
-%if %{with tests}
-mkdir build-tests
-pushd build-tests
+%if %{with check}
+mkdir build-check
+pushd build-check
 %configure %{dbus_common_config_opts} --enable-asserts --enable-verbose-mode --enable-tests
 make V=1 %{?_smp_mflags}
 popd
@@ -211,9 +215,9 @@ EOF
 install -pm 755 -t %{buildroot}%{_libexecdir}/dbus-1 dbus-run-installed-tests
 
 
-%if %{with tests}
+%if %{with check}
 %check
-pushd build-tests
+pushd build-check
 
 # TODO: better script for this...
 export DISPLAY=42
@@ -333,6 +337,7 @@ popd
 - Update man page globs in files section
 - Build tests in a separate build directory
 - Enable installed tests, with new -tests subpackage
+- Allow extra dependencies for tests to be disabled independently of check
 
 * Mon Mar 16 2015 Than Ngo <than@redhat.com> - 1:1.8.16-2
 - bump release and rebuild so that koji-shadow can rebuild it
