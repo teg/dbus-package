@@ -15,8 +15,8 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.8.16
-Release: 2%{?dist}
+Version: 1.9.14
+Release: 1%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -55,9 +55,8 @@ Requires(pre): /usr/sbin/useradd
 # pass --without-tests.
 %if %{with tests}
 BuildRequires: pkgconfig(gio-2.0)
-BuildRequires: pkgconfig(dbus-glib-1)
 BuildRequires: dbus-python
-BuildRequires: pygobject2
+BuildRequires: pygobject3
 BuildRequires: /usr/bin/Xvfb
 %endif
 
@@ -207,12 +206,16 @@ fi
 %{_bindir}/dbus-cleanup-sockets
 %{_bindir}/dbus-run-session
 %{_bindir}/dbus-monitor
+%{_bindir}/dbus-test-tool
+%{_bindir}/dbus-update-activation-environment
 %{_bindir}/dbus-uuidgen
 %{_mandir}/man*/dbus-cleanup-sockets.1.gz
 %{_mandir}/man*/dbus-daemon.1.gz
 %{_mandir}/man*/dbus-run-session.1.gz
 %{_mandir}/man*/dbus-monitor.1.gz
 %{_mandir}/man*/dbus-send.1.gz
+%{_mandir}/man1/dbus-test-tool.1.gz
+%{_mandir}/man*/dbus-update-activation-environment.1.gz
 %{_mandir}/man*/dbus-uuidgen.1.gz
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/services
@@ -256,6 +259,9 @@ fi
 
 
 %changelog
+* Thu Apr 23 2015 David King <amigadave@amigadave.com> - 1:1.9.14-1
+- Update to 1.9.14
+
 * Mon Mar 16 2015 Than Ngo <than@redhat.com> - 1:1.8.16-2
 - bump release and rebuild so that koji-shadow can rebuild it
   against new gcc on secondary arch
