@@ -209,14 +209,14 @@ fi
 %{_bindir}/dbus-test-tool
 %{_bindir}/dbus-update-activation-environment
 %{_bindir}/dbus-uuidgen
-%{_mandir}/man*/dbus-cleanup-sockets.1.gz
-%{_mandir}/man*/dbus-daemon.1.gz
-%{_mandir}/man*/dbus-run-session.1.gz
-%{_mandir}/man*/dbus-monitor.1.gz
-%{_mandir}/man*/dbus-send.1.gz
-%{_mandir}/man1/dbus-test-tool.1.gz
-%{_mandir}/man*/dbus-update-activation-environment.1.gz
-%{_mandir}/man*/dbus-uuidgen.1.gz
+%{_mandir}/man1/dbus-cleanup-sockets.1*
+%{_mandir}/man1/dbus-daemon.1*
+%{_mandir}/man1/dbus-run-session.1*
+%{_mandir}/man1/dbus-monitor.1*
+%{_mandir}/man1/dbus-send.1*
+%{_mandir}/man1/dbus-test-tool.1*
+%{_mandir}/man1/dbus-update-activation-environment.1*
+%{_mandir}/man1/dbus-uuidgen.1*
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/services
 %{_datadir}/dbus-1/system-services
@@ -238,7 +238,7 @@ fi
 
 %files x11
 %{_bindir}/dbus-launch
-%{_datadir}/man/man*/dbus-launch.1.gz
+%{_mandir}/man1/dbus-launch.1*
 %{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
 
 %files doc
@@ -261,6 +261,7 @@ fi
 %changelog
 * Thu Apr 23 2015 David King <amigadave@amigadave.com> - 1:1.9.14-1
 - Update to 1.9.14
+- Update man page globs in files section
 
 * Mon Mar 16 2015 Than Ngo <than@redhat.com> - 1:1.8.16-2
 - bump release and rebuild so that koji-shadow can rebuild it
