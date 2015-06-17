@@ -18,7 +18,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.9.16
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -332,6 +332,9 @@ popd
 
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.9.16-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Thu May 14 2015 David King <amigadave@amigadave.com> - 1:1.9.16-1
 - Update to 1.9.16
 
