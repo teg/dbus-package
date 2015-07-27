@@ -17,8 +17,8 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.9.16
-Release: 2%{?dist}
+Version: 1.9.18
+Release: 1%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -263,9 +263,8 @@ popd
 %exclude %{_pkgdocdir}/system-activation.txt
 %exclude %{_pkgdocdir}/*.html
 %dir %{_sysconfdir}/dbus-1
-%config %{_sysconfdir}/dbus-1/*.conf
-%dir %{_sysconfdir}/dbus-1/system.d
-%dir %{_sysconfdir}/dbus-1/session.d
+%config %{_sysconfdir}/dbus-1/session.conf
+%config %{_sysconfdir}/dbus-1/system.conf
 %ghost %dir /run/%{name}
 %dir %{_localstatedir}/lib/dbus/
 %{_bindir}/dbus-daemon
@@ -285,6 +284,8 @@ popd
 %{_mandir}/man1/dbus-update-activation-environment.1*
 %{_mandir}/man1/dbus-uuidgen.1*
 %dir %{_datadir}/dbus-1
+%{_datadir}/dbus-1/session.conf
+%{_datadir}/dbus-1/system.conf
 %{_datadir}/dbus-1/services
 %{_datadir}/dbus-1/system-services
 %{_datadir}/dbus-1/interfaces
@@ -332,6 +333,9 @@ popd
 
 
 %changelog
+* Mon Jul 27 2015 David King <amigadave@amigadave.com> - 1:1.9.18-1
+- Update to 1.9.18
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:1.9.16-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
