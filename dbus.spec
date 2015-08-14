@@ -18,7 +18,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.9.20
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -29,6 +29,8 @@ URL:     http://www.freedesktop.org/Software/dbus/
 #VCS:    git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
 Source1: 00-start-message-bus.sh
+
+Patch0: dbus-1.9.20-ldflags.patch
 
 BuildRequires: libtool
 BuildRequires: expat-devel >= %{expat_version}
@@ -119,6 +121,7 @@ in this separate package so server systems need not install X.
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p1 -b .ldflags
 
 
 %build
@@ -333,6 +336,9 @@ popd
 
 
 %changelog
+* Fri Aug 14 2015 Adam Jackson <ajax@redhat.com> 1:1.9.20-2
+- Link libdbus with -z now
+
 * Tue Aug 11 2015 David King <amigadave@amigadave.com> - 1:1.9.20-1
 - Update to 1.9.20
 

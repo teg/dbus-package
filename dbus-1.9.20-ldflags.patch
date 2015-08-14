@@ -1,0 +1,13 @@
+I have no idea why autoblah isn't getting this right automatically.
+
+diff -up dbus-1.9.20/dbus/Makefile.am.jx dbus-1.9.20/dbus/Makefile.am
+--- dbus-1.9.20/dbus/Makefile.am.jx	2015-07-21 12:46:00.000000000 -0400
++++ dbus-1.9.20/dbus/Makefile.am	2015-08-14 14:30:32.413052818 -0400
+@@ -297,6 +297,7 @@ libdbus_1_la_LDFLAGS = \
+ 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
+ 	$(SYMBOL_EXPORT_LDFLAGS) \
+ 	-no-undefined \
++	-Wl,-z,now \
+ 	$(NULL)
+ 
+ libdbus_internal_la_LIBADD=$(LIBDBUS_LIBS) libdbus-1.la
