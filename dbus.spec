@@ -18,7 +18,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.9.20
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -29,8 +29,6 @@ URL:     http://www.freedesktop.org/Software/dbus/
 #VCS:    git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
 Source1: 00-start-message-bus.sh
-
-Patch0: dbus-1.9.20-ldflags.patch
 
 BuildRequires: libtool
 BuildRequires: expat-devel >= %{expat_version}
@@ -121,12 +119,17 @@ in this separate package so server systems need not install X.
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch0 -p1 -b .ldflags
 
 
 %build
 # Avoid rpath.
 if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf --verbose --force --install; fi
+
+# Call configure here (before the extra directories for the multiple builds
+# have been created) to ensure that the hardening flag hack is applied to
+# ltmain.sh
+%configure %{dbus_common_config_opts} --enable-doxygen-docs --enable-xml-docs --disable-asserts
+make distclean
 
 mkdir build
 pushd build
@@ -336,6 +339,9 @@ popd
 
 
 %changelog
+* Thu Aug 20 2015 David King <amigadave@amigadave.com> - 1:1.9.20-3
+- Adjust configure calls to make LDFLAGS patch unneccesary
+
 * Fri Aug 14 2015 Adam Jackson <ajax@redhat.com> 1:1.9.20-2
 - Link libdbus with -z now
 
