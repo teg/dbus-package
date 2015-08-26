@@ -17,8 +17,8 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.9.20
-Release: 3%{?dist}
+Version: 1.10.0
+Release: 1%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -339,6 +339,9 @@ popd
 
 
 %changelog
+* Wed Aug 26 2015 David King <amigadave@amigadave.com> - 1:1.10.0-1
+- Update to 1.10.0
+
 * Thu Aug 20 2015 David King <amigadave@amigadave.com> - 1:1.9.20-3
 - Adjust configure calls to make LDFLAGS patch unneccesary
 
