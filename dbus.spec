@@ -8,7 +8,7 @@
 
 %global dbus_user_uid           81
 
-%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-socket=/run/dbus/system_bus_socket --with-system-pid-file=/run/dbus/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --docdir=%{_pkgdocdir} --enable-installed-tests
+%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-socket=/run/dbus/system_bus_socket --with-system-pid-file=/run/dbus/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --enable-user-session --docdir=%{_pkgdocdir} --enable-installed-tests
 
 # Allow extra dependencies required for some tests to be disabled.
 %bcond_without tests
@@ -18,7 +18,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.10.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -305,6 +305,9 @@ popd
 %{_unitdir}/messagebus.service
 %{_unitdir}/multi-user.target.wants/dbus.service
 %{_unitdir}/sockets.target.wants/dbus.socket
+%{_userunitdir}/dbus.service
+%{_userunitdir}/dbus.socket
+%{_userunitdir}/sockets.target.wants/dbus.socket
 
 %files libs
 %{!?_licensedir:%global license %%doc}
@@ -339,6 +342,9 @@ popd
 
 
 %changelog
+* Mon Aug 31 2015 Kay Sievers <kay@redhat.com> - 1:1.10.0-2
+- add --enable-user-session to ship systemd user bus units
+
 * Wed Aug 26 2015 David King <amigadave@amigadave.com> - 1:1.10.0-1
 - Update to 1.10.0
 
