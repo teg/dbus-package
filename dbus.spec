@@ -18,7 +18,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.10.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -39,6 +39,9 @@ BuildRequires: libcap-ng-devel
 BuildRequires: pkgconfig(libsystemd)
 BuildRequires: pkgconfig(systemd)
 BuildRequires: doxygen
+# For Ducktype documentation.
+BuildRequires: /usr/bin/ducktype
+BuildRequires: /usr/bin/yelp-build
 # For building XML documentation.
 BuildRequires: /usr/bin/xsltproc
 BuildRequires: xmlto
@@ -128,14 +131,14 @@ if test -f autogen.sh; then env NOCONFIGURE=1 ./autogen.sh; else autoreconf --ve
 # Call configure here (before the extra directories for the multiple builds
 # have been created) to ensure that the hardening flag hack is applied to
 # ltmain.sh
-%configure %{dbus_common_config_opts} --enable-doxygen-docs --enable-xml-docs --disable-asserts
+%configure %{dbus_common_config_opts} --enable-doxygen-docs --enable-ducktype-docs --enable-xml-docs --disable-asserts
 make distclean
 
 mkdir build
 pushd build
 # See /usr/lib/rpm/macros
 %global _configure ../configure
-%configure %{dbus_common_config_opts} --enable-doxygen-docs --enable-xml-docs --disable-asserts
+%configure %{dbus_common_config_opts} --enable-doxygen-docs --enable-ducktype-docs --enable-xml-docs --disable-asserts
 make V=1 %{?_smp_mflags}
 popd
 
@@ -342,6 +345,9 @@ popd
 
 
 %changelog
+* Fri Sep 04 2015 David King <amigadave@amigadave.com> - 1:1.10.0-3
+- Enable Ducktype documentation
+
 * Mon Aug 31 2015 Kay Sievers <kay@redhat.com> - 1:1.10.0-2
 - add --enable-user-session to ship systemd user bus units
 
