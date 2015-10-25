@@ -1,0 +1,47 @@
+From 2ae8759322f774d35332aba1502dea2983bd350c Mon Sep 17 00:00:00 2001
+From: "Jan Alexander Steffens (heftig)" <jan.steffens@gmail.com>
+Date: Thu, 22 Oct 2015 19:50:29 +0200
+Subject: [PATCH] user dbus.socket: Set DBUS_SESSION_BUS_ADDRESS
+
+As discussed in https://github.com/systemd/systemd/issues/1600
+
+Bug: https://bugs.freedesktop.org/show_bug.cgi?id=92612
+[smcv: use AC_PATH_PROG to find systemctl; ignore systemctl failure]
+Signed-off-by: Simon McVittie <simon.mcvittie@collabora.co.uk>
+---
+ bus/systemd-user/dbus.socket.in | 1 +
+ configure.ac                    | 6 ++++++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/bus/systemd-user/dbus.socket.in b/bus/systemd-user/dbus.socket.in
+index 77958f7..4793d1d 100644
+--- a/bus/systemd-user/dbus.socket.in
++++ b/bus/systemd-user/dbus.socket.in
+@@ -3,6 +3,7 @@ Description=D-Bus User Message Bus Socket
+ 
+ [Socket]
+ ListenStream=%t/bus
++ExecStartPost=-@SYSTEMCTL@ --user set-environment DBUS_SESSION_BUS_ADDRESS=unix:path=%t/bus
+ 
+ [Install]
+ WantedBy=sockets.target
+diff --git a/configure.ac b/configure.ac
+index 6078ce7..e29536d 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1163,6 +1163,12 @@ if test x$enable_systemd = xyes -a x$have_systemd != xyes ; then
+     AC_MSG_ERROR([Explicitly requested systemd support, but systemd not found])
+ fi
+ 
++# If not found in $PATH, we might still have systemd and systemctl at runtime
++# (perhaps dbus is being compiled in a minimal chroot with no systemd).
++# Assume the upstream-recommended location. Distributors with split /usr
++# can override this with ./configure SYSTEMCTL=/bin/systemctl
++AC_PATH_PROG([SYSTEMCTL], [systemctl], [/usr/bin/systemctl])
++
+ # libaudit detection
+ if test x$enable_libaudit = xno ; then
+     have_libaudit=no;
+-- 
+2.6.1
+

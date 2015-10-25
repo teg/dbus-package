@@ -18,7 +18,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.10.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -29,6 +29,8 @@ URL:     http://www.freedesktop.org/Software/dbus/
 #VCS:    git:git://git.freedesktop.org/git/dbus/dbus
 Source0: http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
 Source1: 00-start-message-bus.sh
+# https://bugzilla.redhat.com/show_bug.cgi?id=1274700
+Patch0:  dbus-1.10.0-inject-session-address-in-user-bus.patch
 
 BuildRequires: libtool
 BuildRequires: expat-devel >= %{expat_version}
@@ -122,6 +124,7 @@ in this separate package so server systems need not install X.
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p1
 
 
 %build
@@ -345,6 +348,9 @@ popd
 
 
 %changelog
+* Sun Oct 25 2015 David King <amigadave@amigadave.com> - 1:1.10.0-4
+- Inject session bus address into user bus environment (#1274700)
+
 * Fri Sep 04 2015 David King <amigadave@amigadave.com> - 1:1.10.0-3
 - Enable Ducktype documentation
 
