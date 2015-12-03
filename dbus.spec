@@ -17,7 +17,7 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.10.6
+Version: 1.11.0
 Release: 1%{?dist}
 Summary: D-BUS message bus
 
@@ -181,9 +181,6 @@ install -pm 644 -t %{buildroot}%{_pkgdocdir} \
 mkdir -p %{buildroot}%{_datadir}/gtk-doc/html
 ln -s %{_pkgdocdir} %{buildroot}%{_datadir}/gtk-doc/html/dbus
 
-# dbus.target was removed, in favor of dbus.socket, from systemd 21.
-rm -r %{buildroot}%{_unitdir}/dbus.target.wants
-
 # Shell wrapper for installed tests, modified from Debian package.
 cat > dbus-run-installed-tests <<EOF
 #!/bin/sh
@@ -345,6 +342,10 @@ popd
 
 
 %changelog
+* Thu Dec 03 2015 David King <amigadave@amigadave.com> - 1:1.11.0-1
+- Update to 1.11.0
+- Fix sending of audit events (#1278602)
+
 * Wed Dec 02 2015 David King <amigadave@amigadave.com> - 1:1.10.6-1
 - Update to 1.10.6
 
@@ -398,6 +399,7 @@ popd
 * Mon Feb 09 2015 David King <amigadave@amigadave.com> - 1:1.8.16-1
 - Update to 1.8.16
 - Fixes CVE-2015-0245 (fd.o#88811)
+
 * Mon Jan 05 2015 David King <amigadave@amigadave.com> - 1:1.8.14-1
 - Update to 1.8.14
 
