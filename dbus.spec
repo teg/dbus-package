@@ -17,7 +17,7 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.11.2
+Version: 1.11.4
 Release: 1%{?dist}
 Summary: D-BUS message bus
 
@@ -30,6 +30,7 @@ URL:     http://www.freedesktop.org/Software/dbus/
 Source0: http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
 Source1: 00-start-message-bus.sh
 
+BuildRequires: autoconf-archive
 BuildRequires: libtool
 BuildRequires: expat-devel >= %{expat_version}
 BuildRequires: libselinux-devel >= %{libselinux_version}
@@ -342,6 +343,9 @@ popd
 
 
 %changelog
+* Tue Aug 16 2016 David King <amigadave@amigadave.com> - 1:1.11.4-1
+- Update to 1.11.4
+
 * Wed Mar 16 2016 David King <amigadave@amigadave.com> - 1:1.11.2-1
 - Update to 1.11.2
 
