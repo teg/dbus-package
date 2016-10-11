@@ -17,7 +17,7 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.11.4
+Version: 1.11.6
 Release: 1%{?dist}
 Summary: D-BUS message bus
 
@@ -95,6 +95,8 @@ Summary: Development files for D-BUS
 Group: Development/Libraries
 # The server package can be a different architecture.
 Requires: %{name} = %{epoch}:%{version}-%{release}
+# For xml directory ownership.
+Requires: xml-common
 
 %description devel
 This package contains libraries and header files needed for
@@ -335,6 +337,7 @@ popd
 %exclude %{_pkgdocdir}/README
 
 %files devel
+%{_datadir}/xml/dbus-1
 %{_libdir}/lib*.so
 %dir %{_libdir}/dbus-1.0
 %{_libdir}/dbus-1.0/include/
@@ -343,6 +346,9 @@ popd
 
 
 %changelog
+* Tue Oct 11 2016 David King <amigadave@amigadave.com> - 1:1.11.6-1
+- Update to 1.11.6
+
 * Tue Aug 16 2016 David King <amigadave@amigadave.com> - 1:1.11.4-1
 - Update to 1.11.4
 
