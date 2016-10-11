@@ -48,9 +48,7 @@ BuildRequires: /usr/bin/xsltproc
 BuildRequires: xmlto
 
 #For macroized scriptlets.
-Requires(post):   systemd
-Requires(preun):  systemd
-Requires(postun): systemd
+%{?systemd_requires}
 BuildRequires:    systemd
 
 Requires:      libselinux%{?_isa} >= %{libselinux_version}
@@ -248,15 +246,21 @@ popd
 /usr/sbin/useradd -c 'System message bus' -u %{dbus_user_uid} -g %{dbus_user_uid} \
     -s /sbin/nologin -r -d '/' dbus 2> /dev/null || :
 
+%post
+%systemd_post dbus.service dbus.socket
+%systemd_user_post dbus.service dbus.socket
+
 %post libs -p /sbin/ldconfig
 
 %preun
-%systemd_preun stop dbus.service dbus.socket
-
-%postun libs -p /sbin/ldconfig
+%systemd_preun dbus.service dbus.socket
+%systemd_user_preun dbus.service dbus.socket
 
 %postun
-%systemd_postun
+%systemd_postun dbus.service dbus.socket
+%systemd_user_postun dbus.service dbus.socket
+
+%postun libs -p /sbin/ldconfig
 
 
 %files
@@ -348,6 +352,7 @@ popd
 %changelog
 * Tue Oct 11 2016 David King <amigadave@amigadave.com> - 1:1.11.6-1
 - Update to 1.11.6
+- Use systemd user unit macros
 
 * Tue Aug 16 2016 David King <amigadave@amigadave.com> - 1:1.11.4-1
 - Update to 1.11.4
