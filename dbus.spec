@@ -17,8 +17,8 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.11.8
-Release: 2%{?dist}
+Version: 1.11.10
+Release: 1%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -315,6 +315,7 @@ popd
 %{_userunitdir}/dbus.service
 %{_userunitdir}/dbus.socket
 %{_userunitdir}/sockets.target.wants/dbus.socket
+%{_sysusersdir}/dbus.conf
 
 %files libs
 %{!?_licensedir:%global license %%doc}
@@ -350,6 +351,9 @@ popd
 
 
 %changelog
+* Fri Feb 17 2017 David King <amigadave@amigadave.com> - 1.11.10-1
+- Update to 1.11.10
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.11.8-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
