@@ -18,7 +18,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.11.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -162,7 +162,11 @@ find %{buildroot} -name '*.la' -type f -delete
 
 install -Dp -m755 %{SOURCE1} %{buildroot}%{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
 
-mkdir -p %{buildroot}%{_datadir}/dbus-1/interfaces
+# Obsolete, but still widely used, for drop-in configuration snippets.
+install --directory %{buildroot}%{_sysconfdir}/dbus-1/session.d
+install --directory %{buildroot}%{_sysconfdir}/dbus-1/system.d
+
+install --directory %{buildroot}%{_datadir}/dbus-1/interfaces
 
 # Make sure that when somebody asks for D-Bus under the name of the
 # old SysV script, that he ends up with the standard dbus.service name
@@ -173,13 +177,13 @@ ln -s dbus.service %{buildroot}%{_unitdir}/messagebus.service
 # Delete the old legacy sysv init script
 rm -rf %{buildroot}%{_initrddir}
 
-mkdir -p %{buildroot}/var/lib/dbus
+install --directory %{buildroot}/var/lib/dbus
 
 install -pm 644 -t %{buildroot}%{_pkgdocdir} \
     doc/introspect.dtd doc/introspect.xsl doc/system-activation.txt
 
 # Make sure that the documentation shows up in Devhelp.
-mkdir -p %{buildroot}%{_datadir}/gtk-doc/html
+install --directory %{buildroot}%{_datadir}/gtk-doc/html
 ln -s %{_pkgdocdir} %{buildroot}%{_datadir}/gtk-doc/html/dbus
 
 # Shell wrapper for installed tests, modified from Debian package.
@@ -276,6 +280,8 @@ popd
 %exclude %{_pkgdocdir}/system-activation.txt
 %exclude %{_pkgdocdir}/*.html
 %dir %{_sysconfdir}/dbus-1
+%dir %{_sysconfdir}/dbus-1/session.d
+%dir %{_sysconfdir}/dbus-1/system.d
 %config %{_sysconfdir}/dbus-1/session.conf
 %config %{_sysconfdir}/dbus-1/system.conf
 %ghost %dir /run/%{name}
@@ -351,6 +357,9 @@ popd
 
 
 %changelog
+* Thu Mar 02 2017 David King <amigadave@amigadave.com> - 1.11.10-2
+- Own session.d and system.d directories (#1285033)
+
 * Fri Feb 17 2017 David King <amigadave@amigadave.com> - 1.11.10-1
 - Update to 1.11.10
 
