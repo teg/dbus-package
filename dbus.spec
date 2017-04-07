@@ -17,8 +17,8 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.11.10
-Release: 2%{?dist}
+Version: 1.11.12
+Release: 1%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -351,12 +351,16 @@ popd
 %{_datadir}/xml/dbus-1
 %{_libdir}/lib*.so
 %dir %{_libdir}/dbus-1.0
+%{_libdir}/cmake/DBus1
 %{_libdir}/dbus-1.0/include/
 %{_libdir}/pkgconfig/dbus-1.pc
 %{_includedir}/*
 
 
 %changelog
+* Fri Apr 07 2017 David King <amigadave@amigadave.com> - 1.11.12-1
+- Update to 1.11.12
+
 * Thu Mar 02 2017 David King <amigadave@amigadave.com> - 1.11.10-2
 - Own session.d and system.d directories (#1285033)
 
