@@ -16,8 +16,8 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.11.14
-Release: 2%{?dist}
+Version: 1.11.16
+Release: 1%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -358,6 +358,9 @@ popd
 
 
 %changelog
+* Fri Jul 28 2017 David King <amigadave@amigadave.com> - 1:1.11.16-1
+- Update to 1.11.16
+
 * Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.11.14-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
 
