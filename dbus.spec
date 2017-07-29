@@ -17,7 +17,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.11.16
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -358,6 +358,9 @@ popd
 
 
 %changelog
+* Sat Jul 29 2017 Florian Weimer <fweimer@redhat.com> - 1:1.11.16-2
+- Rebuild with binutils fix for ppc64le (#1475636)
+
 * Fri Jul 28 2017 David King <amigadave@amigadave.com> - 1:1.11.16-1
 - Update to 1.11.16
 
