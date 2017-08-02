@@ -17,7 +17,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.11.16
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -358,6 +358,9 @@ popd
 
 
 %changelog
+* Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.11.16-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
+
 * Sat Jul 29 2017 Florian Weimer <fweimer@redhat.com> - 1:1.11.16-2
 - Rebuild with binutils fix for ppc64le (#1475636)
 
