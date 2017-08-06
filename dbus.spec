@@ -17,7 +17,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.11.16
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -45,6 +45,8 @@ BuildRequires: /usr/bin/yelp-build
 # For building XML documentation.
 BuildRequires: /usr/bin/xsltproc
 BuildRequires: xmlto
+# For AutoReq cmake-filesystem.
+BuildRequires: cmake
 
 #For macroized scriptlets.
 %{?systemd_requires}
@@ -358,6 +360,9 @@ popd
 
 
 %changelog
+* Sun Aug 06 2017 Björn Esser <besser82@fedoraproject.org> - 1:1.11.16-4
+- Rebuilt for AutoReq cmake-filesystem
+
 * Wed Aug 02 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.11.16-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
 
