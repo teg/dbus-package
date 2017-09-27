@@ -7,7 +7,7 @@
 
 %global dbus_user_uid           81
 
-%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-init-scripts=redhat --with-system-socket=/run/dbus/system_bus_socket --with-system-pid-file=/run/dbus/messagebus.pid --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --enable-user-session --docdir=%{_pkgdocdir} --enable-installed-tests
+%global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-system-socket=/run/dbus/system_bus_socket --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --enable-user-session --docdir=%{_pkgdocdir} --enable-installed-tests
 
 # Allow extra dependencies required for some tests to be disabled.
 %bcond_without tests
@@ -16,8 +16,8 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.11.16
-Release: 4%{?dist}
+Version: 1.11.18
+Release: 1%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -175,8 +175,6 @@ install --directory %{buildroot}%{_datadir}/dbus-1/interfaces
 ln -s dbus.service %{buildroot}%{_unitdir}/messagebus.service
 
 ## %find_lang %{gettext_package}
-# Delete the old legacy sysv init script
-rm -rf %{buildroot}%{_initrddir}
 
 install --directory %{buildroot}/var/lib/dbus
 
@@ -360,6 +358,9 @@ popd
 
 
 %changelog
+* Wed Sep 27 2017 David King <amigadave@amigadave.com> - 1:1.11.18-1
+- Update to 1.11.18
+
 * Sun Aug 06 2017 Björn Esser <besser82@fedoraproject.org> - 1:1.11.16-4
 - Rebuilt for AutoReq cmake-filesystem
 
