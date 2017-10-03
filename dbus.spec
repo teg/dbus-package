@@ -13,6 +13,8 @@
 %bcond_without tests
 # Disabled in June 2014: http://lists.freedesktop.org/archives/dbus/2014-June/016223.html
 %bcond_with check
+# Allow cmake support to be disabled. #1497257
+%bcond_without cmake
 
 Name:    dbus
 Epoch:   1
@@ -45,8 +47,10 @@ BuildRequires: /usr/bin/yelp-build
 # For building XML documentation.
 BuildRequires: /usr/bin/xsltproc
 BuildRequires: xmlto
+%if %{with cmake}
 # For AutoReq cmake-filesystem.
 BuildRequires: cmake
+%endif
 
 #For macroized scriptlets.
 %{?systemd_requires}
@@ -160,6 +164,10 @@ popd
 
 find %{buildroot} -name '*.a' -type f -delete
 find %{buildroot} -name '*.la' -type f -delete
+
+%if ! %{with cmake}
+rm -rf %{buildroot}%{_libdir}/cmake
+%endif
 
 install -Dp -m755 %{SOURCE1} %{buildroot}%{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
 
@@ -351,7 +359,9 @@ popd
 %{_datadir}/xml/dbus-1
 %{_libdir}/lib*.so
 %dir %{_libdir}/dbus-1.0
+%if %{with cmake}
 %{_libdir}/cmake/DBus1
+%endif
 %{_libdir}/dbus-1.0/include/
 %{_libdir}/pkgconfig/dbus-1.pc
 %{_includedir}/*
@@ -360,6 +370,7 @@ popd
 %changelog
 * Tue Oct 03 2017 David King <amigadave@amigadave.com> - 1:1.11.20-1
 - Update to 1.11.20
+- Allow cmake support to be disabled (#1497257)
 
 * Wed Sep 27 2017 David King <amigadave@amigadave.com> - 1:1.11.18-1
 - Update to 1.11.18
