@@ -18,7 +18,7 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.11.20
+Version: 1.11.22
 Release: 1%{?dist}
 Summary: D-BUS message bus
 
@@ -368,6 +368,9 @@ popd
 
 
 %changelog
+* Mon Oct 23 2017 David King <amigadave@amigadave.com> - 1:1.11.22-1
+- Update to 1.11.22
+
 * Tue Oct 03 2017 David King <amigadave@amigadave.com> - 1:1.11.20-1
 - Update to 1.11.20
 - Allow cmake support to be disabled (#1497257)
