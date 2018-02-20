@@ -19,7 +19,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.12.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -119,7 +119,6 @@ Summary: X11-requiring add-ons for D-BUS
 Group: Development/Libraries
 # The server package can be a different architecture.
 Requires: %{name} = %{epoch}:%{version}-%{release}
-Requires: xorg-x11-xinit
 
 %description x11
 D-BUS contains some tools that require Xlib to be installed, those are
@@ -368,6 +367,10 @@ popd
 
 
 %changelog
+* Tue Feb 20 2018 Adam Jackson <ajax@redhat.com> - 1.12.0-3
+- Don't Require: xorg-x11-xinit. We don't actually need it, and newer
+  filesystem packages own the directory for us.
+
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.12.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
