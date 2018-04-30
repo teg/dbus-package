@@ -18,8 +18,8 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.12.0
-Release: 3%{?dist}
+Version: 1.12.8
+Release: 1%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -28,7 +28,7 @@ Group:   System Environment/Libraries
 License: (GPLv2+ or AFL) and GPLv2+
 URL:     http://www.freedesktop.org/Software/dbus/
 #VCS:    git:git://git.freedesktop.org/git/dbus/dbus
-Source0: http://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
+Source0: https://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
 Source1: 00-start-message-bus.sh
 
 BuildRequires: autoconf-archive
@@ -367,7 +367,10 @@ popd
 
 
 %changelog
-* Tue Feb 20 2018 Adam Jackson <ajax@redhat.com> - 1.12.0-3
+* Mon Apr 30 2018 David King <amigadave@amigadave.com> - 1:1.12.8-1
+- Update to 1.12.8 (#1556590)
+
+* Tue Feb 20 2018 Adam Jackson <ajax@redhat.com> - 1:1.12.0-3
 - Don't Require: xorg-x11-xinit. We don't actually need it, and newer
   filesystem packages own the directory for us.
 
