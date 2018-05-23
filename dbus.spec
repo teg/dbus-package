@@ -5,6 +5,9 @@
 
 %global libselinux_version      2.0.86
 
+# fedora-release-30-0.2 added required presets to enable systemd-unit symlinks
+%global system_release_version  30-0.2
+
 %global dbus_user_uid           81
 
 %global dbus_common_config_opts --enable-libaudit --enable-selinux=yes --with-system-socket=/run/dbus/system_bus_socket --with-dbus-user=dbus --libexecdir=/%{_libexecdir}/dbus-1 --enable-user-session --docdir=%{_pkgdocdir} --enable-installed-tests
@@ -84,6 +87,7 @@ Summary:        D-BUS message bus configuration
 Group:          System Environment/Libraries
 BuildArch:      noarch
 Requires(pre):  /usr/sbin/useradd
+Requires:       system-release >= %{system_release_version}
 
 %description common
 The %{name}-common package provides the configuration and setup files for D-Bus
@@ -219,15 +223,6 @@ install -Dp -m644 %{SOURCE2} %{buildroot}%{_unitdir}/dbus.socket
 install -Dp -m644 %{SOURCE3} %{buildroot}%{_unitdir}/dbus-daemon.service
 install -Dp -m644 %{SOURCE4} %{buildroot}%{_userunitdir}/dbus.socket
 install -Dp -m644 %{SOURCE5} %{buildroot}%{_userunitdir}/dbus-daemon.service
-
-# dbus-daemon is the default D-Bus implementation on Fedora
-ln -f -s dbus-daemon.service %{buildroot}%{_unitdir}/dbus.service
-ln -f -s dbus-daemon.service %{buildroot}%{_userunitdir}/dbus.service
-
-# D-Bus is unconditionally enabled on all systems
-ln -f -s ../dbus.service %{buildroot}%{_unitdir}/multi-user.target.wants/dbus.service
-ln -f -s ../dbus.socket %{buildroot}%{_unitdir}/sockets.target.wants/dbus.socket
-ln -f -s ../dbus.socket %{buildroot}%{_userunitdir}/sockets.target.wants/dbus.socket
 
 # Make sure that when somebody asks for D-Bus under the name of the
 # old SysV script, that he ends up with the standard dbus.service name
@@ -383,15 +378,10 @@ popd
 %exclude %{_libexecdir}/dbus-1/dbus-run-installed-tests
 %{_tmpfilesdir}/dbus.conf
 %{_unitdir}/dbus-daemon.service
-%{_unitdir}/dbus.service
 %{_unitdir}/dbus.socket
 %{_unitdir}/messagebus.service
-%{_unitdir}/multi-user.target.wants/dbus.service
-%{_unitdir}/sockets.target.wants/dbus.socket
 %{_userunitdir}/dbus-daemon.service
-%{_userunitdir}/dbus.service
 %{_userunitdir}/dbus.socket
-%{_userunitdir}/sockets.target.wants/dbus.socket
 
 %files tools
 %{!?_licensedir:%global license %%doc}
@@ -442,6 +432,11 @@ popd
 
 
 %changelog
+* Fri Aug 10 2018 David Herrmann <dh.herrmann@gmail.com> - 1:1.12.10-1
+- Add [Install] sections to unit files, rather than creating the symlinks
+  manually during the installation. This will pick up the systemd-presets
+  global to Fedora from the 'fedora-release' package.
+
 * Fri Aug 10 2018 David Herrmann <dh.herrmann@gmail.com> - 1:1.12.10-1
 - Provide custom systemd unit files to replace the upstream units. Also rename
   the service to 'dbus-daemon.service', but provide an alias to 'dbus.service'.
