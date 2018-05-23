@@ -22,7 +22,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.12.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -348,6 +348,9 @@ popd
 %{_datadir}/dbus-1/system-services
 %{_datadir}/dbus-1/interfaces
 %{_sysusersdir}/dbus.conf
+%{_unitdir}/dbus.socket
+%{_unitdir}/messagebus.service
+%{_userunitdir}/dbus.socket
 
 %files daemon
 # Strictly speaking, we could remove the COPYING from this subpackage and 
@@ -378,10 +381,7 @@ popd
 %exclude %{_libexecdir}/dbus-1/dbus-run-installed-tests
 %{_tmpfilesdir}/dbus.conf
 %{_unitdir}/dbus-daemon.service
-%{_unitdir}/dbus.socket
-%{_unitdir}/messagebus.service
 %{_userunitdir}/dbus-daemon.service
-%{_userunitdir}/dbus.socket
 
 %files tools
 %{!?_licensedir:%global license %%doc}
@@ -432,6 +432,10 @@ popd
 
 
 %changelog
+* Fri Aug 10 2018 David Herrmann <dh.herrmann@gmail.com> - 1:1.12.10-2
+- Move generic units into 'dbus-common', so other dbus implementations can use
+  them as well.
+
 * Fri Aug 10 2018 David Herrmann <dh.herrmann@gmail.com> - 1:1.12.10-1
 - Add [Install] sections to unit files, rather than creating the symlinks
   manually during the installation. This will pick up the systemd-presets
