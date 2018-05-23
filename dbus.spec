@@ -30,6 +30,10 @@ URL:     http://www.freedesktop.org/Software/dbus/
 #VCS:    git:git://git.freedesktop.org/git/dbus/dbus
 Source0: https://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
 Source1: 00-start-message-bus.sh
+Source2: dbus.socket
+Source3: dbus-daemon.service
+Source4: dbus.user.socket
+Source5: dbus-daemon.user.service
 Patch0: 0001-tools-Use-Python3-for-GetAllMatchRules.patch
 
 BuildRequires: autoconf-archive
@@ -202,18 +206,39 @@ find %{buildroot} -name '*.la' -type f -delete
 rm -rf %{buildroot}%{_libdir}/cmake
 %endif
 
+# Delete upstream units
+rm -f %{buildroot}%{_unitdir}/dbus.{socket,service}
+rm -f %{buildroot}%{_unitdir}/sockets.target.wants/dbus.socket
+rm -f %{buildroot}%{_unitdir}/multi-user.target.wants/dbus.service
+rm -f %{buildroot}%{_userunitdir}/dbus.{socket,service}
+rm -f %{buildroot}%{_userunitdir}/sockets.target.wants/dbus.socket
+
+# Install downstream units
 install -Dp -m755 %{SOURCE1} %{buildroot}%{_sysconfdir}/X11/xinit/xinitrc.d/00-start-message-bus.sh
+install -Dp -m644 %{SOURCE2} %{buildroot}%{_unitdir}/dbus.socket
+install -Dp -m644 %{SOURCE3} %{buildroot}%{_unitdir}/dbus-daemon.service
+install -Dp -m644 %{SOURCE4} %{buildroot}%{_userunitdir}/dbus.socket
+install -Dp -m644 %{SOURCE5} %{buildroot}%{_userunitdir}/dbus-daemon.service
+
+# dbus-daemon is the default D-Bus implementation on Fedora
+ln -f -s dbus-daemon.service %{buildroot}%{_unitdir}/dbus.service
+ln -f -s dbus-daemon.service %{buildroot}%{_userunitdir}/dbus.service
+
+# D-Bus is unconditionally enabled on all systems
+ln -f -s ../dbus.service %{buildroot}%{_unitdir}/multi-user.target.wants/dbus.service
+ln -f -s ../dbus.socket %{buildroot}%{_unitdir}/sockets.target.wants/dbus.socket
+ln -f -s ../dbus.socket %{buildroot}%{_userunitdir}/sockets.target.wants/dbus.socket
+
+# Make sure that when somebody asks for D-Bus under the name of the
+# old SysV script, that he ends up with the standard dbus.service name
+# now.
+ln -s dbus.service %{buildroot}%{_unitdir}/messagebus.service
 
 # Obsolete, but still widely used, for drop-in configuration snippets.
 install --directory %{buildroot}%{_sysconfdir}/dbus-1/session.d
 install --directory %{buildroot}%{_sysconfdir}/dbus-1/system.d
 
 install --directory %{buildroot}%{_datadir}/dbus-1/interfaces
-
-# Make sure that when somebody asks for D-Bus under the name of the
-# old SysV script, that he ends up with the standard dbus.service name
-# now.
-ln -s dbus.service %{buildroot}%{_unitdir}/messagebus.service
 
 ## %find_lang %{gettext_package}
 
@@ -291,18 +316,18 @@ popd
     -s /sbin/nologin -r -d '/' dbus 2> /dev/null || :
 
 %post daemon
-%systemd_post dbus.service dbus.socket
-%systemd_user_post dbus.service dbus.socket
+%systemd_post dbus-daemon.service dbus.socket
+%systemd_user_post dbus-daemon.service dbus.socket
 
 %post libs -p /sbin/ldconfig
 
 %preun daemon
-%systemd_preun dbus.service dbus.socket
-%systemd_user_preun dbus.service dbus.socket
+%systemd_preun dbus-daemon.service dbus.socket
+%systemd_user_preun dbus-daemon.service dbus.socket
 
 %postun daemon
-%systemd_postun dbus.service dbus.socket
-%systemd_user_postun dbus.service dbus.socket
+%systemd_postun dbus-daemon.service dbus.socket
+%systemd_user_postun dbus-daemon.service dbus.socket
 
 %postun libs -p /sbin/ldconfig
 
@@ -357,11 +382,13 @@ popd
 %attr(4750,root,dbus) %{_libexecdir}/dbus-1/dbus-daemon-launch-helper
 %exclude %{_libexecdir}/dbus-1/dbus-run-installed-tests
 %{_tmpfilesdir}/dbus.conf
+%{_unitdir}/dbus-daemon.service
 %{_unitdir}/dbus.service
 %{_unitdir}/dbus.socket
 %{_unitdir}/messagebus.service
 %{_unitdir}/multi-user.target.wants/dbus.service
 %{_unitdir}/sockets.target.wants/dbus.socket
+%{_userunitdir}/dbus-daemon.service
 %{_userunitdir}/dbus.service
 %{_userunitdir}/dbus.socket
 %{_userunitdir}/sockets.target.wants/dbus.socket
@@ -415,6 +442,10 @@ popd
 
 
 %changelog
+* Fri Aug 10 2018 David Herrmann <dh.herrmann@gmail.com> - 1:1.12.10-1
+- Provide custom systemd unit files to replace the upstream units. Also rename
+  the service to 'dbus-daemon.service', but provide an alias to 'dbus.service'.
+
 * Fri Aug 03 2018 David King <amigadave@amigadave.com> - 1:1.12.10-1
 - Update to 1.12.10
 
