@@ -19,7 +19,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.12.8
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -411,6 +411,9 @@ popd
 
 
 %changelog
+* Thu Jul 12 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1:1.12.8-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Wed May 16 2018 David Herrmann <dh.herrmann@gmail.com> - 1:1.12.8-2
 - Extract 'dbus-tools' package from 'dbus-daemon' to provide all command-line
   utilities independent of the actual message bus. They are valid to be used
