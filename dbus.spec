@@ -60,7 +60,7 @@ BuildRequires:    systemd
 # pass --without-tests.
 %if %{with tests}
 BuildRequires: pkgconfig(gio-2.0) >= 2.40.0
-BuildRequires: dbus-python
+BuildRequires: python3-dbus
 BuildRequires: pygobject3
 %endif
 %if %{with check}
