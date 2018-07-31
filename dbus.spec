@@ -19,7 +19,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.12.8
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -30,6 +30,7 @@ URL:     http://www.freedesktop.org/Software/dbus/
 #VCS:    git:git://git.freedesktop.org/git/dbus/dbus
 Source0: https://dbus.freedesktop.org/releases/%{name}/%{name}-%{version}.tar.gz
 Source1: 00-start-message-bus.sh
+Patch0: 0001-tools-Use-Python3-for-GetAllMatchRules.patch
 
 BuildRequires: autoconf-archive
 BuildRequires: libtool
@@ -190,6 +191,9 @@ popd
 pushd build
 make install DESTDIR=%{buildroot} INSTALL="install -p"
 popd
+
+# Delete python2 code
+rm -f %{buildroot}/%{_pkgdocdir}/examples/GetAllMatchRules.py
 
 find %{buildroot} -name '*.a' -type f -delete
 find %{buildroot} -name '*.la' -type f -delete
@@ -411,6 +415,9 @@ popd
 
 
 %changelog
+* Tue Jul 31 2018 Colin Walters <walters@verbum.org> - 1:1.12.8-5
+- More python3
+
 * Tue Jul 31 2018 Colin Walters <walters@verbum.org> - 1:1.12.8-4
 - Use python3-dbus to drop python2 deps
 
