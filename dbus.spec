@@ -18,8 +18,8 @@
 
 Name:    dbus
 Epoch:   1
-Version: 1.12.8
-Release: 5%{?dist}
+Version: 1.12.10
+Release: 1%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -415,6 +415,9 @@ popd
 
 
 %changelog
+* Fri Aug 03 2018 David King <amigadave@amigadave.com> - 1:1.12.10-1
+- Update to 1.12.10
+
 * Tue Jul 31 2018 Colin Walters <walters@verbum.org> - 1:1.12.8-5
 - More python3
 
