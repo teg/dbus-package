@@ -310,19 +310,31 @@ popd
 /usr/sbin/useradd -c 'System message bus' -u %{dbus_user_uid} -g %{dbus_user_uid} \
     -s /sbin/nologin -r -d '/' dbus 2> /dev/null || :
 
+%post common
+%systemd_post dbus.socket
+%systemd_user_post dbus.socket
+
 %post daemon
-%systemd_post dbus-daemon.service dbus.socket
-%systemd_user_post dbus-daemon.service dbus.socket
+%systemd_post dbus-daemon.service
+%systemd_user_post dbus-daemon.service
 
 %post libs -p /sbin/ldconfig
 
+%preun common
+%systemd_preun dbus.socket
+%systemd_user_preun dbus.socket
+
 %preun daemon
-%systemd_preun dbus-daemon.service dbus.socket
-%systemd_user_preun dbus-daemon.service dbus.socket
+%systemd_preun dbus-daemon.service
+%systemd_user_preun dbus-daemon.service
+
+%postun common
+%systemd_postun dbus.socket
+%systemd_user_postun dbus.socket
 
 %postun daemon
-%systemd_postun dbus-daemon.service dbus.socket
-%systemd_user_postun dbus-daemon.service dbus.socket
+%systemd_postun dbus-daemon.service
+%systemd_user_postun dbus-daemon.service
 
 %postun libs -p /sbin/ldconfig
 
