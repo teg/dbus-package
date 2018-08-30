@@ -6,7 +6,7 @@
 %global libselinux_version      2.0.86
 
 # fedora-release-30-0.2 added required presets to enable systemd-unit symlinks
-%global system_release_version  30-0.2
+%global fedora_release_version  30-0.2
 
 %global dbus_user_uid           81
 
@@ -22,7 +22,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.12.10
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -87,7 +87,7 @@ Summary:        D-BUS message bus configuration
 Group:          System Environment/Libraries
 BuildArch:      noarch
 Requires(pre):  /usr/sbin/useradd
-Requires:       system-release >= %{system_release_version}
+Requires:       fedora-release >= %{fedora_release_version}
 
 %description common
 The %{name}-common package provides the configuration and setup files for D-Bus
@@ -444,6 +444,10 @@ popd
 
 
 %changelog
+* Thu Aug 30 2018 David Herrmann <dh.herrmann@gmail.com> - 1:1.12.10-3
+- Change 'system-release' dependency to 'fedora-release', since otherwise hard
+  version dependencies are ignored.
+
 * Fri Aug 10 2018 David Herrmann <dh.herrmann@gmail.com> - 1:1.12.10-2
 - Move generic units into 'dbus-common', so other dbus implementations can use
   them as well.
