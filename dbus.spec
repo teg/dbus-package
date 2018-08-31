@@ -22,7 +22,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.12.10
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -338,6 +338,13 @@ popd
 
 %postun libs -p /sbin/ldconfig
 
+%triggerpostun common -- dbus-common < 1:1.12.10-4
+systemctl --no-reload preset dbus.socket &>/dev/null || :
+systemctl --no-reload --global preset dbus.socket &>/dev/null || :
+
+%triggerpostun daemon -- dbus-daemon < 1:1.12.10-4
+systemctl --no-reload preset dbus-daemon.service &>/dev/null || :
+systemctl --no-reload --global preset dbus-daemon.service &>/dev/null || :
 
 %files
 # The 'dbus' package is only retained for compatibility purposes. It will
@@ -444,6 +451,10 @@ popd
 
 
 %changelog
+* Fri Aug 31 2018 Tom Gundersen <teg@jklm.no> - 1:1.12.10-3
+- Make sure presets are applied when upgrading from packages before the presets
+  existed
+
 * Thu Aug 30 2018 David Herrmann <dh.herrmann@gmail.com> - 1:1.12.10-2
 - Change 'system-release' dependency to 'fedora-release', since otherwise hard
   version dependencies are ignored.
