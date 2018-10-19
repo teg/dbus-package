@@ -318,8 +318,6 @@ popd
 %systemd_post dbus-daemon.service
 %systemd_user_post dbus-daemon.service
 
-%post libs -p /sbin/ldconfig
-
 %preun common
 %systemd_preun dbus.socket
 %systemd_user_preun dbus.socket
@@ -335,8 +333,6 @@ popd
 %postun daemon
 %systemd_postun dbus-daemon.service
 %systemd_user_postun dbus-daemon.service
-
-%postun libs -p /sbin/ldconfig
 
 %triggerpostun common -- dbus-common < 1:1.12.10-4
 systemctl --no-reload preset dbus.socket &>/dev/null || :
@@ -454,6 +450,7 @@ systemctl --no-reload --global preset dbus-daemon.service &>/dev/null || :
 * Fri Oct 19 2018 David King <amigadave@amigadave.com> - 1:1.12.10-4
 - Move user and group creation to daemon subpackage
 - Move systemd to Requires of common subpackage (#1638910)
+- Remove unnecessary ldconfig calls
 
 * Fri Aug 31 2018 Tom Gundersen <teg@jklm.no> - 1:1.12.10-3
 - Make sure presets are applied when upgrading from packages before the presets
