@@ -22,7 +22,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.12.10
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -304,7 +304,7 @@ popd
 %endif
 
 
-%pre common
+%pre daemon
 # Add the "dbus" user and group
 /usr/sbin/groupadd -r -g %{dbus_user_uid} dbus 2>/dev/null || :
 /usr/sbin/useradd -c 'System message bus' -u %{dbus_user_uid} -g %{dbus_user_uid} \
@@ -451,6 +451,9 @@ systemctl --no-reload --global preset dbus-daemon.service &>/dev/null || :
 
 
 %changelog
+* Fri Oct 19 2018 David King <amigadave@amigadave.com> - 1:1.12.10-4
+- Move user and group creation to daemon subpackage
+
 * Fri Aug 31 2018 Tom Gundersen <teg@jklm.no> - 1:1.12.10-3
 - Make sure presets are applied when upgrading from packages before the presets
   existed
