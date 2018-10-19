@@ -61,7 +61,6 @@ BuildRequires: cmake
 %endif
 
 #For macroized scriptlets.
-%{?systemd_requires}
 BuildRequires:    systemd
 
 # Note: These is only required for --with-tests; when bootstrapping, you can
@@ -87,6 +86,7 @@ Summary:        D-BUS message bus configuration
 Group:          System Environment/Libraries
 BuildArch:      noarch
 Requires(pre):  /usr/sbin/useradd
+%{?systemd_requires}
 Requires:       fedora-release >= %{fedora_release_version}
 
 %description common
@@ -453,6 +453,7 @@ systemctl --no-reload --global preset dbus-daemon.service &>/dev/null || :
 %changelog
 * Fri Oct 19 2018 David King <amigadave@amigadave.com> - 1:1.12.10-4
 - Move user and group creation to daemon subpackage
+- Move systemd to Requires of common subpackage (#1638910)
 
 * Fri Aug 31 2018 Tom Gundersen <teg@jklm.no> - 1:1.12.10-3
 - Make sure presets are applied when upgrading from packages before the presets
