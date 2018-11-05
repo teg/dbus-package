@@ -22,7 +22,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.12.10
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -97,6 +97,7 @@ implementations to provide a System and User Message Bus.
 Summary:        D-BUS message bus
 Group:          System Environment/Libraries
 %{?systemd_requires}
+Requires:       fedora-release >= %{fedora_release_version}
 Requires:       libselinux%{?_isa} >= %{libselinux_version}
 Requires:       dbus-common = %{epoch}:%{version}-%{release}
 Requires:       dbus-libs%{?_isa} = %{epoch}:%{version}-%{release}
@@ -450,6 +451,9 @@ systemctl --no-reload --global preset dbus-daemon.service &>/dev/null || :
 
 
 %changelog
+* Mon Nov 05 2018 David King <amigadave@amigadave.com> - 1:1.12.10-6
+- Add further Requires to subpackages
+
 * Tue Oct 23 2018 David Herrmann <dh.herrmann@gmail.com> - 1:1.12.10-5
 - Move useradd dependency to daemon subpackage
 
