@@ -87,6 +87,7 @@ Group:          System Environment/Libraries
 BuildArch:      noarch
 %{?systemd_requires}
 Requires:       fedora-release >= %{fedora_release_version}
+Requires:       /usr/bin/systemctl
 
 %description common
 The %{name}-common package provides the configuration and setup files for D-Bus
@@ -95,11 +96,13 @@ implementations to provide a System and User Message Bus.
 %package daemon
 Summary:        D-BUS message bus
 Group:          System Environment/Libraries
+%{?systemd_requires}
 Requires:       libselinux%{?_isa} >= %{libselinux_version}
 Requires:       dbus-common = %{epoch}:%{version}-%{release}
 Requires:       dbus-libs%{?_isa} = %{epoch}:%{version}-%{release}
 Requires:       dbus-tools = %{epoch}:%{version}-%{release}
 Requires(pre):  /usr/sbin/useradd
+Requires:       /usr/bin/systemctl
 
 %description daemon
 D-BUS is a system for sending messages between applications. It is
