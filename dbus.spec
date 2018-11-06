@@ -22,7 +22,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.12.10
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -228,11 +228,6 @@ install -Dp -m644 %{SOURCE3} %{buildroot}%{_unitdir}/dbus-daemon.service
 install -Dp -m644 %{SOURCE4} %{buildroot}%{_userunitdir}/dbus.socket
 install -Dp -m644 %{SOURCE5} %{buildroot}%{_userunitdir}/dbus-daemon.service
 
-# Make sure that when somebody asks for D-Bus under the name of the
-# old SysV script, that he ends up with the standard dbus.service name
-# now.
-ln -s dbus.service %{buildroot}%{_unitdir}/messagebus.service
-
 # Obsolete, but still widely used, for drop-in configuration snippets.
 install --directory %{buildroot}%{_sysconfdir}/dbus-1/session.d
 install --directory %{buildroot}%{_sysconfdir}/dbus-1/system.d
@@ -342,7 +337,7 @@ popd
 systemctl --no-reload preset dbus.socket &>/dev/null || :
 systemctl --no-reload --global preset dbus.socket &>/dev/null || :
 
-%triggerpostun daemon -- dbus-daemon < 1:1.12.10-4
+%triggerpostun daemon -- dbus-daemon < 1:1.12.10-7
 systemctl --no-reload preset dbus-daemon.service &>/dev/null || :
 systemctl --no-reload --global preset dbus-daemon.service &>/dev/null || :
 
@@ -368,7 +363,6 @@ systemctl --no-reload --global preset dbus-daemon.service &>/dev/null || :
 %{_datadir}/dbus-1/interfaces
 %{_sysusersdir}/dbus.conf
 %{_unitdir}/dbus.socket
-%{_unitdir}/messagebus.service
 %{_userunitdir}/dbus.socket
 
 %files daemon
@@ -451,6 +445,9 @@ systemctl --no-reload --global preset dbus-daemon.service &>/dev/null || :
 
 
 %changelog
+* Tue Nov 06 2018 Tom Gundersen <teg@jklm.no> - 1:1.12.10-7
+- Fix the messagebus.service alias
+
 * Mon Nov 05 2018 David King <amigadave@amigadave.com> - 1:1.12.10-6
 - Add further Requires to subpackages
 

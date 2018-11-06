@@ -9,5 +9,7 @@ ExecReload=/usr/bin/dbus-send --print-reply --system --type=method_call --dest=o
 OOMScoreAdjust=-900
 
 [Install]
-Alias=dbus.service
+# Make sure that services can still refer to this under the name of the
+# old SysV script (messagebus).
+Alias=dbus.service messagebus.service
 WantedBy=multi-user.target
