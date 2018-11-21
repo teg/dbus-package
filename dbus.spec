@@ -23,7 +23,7 @@
 Name:    dbus
 Epoch:   1
 Version: 1.12.10
-Release: 8%{?dist}
+Release: 9%{?dist}
 Summary: D-BUS message bus
 
 Group:   System Environment/Libraries
@@ -75,7 +75,8 @@ BuildRequires: pygobject3
 BuildRequires: /usr/bin/Xvfb
 %endif
 
-Requires: %{name}-daemon = %{epoch}:%{version}-%{release}
+# Since F30 the default implementation is dbus-broker over dbus-daemon
+Requires: dbus-broker >= 16-4
 
 %description
 D-BUS is a system for sending messages between applications. It is
@@ -448,6 +449,9 @@ systemctl --no-reload --global preset dbus-daemon.service &>/dev/null || :
 
 
 %changelog
+* Thu Nov 22 2018 David Herrmann <dh.herrmann@gmail.com> - 1:1.12.10-9
+- Switch to dbus-broker as the default implementation
+
 * Wed Nov 07 2018 Stephen Gallagher <sgallagh@redhat.com> - 1:1.12.10-8
 - Fix requirement on system-release
 
