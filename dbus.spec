@@ -338,12 +338,12 @@ popd
 %systemd_user_postun dbus-daemon.service
 
 %triggerpostun common -- dbus-common < 1:1.12.10-4
-systemctl --no-reload preset dbus.socket &>/dev/null || :
-systemctl --no-reload --global preset dbus.socket &>/dev/null || :
+/usr/bin/systemctl --no-reload preset dbus.socket &>/dev/null || :
+/usr/bin/systemctl --no-reload --global preset dbus.socket &>/dev/null || :
 
 %triggerpostun daemon -- dbus-daemon < 1:1.12.10-7
-systemctl --no-reload preset dbus-daemon.service &>/dev/null || :
-systemctl --no-reload --global preset dbus-daemon.service &>/dev/null || :
+/usr/bin/systemctl --no-reload preset dbus-daemon.service &>/dev/null || :
+/usr/bin/systemctl --no-reload --global preset dbus-daemon.service &>/dev/null || :
 
 %files
 # The 'dbus' package is only retained for compatibility purposes. It will
